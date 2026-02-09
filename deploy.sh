@@ -32,6 +32,7 @@ deploy_project() {
     local remote_dir="/opt/${project}"
     local local_dir="${BASE_DIR}/${project}"
     local files=()
+    local need_restart=true
 
     case "$project" in
         homepage)
@@ -82,9 +83,23 @@ deploy_project() {
         rsync -avz "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
     done
 
-    # Always restart to refresh bind mounts (rsync creates new inodes)
-    info "Restarting containers for ${project}..."
-    ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
+    # Decide whether to restart containers
+    # homepage special case: skip restart if only index.html was synced
+    if [[ "$project" == "homepage" ]]; then
+        local has_compose=false
+        for f in "${synced_files[@]}"; do
+            [[ "$f" == "docker-compose.yml" ]] && has_compose=true
+        done
+        if [[ "$has_compose" == false ]]; then
+            need_restart=false
+            info "Only index.html deployed — skipping docker restart (nginx serves via volume)"
+        fi
+    fi
+
+    if [[ "$need_restart" == true ]]; then
+        info "Restarting containers for ${project}..."
+        ssh "$SERVER" "cd ${remote_dir} && docker compose up -d"
+    fi
 
     success "Deploy complete: ${project}"
 }
