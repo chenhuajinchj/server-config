@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XiaoChen - Pixel Portal</title>
+    <title>陈与小金 - Pixel Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
 
         /* HERO */
         .hero{position:relative;z-index:1;height:100vh;min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
-        .avatar{width:96px;height:96px;margin-bottom:24px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(240,208,64,.3))}
+        .avatar{width:96px;height:96px;margin-bottom:24px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(240,208,64,.3));border-radius:8px;transition:filter 0.2s}
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
         .hero h1{font-size:32px;color:var(--gold);text-shadow:4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.2);margin-bottom:10px;letter-spacing:2px}
         .hero .sub{font-size:10px;color:#88c070;letter-spacing:4px;margin-bottom:32px;opacity:0;animation:fadeUp .8s .5s forwards}
@@ -83,8 +83,10 @@
         .ground::before{content:"";position:absolute;top:-12px;left:0;width:100%;height:12px;background:repeating-linear-gradient(90deg,transparent 0,transparent 28px,#3a6e28 28px,#3a6e28 36px,transparent 36px,transparent 64px)}
 
         /* WALKING CHARACTER */
-        .walker{position:fixed;bottom:52px;z-index:2;width:28px;height:28px;image-rendering:pixelated;animation:walk 22s linear infinite}
-        @keyframes walk{0%{left:-40px}100%{left:calc(100% + 40px)}}
+        .walker{position:fixed;bottom:52px;z-index:4;width:28px;height:28px;image-rendering:pixelated;left:-40px;transition:filter 0.1s,transform 0.1s}
+
+        /* LASER CANVAS */
+        #laser-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none}
 
         /* RESPONSIVE */
         @media(max-width:600px){
@@ -98,9 +100,10 @@
         }
 </style>
     <canvas id="bg"></canvas>
+    <canvas id="laser-canvas"></canvas>
 
     <!-- Walking pixel character -->
-    <svg class="walker" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <svg id="walker" class="walker" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
         <rect x="5" y="0" width="6" height="2" fill="#f0d040"/>
         <rect x="4" y="2" width="8" height="2" fill="#f0d040"/>
         <rect x="4" y="2" width="2" height="2" fill="#fff"/><rect x="8" y="2" width="2" height="2" fill="#fff"/>
@@ -114,17 +117,7 @@
 
     <!-- HERO -->
     <section class="hero">
-        <svg class="avatar" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="0" width="8" height="3" fill="#333"/>
-            <rect x="3" y="3" width="10" height="2" fill="#333"/>
-            <rect x="3" y="5" width="10" height="6" fill="#ffcc99"/>
-            <rect x="5" y="6" width="2" height="2" fill="#fff"/><rect x="9" y="6" width="2" height="2" fill="#fff"/>
-            <rect x="6" y="7" width="1" height="1" fill="#333"/><rect x="10" y="7" width="1" height="1" fill="#333"/>
-            <rect x="6" y="9" width="4" height="1" fill="#e06060"/>
-            <rect x="3" y="11" width="10" height="3" fill="#4060c0"/>
-            <rect x="2" y="11" width="2" height="4" fill="#4060c0"/><rect x="12" y="11" width="2" height="4" fill="#4060c0"/>
-            <rect x="4" y="14" width="3" height="2" fill="#804020"/><rect x="9" y="14" width="3" height="2" fill="#804020"/>
-        </svg>
+        <img class="avatar" src="avatar.png" alt="陈与小金" />
         <h1 id="title"></h1>
         <div class="sub">- 数字工坊 · DIGITAL WORKSHOP -</div>
         <div class="hp-bar">SERVER <span class="bar"><span class="fill"></span></span> ONLINE</div>
@@ -179,7 +172,7 @@
 
     <!-- FOOTER -->
     <div class="footer reveal">
-        <p>&copy; 2026 XIAOCHENS <span class="coin">🪙</span></p>
+        <p>&copy; 2026 陈与小金 <span class="coin">🪙</span></p>
         <p style="margin-top:8px;color:#333">BUILT WITH PIXELS & PASSION</p>
     </div>
 
@@ -206,12 +199,11 @@
         shooters=shooters.filter(s=>{s.x+=s.vx;s.y+=s.vy;s.life--;
             for(let i=0;i<4;i++){const a=(s.life/(30+20))*(1-i*.25);X.globalAlpha=a;X.fillStyle="#fff";X.fillRect(Math.floor(s.x-s.vx*i*.6),Math.floor(s.y-s.vy*i*.6),2,1)}
             return s.life>0&&s.x<C.width+20});
-        X.globalAlpha=1;requestAnimationFrame(drawBg);
+        X.globalAlpha=1;
     }
-    drawBg();
 
     // ===== TYPING EFFECT =====
-    const txt="XIAOCHENS",el=document.getElementById("title");let ci=0;
+    const txt="陈与小金",el=document.getElementById("title");let ci=0;
     function typeChar(){if(ci<txt.length){el.textContent+=txt[ci];ci++;setTimeout(typeChar,120)}else{el.style.textShadow="4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.4)"}}
     setTimeout(typeChar,300);
 
@@ -223,6 +215,153 @@
     const AC=window.AudioContext||window.webkitAudioContext;
     function beep(f1,f2,dur){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="square";o.frequency.setValueAtTime(f1,a.currentTime);o.frequency.setValueAtTime(f2,a.currentTime+dur*.3);g.gain.setValueAtTime(.06,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.start(a.currentTime);o.stop(a.currentTime+dur)}catch(e){}}
     document.querySelectorAll(".card").forEach(c=>c.addEventListener("mouseenter",()=>beep(660,880,.12)));
+
+    // ===== LASER CANVAS INIT =====
+    const LC=document.getElementById("laser-canvas"),LX=LC.getContext("2d");
+    function resizeLaser(){LC.width=innerWidth;LC.height=innerHeight}
+    addEventListener("resize",resizeLaser);resizeLaser();
+
+    // ===== SOUND EFFECTS =====
+    function laserSound(){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="sawtooth";o.frequency.setValueAtTime(880,a.currentTime);o.frequency.exponentialRampToValueAtTime(220,a.currentTime+.15);g.gain.setValueAtTime(.04,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.2);o.start(a.currentTime);o.stop(a.currentTime+.2)}catch(e){}}
+    function explosionSound(){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="square";o.frequency.setValueAtTime(200,a.currentTime);o.frequency.exponentialRampToValueAtTime(50,a.currentTime+.3);g.gain.setValueAtTime(.06,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.3);o.start(a.currentTime);o.stop(a.currentTime+.3)}catch(e){}}
+
+    // ===== GAME STATE =====
+    const walkerEl=document.getElementById("walker");
+    const avatarEl=document.querySelector(".avatar");
+    const game={
+        walker:{x:-40,state:"walking",vy:0,jumpY:0,deathTimer:0,deadTimer:0,speed:innerWidth/22/60},
+        laser:{timer:Math.floor(180+Math.random()*120),active:false,x1:0,y1:0,x2:0,y2:0,frame:0,maxFrames:12,hit:false},
+        avatarGlow:0
+    };
+    addEventListener("resize",()=>{game.walker.speed=innerWidth/22/60});
+
+    // ===== WALKER STATE MACHINE =====
+    function updateWalker(){
+        const w=game.walker;
+        const bottomY=52;
+        switch(w.state){
+            case "walking":
+                w.x+=w.speed;
+                if(w.x>innerWidth+40){w.x=-40}
+                walkerEl.style.left=w.x+"px";
+                walkerEl.style.bottom=bottomY+"px";
+                walkerEl.style.opacity="1";
+                walkerEl.style.transform="scaleX(1)";
+                walkerEl.style.filter="none";
+                break;
+            case "jumping":
+                w.x+=w.speed;
+                w.vy+=0.4;
+                w.jumpY+=w.vy;
+                if(w.jumpY>=0){w.jumpY=0;w.state="walking"}
+                walkerEl.style.left=w.x+"px";
+                walkerEl.style.bottom=(bottomY-w.jumpY)+"px";
+                break;
+            case "dying":
+                w.deathTimer++;
+                if(w.deathTimer<8){
+                    walkerEl.style.filter="brightness(3)";
+                }else if(w.deathTimer<25){
+                    const s=1+(w.deathTimer-8)*0.06;
+                    const o=1-(w.deathTimer-8)/17;
+                    walkerEl.style.transform="scale("+s+")";
+                    walkerEl.style.opacity=o;
+                    walkerEl.style.filter="brightness(2)";
+                }else{
+                    w.state="dead";w.deadTimer=0;
+                    walkerEl.style.opacity="0";
+                }
+                break;
+            case "dead":
+                w.deadTimer++;
+                if(w.deadTimer>120){
+                    w.state="walking";w.x=-40;w.jumpY=0;
+                    walkerEl.style.opacity="1";
+                    walkerEl.style.transform="scaleX(1)";
+                    walkerEl.style.filter="none";
+                    walkerEl.style.bottom=bottomY+"px";
+                }
+                break;
+        }
+    }
+
+    // ===== LASER SYSTEM =====
+    function getAvatarEyePos(){
+        const r=avatarEl.getBoundingClientRect();
+        return{x:r.left+r.width/2,y:r.top+r.height*0.35};
+    }
+    function getWalkerCenter(){
+        const r=walkerEl.getBoundingClientRect();
+        return{x:r.left+r.width/2,y:r.top+r.height/2};
+    }
+    function updateLaserTimer(){
+        const w=game.walker;const l=game.laser;
+        if(l.active)return;
+        if(w.state!=="walking")return;
+        if(w.x<0||w.x>innerWidth)return;
+        l.timer--;
+        if(l.timer<=0){
+            l.timer=180+Math.floor(Math.random()*120);
+            const dodge=Math.random()<0.5;
+            const eye=getAvatarEyePos();
+            const wc=getWalkerCenter();
+            l.x1=eye.x;l.y1=eye.y;l.x2=wc.x;l.y2=wc.y;
+            l.active=true;l.frame=0;l.hit=!dodge;
+            laserSound();
+            game.avatarGlow=15;
+            if(dodge){
+                w.state="jumping";w.vy=-8;w.jumpY=0;
+            }else{
+                setTimeout(()=>{
+                    w.state="dying";w.deathTimer=0;
+                    explosionSound();
+                },100);
+            }
+        }
+    }
+    function drawLasers(){
+        LX.clearRect(0,0,LC.width,LC.height);
+        const l=game.laser;
+        if(l.active){
+            l.frame++;
+            const progress=l.frame/l.maxFrames;
+            const alpha=1-progress;
+            // main beam
+            LX.save();
+            LX.strokeStyle="rgba(255,40,40,"+alpha+")";
+            LX.lineWidth=3;
+            LX.shadowColor="#ff0000";
+            LX.shadowBlur=20*alpha;
+            LX.beginPath();LX.moveTo(l.x1,l.y1);LX.lineTo(l.x2,l.y2);LX.stroke();
+            // inner bright core
+            LX.strokeStyle="rgba(255,200,200,"+alpha*0.8+")";
+            LX.lineWidth=1;
+            LX.beginPath();LX.moveTo(l.x1,l.y1);LX.lineTo(l.x2,l.y2);LX.stroke();
+            // hit flash
+            if(l.hit&&l.frame<4){
+                LX.fillStyle="rgba(255,255,255,"+(0.8-l.frame*0.2)+")";
+                LX.beginPath();LX.arc(l.x2,l.y2,20+l.frame*8,0,Math.PI*2);LX.fill();
+            }
+            LX.restore();
+            if(l.frame>=l.maxFrames){l.active=false}
+        }
+        // avatar glow
+        if(game.avatarGlow>0){
+            game.avatarGlow--;
+            avatarEl.style.filter="drop-shadow(0 0 24px rgba(240,208,64,.3)) drop-shadow(0 0 12px rgba(255,0,0,"+(game.avatarGlow/15)*0.6+"))";
+            if(game.avatarGlow<=0){avatarEl.style.filter="drop-shadow(0 0 24px rgba(240,208,64,.3))"}
+        }
+    }
+
+    // ===== UNIFIED GAME LOOP =====
+    function gameLoop(){
+        drawBg();
+        updateWalker();
+        updateLaserTimer();
+        drawLasers();
+        requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
     </script>
 </body>
 </html>

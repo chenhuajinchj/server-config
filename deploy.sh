@@ -35,7 +35,7 @@ deploy_project() {
 
     case "$project" in
         homepage)
-            files=(index.html docker-compose.yml)
+            files=(index.html avatar.png docker-compose.yml)
             ;;
         dujiaoka)
             files=(docker-compose.yml .env)
