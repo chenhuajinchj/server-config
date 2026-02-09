@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XiaoChen - Pixel Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#0a0a1a;--gold:#f0d040;--red:#ff4060;--blue:#40a0ff;--purple:#a060ff;--green:#40e0a0;--cyan:#60e0e0}
+        html{scroll-behavior:smooth}
+        body{font-family:"Press Start 2P",monospace;background:var(--bg);color:#e0e0e0;overflow-x:hidden;image-rendering:pixelated}
+        canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+
+        /* HERO */
+        .hero{position:relative;z-index:1;height:100vh;min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+        .avatar{width:96px;height:96px;margin-bottom:24px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(240,208,64,.3))}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        .hero h1{font-size:32px;color:var(--gold);text-shadow:4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.2);margin-bottom:10px;letter-spacing:2px}
+        .hero .sub{font-size:10px;color:#88c070;letter-spacing:4px;margin-bottom:32px;opacity:0;animation:fadeUp .8s .5s forwards}
+        .hp-bar{font-size:8px;color:#aaa;margin-bottom:36px;opacity:0;animation:fadeUp .8s .8s forwards}
+        .hp-bar .bar{display:inline-block;width:120px;height:12px;background:#222;border:2px solid #555;position:relative;vertical-align:middle;margin-left:8px;overflow:hidden}
+        .hp-bar .fill{position:absolute;top:0;left:0;height:100%;width:100%;background:linear-gradient(90deg,#40e040,#80ff80);animation:pulse 2s ease-in-out infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+        .blink{font-size:10px;color:var(--gold);animation:blink 1s steps(1) infinite;margin-bottom:12px;opacity:0;animation:fadeUp .8s 1s forwards,blink 1s 1.8s steps(1) infinite}
+        @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+        .scroll-hint{position:absolute;bottom:40px;font-size:8px;color:#555;animation:bounce 2s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        /* SECTION */
+        .section{position:relative;z-index:1;padding:80px 20px;max-width:900px;margin:0 auto}
+        .section-title{font-size:16px;color:var(--gold);text-align:center;margin-bottom:12px;text-shadow:2px 2px 0 rgba(0,0,0,.5)}
+        .section-sub{font-size:8px;color:#666;text-align:center;margin-bottom:48px;letter-spacing:2px}
+        .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s}
+        .reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<!-- MORE_CSS -->
+<style>
+        /* CARDS */
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+        .card{background:linear-gradient(180deg,#1a1a3e,#10102a);border:3px solid #3a3a6e;padding:28px 20px;cursor:pointer;text-decoration:none;color:#ccc;position:relative;transition:transform .15s,border-color .3s,box-shadow .3s;box-shadow:inset -3px -3px 0 rgba(0,0,0,.4),inset 3px 3px 0 rgba(255,255,255,.08),6px 6px 0 rgba(0,0,0,.5);overflow:hidden}
+        .card::before{content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);transition:left .5s}
+        .card:hover::before{left:120%}
+        .card:hover{transform:translate(-3px,-3px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.4),inset 3px 3px 0 rgba(255,255,255,.12),10px 10px 0 rgba(0,0,0,.5)}
+        .card:active{transform:translate(2px,2px);box-shadow:3px 3px 0 rgba(0,0,0,.5)}
+        .card .icon{font-size:40px;display:block;margin-bottom:14px;transition:transform .3s}
+        .card:hover .icon{transform:scale(1.15)}
+        .card .label{font-size:14px;display:block;margin-bottom:8px;transition:color .3s}
+        .card .desc{font-size:7px;color:#777;display:block;margin-bottom:10px;line-height:1.8}
+        .card .url{font-size:7px;color:#555;display:block;transition:color .3s}
+        .card:hover .url{color:#88c070}
+        .card .glow{position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:-1}
+        .card:hover .glow{opacity:1}
+        /* card colors */
+        .card.blog{border-color:#e04040;background:linear-gradient(180deg,#2a1a1a,#10102a)}.card.blog:hover{border-color:#ff6060}.card.blog .label{color:#ff6060}.card.blog .glow{box-shadow:0 0 20px rgba(255,64,96,.15)}
+        .card.img{border-color:#40a0e0;background:linear-gradient(180deg,#1a1a2e,#10102a)}.card.img:hover{border-color:#60c0ff}.card.img .label{color:#60c0ff}.card.img .glow{box-shadow:0 0 20px rgba(64,160,255,.15)}
+        .card.ai{border-color:#a040e0;background:linear-gradient(180deg,#2a1a2e,#10102a)}.card.ai:hover{border-color:#c060ff}.card.ai .label{color:#c060ff}.card.ai .glow{box-shadow:0 0 20px rgba(160,96,255,.15)}
+        .card.api{border-color:#40e0a0;background:linear-gradient(180deg,#1a2a2a,#10102a)}.card.api:hover{border-color:#60ffc0}.card.api .label{color:#60ffc0}.card.api .glow{box-shadow:0 0 20px rgba(64,224,160,.15)}
+        .card.shop{border-color:#f0d040;background:linear-gradient(180deg,#2a2a1a,#10102a)}.card.shop:hover{border-color:#ffe060}.card.shop .label{color:#ffe060}.card.shop .glow{box-shadow:0 0 20px rgba(240,208,64,.15)}
+        /* sparkle */
+        .card .sparkle{position:absolute;top:10px;right:10px;width:6px;height:6px;opacity:0;transition:opacity .3s}
+        .card:hover .sparkle{opacity:1;animation:sparkle .6s steps(2) infinite}
+        @keyframes sparkle{0%{box-shadow:0 0 0 #fff}50%{box-shadow:0 0 0 #fff,6px 0 0 #fff,-6px 0 0 #fff,0 6px 0 #fff,0 -6px 0 #fff}100%{box-shadow:0 0 0 #fff}}
+
+        /* PIXEL DIVIDER */
+        .divider{height:4px;background:repeating-linear-gradient(90deg,#333 0,#333 8px,transparent 8px,transparent 16px);margin:0 auto;max-width:400px;opacity:.5}
+
+        /* CITYSCAPE */
+        .city{position:fixed;bottom:0;left:0;width:100%;z-index:1;pointer-events:none}
+
+        /* FOOTER */
+        .footer{position:relative;z-index:2;text-align:center;padding:40px 20px 100px;font-size:8px;color:#444}
+        .footer a{color:#88c070;text-decoration:none}
+        .footer .coin{display:inline-block;animation:spin .8s steps(4) infinite}
+        @keyframes spin{0%{transform:scaleX(1)}25%{transform:scaleX(.3)}50%{transform:scaleX(1)}75%{transform:scaleX(.3)}}
+
+        /* GROUND */
+        .ground{position:fixed;bottom:0;left:0;width:100%;height:48px;z-index:1;background:repeating-linear-gradient(90deg,#2d5a1e 0,#2d5a1e 32px,#3a6e28 32px,#3a6e28 64px);border-top:3px solid #1a3a10;box-shadow:inset 0 3px 0 rgba(255,255,255,.08)}
+        .ground::before{content:"";position:absolute;top:-12px;left:0;width:100%;height:12px;background:repeating-linear-gradient(90deg,transparent 0,transparent 28px,#3a6e28 28px,#3a6e28 36px,transparent 36px,transparent 64px)}
+
+        /* WALKING CHARACTER */
+        .walker{position:fixed;bottom:52px;z-index:2;width:28px;height:28px;image-rendering:pixelated;animation:walk 22s linear infinite}
+        @keyframes walk{0%{left:-40px}100%{left:calc(100% + 40px)}}
+
+        /* RESPONSIVE */
+        @media(max-width:600px){
+            .hero h1{font-size:20px}
+            .grid{grid-template-columns:1fr;gap:16px}
+            .card{padding:22px 16px}
+            .card .icon{font-size:32px}
+            .card .label{font-size:12px}
+            .section{padding:60px 16px}
+            .section-title{font-size:13px}
+        }
+</style>
+    <canvas id="bg"></canvas>
+
+    <!-- Walking pixel character -->
+    <svg class="walker" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="0" width="6" height="2" fill="#f0d040"/>
+        <rect x="4" y="2" width="8" height="2" fill="#f0d040"/>
+        <rect x="4" y="2" width="2" height="2" fill="#fff"/><rect x="8" y="2" width="2" height="2" fill="#fff"/>
+        <rect x="5" y="2" width="1" height="1" fill="#222"/><rect x="9" y="2" width="1" height="1" fill="#222"/>
+        <rect x="6" y="4" width="4" height="1" fill="#ffb080"/>
+        <rect x="3" y="5" width="10" height="2" fill="#e04040"/>
+        <rect x="4" y="7" width="8" height="3" fill="#e04040"/><rect x="6" y="7" width="4" height="3" fill="#f0d040"/>
+        <rect x="4" y="10" width="3" height="2" fill="#4040c0"/><rect x="9" y="10" width="3" height="2" fill="#4040c0"/>
+        <rect x="4" y="12" width="3" height="2" fill="#804020"/><rect x="9" y="12" width="3" height="2" fill="#804020"/>
+    </svg>
+
+    <!-- HERO -->
+    <section class="hero">
+        <svg class="avatar" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="0" width="8" height="3" fill="#333"/>
+            <rect x="3" y="3" width="10" height="2" fill="#333"/>
+            <rect x="3" y="5" width="10" height="6" fill="#ffcc99"/>
+            <rect x="5" y="6" width="2" height="2" fill="#fff"/><rect x="9" y="6" width="2" height="2" fill="#fff"/>
+            <rect x="6" y="7" width="1" height="1" fill="#333"/><rect x="10" y="7" width="1" height="1" fill="#333"/>
+            <rect x="6" y="9" width="4" height="1" fill="#e06060"/>
+            <rect x="3" y="11" width="10" height="3" fill="#4060c0"/>
+            <rect x="2" y="11" width="2" height="4" fill="#4060c0"/><rect x="12" y="11" width="2" height="4" fill="#4060c0"/>
+            <rect x="4" y="14" width="3" height="2" fill="#804020"/><rect x="9" y="14" width="3" height="2" fill="#804020"/>
+        </svg>
+        <h1 id="title"></h1>
+        <div class="sub">- 数字工坊 · DIGITAL WORKSHOP -</div>
+        <div class="hp-bar">SERVER <span class="bar"><span class="fill"></span></span> ONLINE</div>
+        <div class="blink">▼ 选择你的目的地 ▼</div>
+        <div class="scroll-hint">↓ SCROLL ↓</div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section">
+        <div class="reveal"><div class="section-title">◆ SERVICES ◆</div></div>
+        <div class="reveal"><div class="section-sub">— 传送门已就绪 —</div></div>
+        <div class="reveal"><div class="divider"></div></div>
+        <div style="height:32px"></div>
+        <nav class="grid">
+            <a href="https://blog.xiaochens.com" class="card blog reveal">
+                <div class="glow"></div><div class="sparkle"></div>
+                <span class="icon">📝</span>
+                <span class="label">博客 BLOG</span>
+                <span class="desc">记录技术探索与生活碎片</span>
+                <span class="url">blog.xiaochens.com →</span>
+            </a>
+            <a href="https://img.xiaochens.com" class="card img reveal">
+                <div class="glow"></div><div class="sparkle"></div>
+                <span class="icon">🖼️</span>
+                <span class="label">图床 IMAGE</span>
+                <span class="desc">图片托管与管理服务</span>
+                <span class="url">img.xiaochens.com →</span>
+            </a>
+            <a href="https://ai.xiaochens.com" class="card ai reveal">
+                <div class="glow"></div><div class="sparkle"></div>
+                <span class="icon">🤖</span>
+                <span class="label">AI 中心</span>
+                <span class="desc">AI 模型接口与对话服务</span>
+                <span class="url">ai.xiaochens.com →</span>
+            </a>
+            <a href="https://api.xiaochens.com" class="card api reveal">
+                <div class="glow"></div><div class="sparkle"></div>
+                <span class="icon">⚡</span>
+                <span class="label">API 接口</span>
+                <span class="desc">API 中转与管理平台</span>
+                <span class="url">api.xiaochens.com →</span>
+            </a>
+            <a href="https://shop.xiaochens.com" class="card shop reveal">
+                <div class="glow"></div><div class="sparkle"></div>
+                <span class="icon">🪙</span>
+                <span class="label">商店 SHOP</span>
+                <span class="desc">数字商品自动发卡</span>
+                <span class="url">shop.xiaochens.com →</span>
+            </a>
+        </nav>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer reveal">
+        <p>&copy; 2026 XIAOCHENS <span class="coin">🪙</span></p>
+        <p style="margin-top:8px;color:#333">BUILT WITH PIXELS & PASSION</p>
+    </div>
+
+    <div class="ground"></div>
+    <script>
+    // ===== STAR FIELD WITH SHOOTING STARS =====
+    const C=document.getElementById("bg"),X=C.getContext("2d");let stars=[];
+    function resize(){C.width=innerWidth;C.height=innerHeight}
+    addEventListener("resize",resize);resize();
+    for(let i=0;i<150;i++)stars.push({x:Math.random()*C.width,y:Math.random()*C.height,s:Math.random()>.92?3:Math.random()>.6?2:1,sp:.08+Math.random()*.25,tw:Math.random()*Math.PI*2,c:["#fff","#f0d040","#60c0ff","#ff8080","#a060ff"][Math.floor(Math.random()*5)]});
+    let shooters=[];
+    function addShooter(){if(Math.random()<.008)shooters.push({x:Math.random()*C.width,y:Math.random()*C.height*.3,vx:3+Math.random()*4,vy:1+Math.random()*2,life:30+Math.random()*20})}
+    function drawBg(){
+        X.clearRect(0,0,C.width,C.height);
+        const t=Date.now()*.001;
+        // stars
+        stars.forEach(s=>{s.y+=s.sp;if(s.y>C.height){s.y=0;s.x=Math.random()*C.width}
+            const a=.3+.7*Math.abs(Math.sin(t*2+s.tw));X.fillStyle=s.c;X.globalAlpha=a;
+            X.fillRect(Math.floor(s.x),Math.floor(s.y),s.s,s.s);
+            if(s.s>=3&&Math.sin(t*3+s.tw)>.7){X.fillRect(Math.floor(s.x)-2,Math.floor(s.y),1,1);X.fillRect(Math.floor(s.x)+3,Math.floor(s.y),1,1);X.fillRect(Math.floor(s.x),Math.floor(s.y)-2,1,1);X.fillRect(Math.floor(s.x),Math.floor(s.y)+3,1,1)}
+        });
+        // shooting stars
+        addShooter();
+        shooters=shooters.filter(s=>{s.x+=s.vx;s.y+=s.vy;s.life--;
+            for(let i=0;i<4;i++){const a=(s.life/(30+20))*(1-i*.25);X.globalAlpha=a;X.fillStyle="#fff";X.fillRect(Math.floor(s.x-s.vx*i*.6),Math.floor(s.y-s.vy*i*.6),2,1)}
+            return s.life>0&&s.x<C.width+20});
+        X.globalAlpha=1;requestAnimationFrame(drawBg);
+    }
+    drawBg();
+
+    // ===== TYPING EFFECT =====
+    const txt="XIAOCHENS",el=document.getElementById("title");let ci=0;
+    function typeChar(){if(ci<txt.length){el.textContent+=txt[ci];ci++;setTimeout(typeChar,120)}else{el.style.textShadow="4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.4)"}}
+    setTimeout(typeChar,300);
+
+    // ===== SCROLL REVEAL =====
+    const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");obs.unobserve(e.target)}})},{threshold:.15});
+    document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+
+    // ===== 8-BIT SOUND =====
+    const AC=window.AudioContext||window.webkitAudioContext;
+    function beep(f1,f2,dur){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="square";o.frequency.setValueAtTime(f1,a.currentTime);o.frequency.setValueAtTime(f2,a.currentTime+dur*.3);g.gain.setValueAtTime(.06,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.start(a.currentTime);o.stop(a.currentTime+dur)}catch(e){}}
+    document.querySelectorAll(".card").forEach(c=>c.addEventListener("mouseenter",()=>beep(660,880,.12)));
+    </script>
+</body>
+</html>

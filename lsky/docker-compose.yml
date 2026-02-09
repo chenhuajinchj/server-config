@@ -1,0 +1,22 @@
+services:
+  lsky:
+    image: halcyonazure/lsky-pro-docker:latest
+    container_name: lsky-pro
+    restart: always
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./data:/var/www/html
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0
+    container_name: lsky-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: lsky_pro
+      MYSQL_USER: lsky
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./mysql:/var/lib/mysql

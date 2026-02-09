@@ -1,0 +1,24 @@
+services:
+  dujiaoka:
+    image: stilleshan/dujiaoka:latest
+    container_name: dujiaoka
+    restart: always
+    ports:
+      - "8091:80"
+    volumes:
+      - ./.env:/dujiaoka/.env
+      - ./storage:/dujiaoka/storage
+    depends_on:
+      - redis
+    networks:
+      - default
+      - lsky_default
+  redis:
+    image: redis:7-alpine
+    container_name: dujiaoka-redis
+    restart: always
+    volumes:
+      - ./redis:/data
+networks:
+  lsky_default:
+    external: true

@@ -1,0 +1,26 @@
+# Sensitive environment and config files
+.env
+.env.raw
+config.yaml
+config.raw.yaml
+
+# Backup files
+*.bak
+
+# Runtime data directories
+data/
+mysql/
+redis/
+halo2/
+
+# SSL certificates
+letsencrypt/
+
+# Auth data
+auth/
+
+# macOS
+.DS_Store
+
+# Dependencies
+node_modules/

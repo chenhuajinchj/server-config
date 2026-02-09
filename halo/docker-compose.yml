@@ -1,0 +1,11 @@
+services:
+  halo:
+    image: registry.fit2cloud.com/halo/halo:2.20
+    container_name: halo
+    restart: always
+    volumes:
+      - ./halo2:/root/.halo2
+    ports:
+      - "8090:8090"
+    command:
+      - --halo.external-url=https://blog.xiaochens.com/

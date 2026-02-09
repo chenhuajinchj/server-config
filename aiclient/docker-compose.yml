@@ -1,0 +1,9 @@
+services:
+  aiclient:
+    image: justlikemaki/aiclient-2-api:latest
+    container_name: aiclient-2-api
+    restart: always
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./data:/app/data
