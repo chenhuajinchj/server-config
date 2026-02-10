@@ -10,6 +10,7 @@ services:
       - ./storage:/dujiaoka/storage
       - ./pixel-theme.css:/dujiaoka/public/assets/unicorn/css/pixel-theme.css:ro
       - ./install.lock:/dujiaoka/install.lock:ro
+      - ./shop-logo.png:/dujiaoka/public/uploads/shop-logo.png:ro
     depends_on:
       - redis
     networks:

@@ -8,6 +8,7 @@ services:
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
       - ./avatar.png:/usr/share/nginx/html/avatar.png:ro
+      - ./shop-card.png:/usr/share/nginx/html/shop-card.png:ro
       - ./robots.txt:/usr/share/nginx/html/robots.txt:ro
       - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml:ro
       - ./google36cc04761872de85.html:/usr/share/nginx/html/google36cc04761872de85.html:ro
