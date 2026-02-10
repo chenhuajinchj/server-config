@@ -1,9 +1,9 @@
 /* ============================================
    Pixel Portal Theme for 独角数卡 (Dujiaoka)
-   Matches www.xiaochens.com pixel art style
+   Cyberpunk / Neon Pixel Art Style
    ============================================ */
 
-/* --- CSS Variables (synced with main site) --- */
+/* --- CSS Variables --- */
 :root {
   --bg: #0a0a1a;
   --gold: #f0d040;
@@ -12,17 +12,84 @@
   --purple: #a060ff;
   --green: #40e0a0;
   --cyan: #60e0e0;
+  --magenta: #ff60c0;
   --card-bg: linear-gradient(180deg, #1a1a3e, #10102a);
   --card-border: #3a3a6e;
   --pixel-font: 'Press Start 2P', monospace;
+  --neon-glow-gold: 0 0 6px rgba(240,208,64,0.4), 0 0 20px rgba(240,208,64,0.15);
+  --neon-glow-cyan: 0 0 6px rgba(96,224,224,0.4), 0 0 20px rgba(96,224,224,0.15);
+  --neon-glow-green: 0 0 6px rgba(64,224,160,0.4), 0 0 20px rgba(64,224,160,0.15);
+}
+
+/* --- Animations --- */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes border-glow {
+  0%, 100% { border-color: var(--cyan); box-shadow: 0 0 8px rgba(96,224,224,0.2); }
+  50% { border-color: var(--purple); box-shadow: 0 0 12px rgba(160,96,255,0.3); }
+}
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 4px var(--cyan), 0 0 12px rgba(96,224,224,0.3); }
+  20%, 24%, 55% { text-shadow: none; }
+}
+@keyframes rainbow-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 /* --- Base / Body --- */
+html {
+  min-height: 100%;
+}
 body {
   background-color: var(--bg) !important;
   color: #e0e0e0 !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   image-rendering: pixelated;
+  min-height: 100vh;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative;
+}
+
+/* Scanline overlay */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Grid background pattern */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(96,224,224,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,224,224,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Main content flex grow */
+.main-container {
+  flex: 1 0 auto;
 }
 
 a { color: var(--cyan) !important; }
@@ -31,13 +98,24 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 /* --- Header / Navbar --- */
 .header.sticky-top {
   background: linear-gradient(180deg, #12122e, #0a0a1a) !important;
-  border-bottom: 3px solid var(--gold) !important;
+  border-bottom: none !important;
   padding: 12px 0 !important;
-  box-shadow: 0 4px 0 rgba(240, 208, 64, 0.15) !important;
+  position: relative;
+  z-index: 100;
+}
+/* Rainbow neon line under header */
+.header.sticky-top::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold), var(--green), var(--cyan), var(--blue), var(--purple), var(--magenta), var(--red));
+  background-size: 200% 100%;
+  animation: rainbow-shift 4s linear infinite;
 }
 
 .logo img {
-  filter: drop-shadow(0 0 8px rgba(240, 208, 64, 0.3));
+  filter: drop-shadow(0 0 10px rgba(240, 208, 64, 0.4));
   border-radius: 0 !important;
 }
 
@@ -48,25 +126,22 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
   letter-spacing: 1px;
   padding: 8px 16px !important;
   border: 2px solid transparent;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
-
 .navbar-light .navbar-nav .nav-link:hover,
 .navbar-light .navbar-nav .nav-link.active {
   color: var(--gold) !important;
   border-bottom: 2px solid var(--gold);
-  text-shadow: 0 0 8px rgba(240, 208, 64, 0.4);
+  text-shadow: 0 0 10px rgba(240, 208, 64, 0.5);
 }
 
 .navbar-toggler {
   border: 2px solid var(--gold) !important;
   border-radius: 0 !important;
 }
-.navbar-toggler-icon {
-  filter: brightness(0) invert(0.85);
-}
+.navbar-toggler-icon { filter: brightness(0) invert(0.85); }
 
-/* Search bar in header */
+/* Search bar */
 .header .form-control {
   background: #1a1a3e !important;
   border: 2px solid var(--card-border) !important;
@@ -76,8 +151,8 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 }
 .header .form-control::placeholder { color: #666 !important; }
 .header .form-control:focus {
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(240, 208, 64, 0.2) !important;
+  border-color: var(--cyan) !important;
+  box-shadow: var(--neon-glow-cyan) !important;
 }
 .header .btn-secondary {
   background: var(--gold) !important;
@@ -89,7 +164,7 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 .header .btn-secondary:hover {
   background: #ffe060 !important;
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5), var(--neon-glow-gold);
 }
 
 /* --- Notice / Announcement Card --- */
@@ -97,12 +172,14 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
   background: linear-gradient(180deg, #0e1a2e, #0a1020) !important;
   border: 3px solid var(--cyan) !important;
   border-radius: 0 !important;
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.5), inset 0 0 20px rgba(96, 224, 224, 0.05);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5), inset 0 0 30px rgba(96, 224, 224, 0.05);
+  animation: border-glow 4s ease-in-out infinite;
 }
 .notice .card h4 {
   font-family: var(--pixel-font) !important;
   font-size: 11px !important;
   color: var(--cyan) !important;
+  animation: neon-flicker 6s infinite;
 }
 .notice .card .lead {
   color: #aaa !important;
@@ -110,29 +187,26 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 }
 
 /* --- Category Section --- */
-.category {
-  padding: 50px 0 !important;
-}
+.category { padding: 50px 0 !important; }
 .category h3 {
   font-family: var(--pixel-font) !important;
   font-size: 14px !important;
   color: var(--gold) !important;
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5), 0 0 15px rgba(240,208,64,0.3);
 }
 .separator {
   background-color: var(--gold) !important;
   border-color: var(--gold) !important;
   height: 3px !important;
+  box-shadow: 0 0 8px rgba(240,208,64,0.3);
 }
-.separator:after {
-  background: var(--red) !important;
-}
+.separator:after { background: var(--red) !important; }
 .category .lead {
   color: #888 !important;
   font-size: 12px !important;
 }
 
-/* Category pills / tabs */
+/* Category pills */
 .category-menus .nav-pills .btn-outline-secondary {
   font-family: var(--pixel-font) !important;
   font-size: 8px !important;
@@ -149,11 +223,11 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
   background: var(--gold) !important;
   color: #0a0a1a !important;
   border-color: var(--gold) !important;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5), var(--neon-glow-gold);
   transform: translate(-1px, -1px);
 }
 
-/* --- Product Cards (goods) --- */
+/* --- Product Cards --- */
 .goods .card,
 .good-card .card {
   background: linear-gradient(180deg, #1a1a3e, #10102a) !important;
@@ -172,18 +246,19 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
   position: absolute;
   top: 0; left: -100%;
   width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(90deg, transparent, rgba(96,224,224,0.06), transparent);
+  transition: left 0.6s;
   z-index: 1;
   pointer-events: none;
 }
 .goods .card:hover::before { left: 120%; }
 .goods .card:hover {
   transform: translate(-3px, -3px);
-  border-color: var(--gold) !important;
+  border-color: var(--cyan) !important;
   box-shadow: inset -3px -3px 0 rgba(0,0,0,0.4),
               inset 3px 3px 0 rgba(255,255,255,0.12),
-              10px 10px 0 rgba(0,0,0,0.5);
+              10px 10px 0 rgba(0,0,0,0.5),
+              var(--neon-glow-cyan);
 }
 .goods .card:active {
   transform: translate(2px, 2px);
@@ -193,6 +268,12 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 .goods .card .card-img-top {
   border-radius: 0 !important;
   border-bottom: 2px solid var(--card-border);
+  background: #10102a !important;
+  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(1.2);
+  mix-blend-mode: screen;
+  max-height: 180px;
+  object-fit: contain;
+  padding: 10px;
 }
 .goods .card .card-title,
 .goods .card h5 {
@@ -212,7 +293,7 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
   color: var(--green) !important;
   font-family: var(--pixel-font) !important;
   font-size: 12px !important;
-  text-shadow: 0 0 8px rgba(64, 224, 160, 0.3);
+  text-shadow: 0 0 10px rgba(64, 224, 160, 0.4);
 }
 
 /* --- Generic Cards --- */
@@ -240,8 +321,8 @@ a:hover { color: var(--gold) !important; text-decoration: none !important; }
 .form-control::placeholder { color: #555 !important; }
 .form-control:focus {
   background-color: #1a1a3e !important;
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(240, 208, 64, 0.2) !important;
+  border-color: var(--cyan) !important;
+  box-shadow: var(--neon-glow-cyan) !important;
   color: #e0e0e0 !important;
 }
 .form-select {
@@ -268,7 +349,7 @@ label, .col-form-label { color: #ccc !important; }
 .btn-primary:hover, .btn-outline-primary:hover {
   background: #ffe060 !important;
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.5), var(--neon-glow-gold);
 }
 .btn-primary:active, .btn-outline-primary:active {
   transform: translate(2px, 2px) !important;
@@ -294,6 +375,9 @@ label, .col-form-label { color: #ccc !important; }
   font-size: 9px !important;
   box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
 }
+.btn-success:hover {
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5), var(--neon-glow-green);
+}
 .btn-danger {
   background: var(--red) !important;
   border: 2px solid #cc3050 !important;
@@ -301,7 +385,7 @@ label, .col-form-label { color: #ccc !important; }
   box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
 }
 
-/* --- Nav Pills (order search tabs) --- */
+/* --- Nav Pills --- */
 .buy-form .nav-pills .nav-link {
   font-family: var(--pixel-font) !important;
   font-size: 8px !important;
@@ -316,15 +400,16 @@ label, .col-form-label { color: #ccc !important; }
   background: var(--blue) !important;
   color: #fff !important;
   border-color: var(--blue) !important;
+  box-shadow: 0 0 8px rgba(64,160,255,0.3);
 }
 
-/* --- Modal / Dialog --- */
+/* --- Modal --- */
 .modal-content {
   background: linear-gradient(180deg, #1a1a3e, #10102a) !important;
   border: 3px solid var(--gold) !important;
   border-radius: 0 !important;
   color: #e0e0e0 !important;
-  box-shadow: 0 0 40px rgba(240, 208, 64, 0.1);
+  box-shadow: 0 0 60px rgba(240, 208, 64, 0.15);
 }
 .modal-header { border-bottom: 2px solid var(--card-border) !important; }
 .modal-header .modal-title {
@@ -346,28 +431,30 @@ label, .col-form-label { color: #ccc !important; }
 }
 .table td { border-color: #2a2a4e !important; }
 
-/* --- Footer --- */
+/* --- Footer (sticky bottom) --- */
 .footer {
-  background: transparent !important;
-  border-top: 3px solid #1a1a3e !important;
+  background: linear-gradient(180deg, #0a0a1a, #06060f) !important;
+  border-top: none !important;
   position: relative;
+  flex-shrink: 0;
+  margin-top: auto !important;
+  padding-bottom: 20px !important;
 }
 .footer .author,
 .footer .author a {
   font-size: 11px !important;
   color: #555 !important;
 }
+/* Animated rainbow pixel bar above footer */
 .footer::before {
   content: "";
   display: block;
-  height: 6px;
-  background: repeating-linear-gradient(
-    90deg,
-    #2a5a2a 0px, #2a5a2a 8px,
-    #1a4a1a 8px, #1a4a1a 16px,
-    #3a6a3a 16px, #3a6a3a 24px,
-    #1a4a1a 24px, #1a4a1a 32px
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--red), var(--gold), var(--green), var(--cyan), var(--blue), var(--purple), var(--magenta), var(--red)
   );
+  background-size: 200% 100%;
+  animation: rainbow-shift 3s linear infinite;
   image-rendering: pixelated;
 }
 
