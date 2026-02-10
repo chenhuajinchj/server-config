@@ -8,6 +8,7 @@ services:
     volumes:
       - ./.env:/dujiaoka/.env
       - ./storage:/dujiaoka/storage
+      - ./pixel-theme.css:/dujiaoka/public/assets/unicorn/css/pixel-theme.css:ro
     depends_on:
       - redis
     networks:

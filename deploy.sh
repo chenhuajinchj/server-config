@@ -38,7 +38,7 @@ deploy_project() {
             files=(index.html avatar.png robots.txt sitemap.xml google36cc04761872de85.html docker-compose.yml)
             ;;
         dujiaoka)
-            files=(docker-compose.yml .env)
+            files=(docker-compose.yml .env pixel-theme.css)
             ;;
         cliproxyapi)
             files=(config.yaml)
