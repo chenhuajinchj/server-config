@@ -8,3 +8,5 @@ services:
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
       - ./avatar.png:/usr/share/nginx/html/avatar.png:ro
+      - ./robots.txt:/usr/share/nginx/html/robots.txt:ro
+      - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml:ro
