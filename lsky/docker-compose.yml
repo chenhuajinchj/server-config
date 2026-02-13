@@ -14,7 +14,7 @@ services:
     container_name: lsky-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: lsky_pro
       MYSQL_USER: lsky
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
