@@ -1,0 +1,25 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.id.replace(/\.md$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+// Calculate reading time (Chinese: ~300 chars/min)
+const content = post.body || '';
+const charCount = content.replace(/\s+/g, '').length;
+const minutes = Math.max(1, Math.ceil(charCount / 300));
+const minutesRead = `${minutes} 分钟`;
+---
+
+<PostLayout frontmatter={post.data} headings={headings} minutesRead={minutesRead}>
+  <Content />
+</PostLayout>

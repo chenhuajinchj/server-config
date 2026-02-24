@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagList from '../../components/TagList.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const tagMap = new Map<string, number>();
+posts.forEach(post => {
+  post.data.tags?.forEach(tag => {
+    tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+  });
+});
+const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="标签" description="所有文章标签">
+  <h1 class="page-title">标签</h1>
+  <div class="tags-grid">
+    {tags.map(([tag, count]) => (
+      <a href={`/tags/${tag}`} class="tag-card">
+        <span class="tag-name">#{tag}</span>
+        <span class="tag-count">{count} 篇</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+  .tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+  .tag-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--c-bg-soft);
+    border: 1px solid var(--c-border);
+    border-radius: 2rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .tag-card:hover {
+    border-color: var(--c-accent);
+    text-decoration: none;
+  }
+  .tag-name { color: var(--c-text); font-weight: 500; }
+  .tag-count { color: var(--c-text-muted); font-size: 0.8rem; }
+</style>

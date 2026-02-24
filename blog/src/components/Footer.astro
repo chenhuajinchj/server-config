@@ -1,0 +1,25 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <p>&copy; {year} 小陈的博客 · 由 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 驱动</p>
+    <p class="footer-links">
+      <a href="/rss.xml">RSS</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    padding: 2rem 0;
+    border-top: 1px solid var(--c-border);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+  }
+  .footer a { color: var(--c-text-soft); }
+  .footer-links { margin-top: 0.5rem; }
+</style>

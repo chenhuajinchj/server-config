@@ -14,7 +14,7 @@ info()    { echo -e "${YELLOW}[INFO]${NC} $*"; }
 success() { echo -e "${GREEN}[OK]${NC} $*"; }
 error()   { echo -e "${RED}[ERROR]${NC} $*"; }
 
-ALL_PROJECTS=(homepage halo lsky newapi aiclient dujiaoka npm cliproxyapi)
+ALL_PROJECTS=(homepage halo lsky newapi aiclient dujiaoka npm cliproxyapi blog)
 
 usage() {
     echo "Usage: $0 <project|all>"
@@ -42,6 +42,21 @@ deploy_project() {
             ;;
         cliproxyapi)
             files=(config.yaml)
+            ;;
+        blog)
+            info "Building blog..."
+            (cd "${local_dir}" && pnpm build)
+            ssh "$SERVER" "mkdir -p ${remote_dir}"
+            info "Syncing dist/ → ${SERVER}:${remote_dir}/dist/"
+            rsync -avz --delete "${local_dir}/dist/" "${SERVER}:${remote_dir}/dist/"
+            for f in docker-compose.yml nginx.conf; do
+                info "Syncing ${f} → ${SERVER}:${remote_dir}/${f}"
+                rsync -avz "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
+            done
+            info "Restarting containers for blog..."
+            ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
+            success "Deploy complete: blog"
+            return 0
             ;;
         halo|lsky|newapi|aiclient|npm)
             files=(docker-compose.yml)

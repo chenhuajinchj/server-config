@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPathsOptions } from 'astro';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = (await getCollection('posts', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return paginate(posts, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title="博客文章" description="所有博客文章列表">
+  <h1 class="page-title">博客文章</h1>
+
+  <div class="post-list">
+    {page.data.map((post: any) => (
+      <PostCard
+        title={post.data.title}
+        href={`/blog/${post.id.replace(/\.md$/, '')}`}
+        description={post.data.description}
+        pubDate={post.data.pubDate}
+        tags={post.data.tags}
+      />
+    ))}
+  </div>
+
+  <nav class="pagination">
+    {page.url.prev && <a href={page.url.prev}>← 上一页</a>}
+    <span class="page-info">第 {page.currentPage} / {page.lastPage} 页</span>
+    {page.url.next && <a href={page.url.next}>下一页 →</a>}
+  </nav>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-border);
+    font-size: 0.9rem;
+  }
+  .page-info { color: var(--c-text-muted); }
+</style>

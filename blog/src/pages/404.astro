@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - 页面未找到" description="页面不存在">
+  <div class="not-found">
+    <h1>404</h1>
+    <p>页面走丢了...</p>
+    <a href="/">回到首页</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 4rem 0;
+  }
+  .not-found h1 {
+    font-size: 6rem;
+    font-weight: 800;
+    color: var(--c-text-muted);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .not-found p {
+    font-size: 1.2rem;
+    color: var(--c-text-soft);
+    margin-bottom: 1.5rem;
+  }
+</style>

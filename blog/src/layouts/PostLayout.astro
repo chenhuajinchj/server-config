@@ -1,0 +1,52 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PostMeta from '../components/PostMeta.astro';
+import TOC from '../components/TOC.astro';
+import Giscus from '../components/Giscus.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    tags?: string[];
+    image?: string;
+  };
+  headings: { depth: number; slug: string; text: string }[];
+  minutesRead?: string;
+}
+
+const { frontmatter, headings, minutesRead } = Astro.props;
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description} image={frontmatter.image}>
+  <article class="post">
+    <header class="post-header">
+      <h1>{frontmatter.title}</h1>
+      <PostMeta
+        pubDate={frontmatter.pubDate}
+        updatedDate={frontmatter.updatedDate}
+        tags={frontmatter.tags}
+        minutesRead={minutesRead}
+      />
+    </header>
+    <TOC headings={headings} />
+    <div class="prose">
+      <slot />
+    </div>
+    <Giscus />
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: 1.5rem;
+  }
+  .post-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+  }
+</style>

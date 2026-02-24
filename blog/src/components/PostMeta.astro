@@ -1,0 +1,41 @@
+---
+interface Props {
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  minutesRead?: string;
+}
+
+const { pubDate, updatedDate, tags = [], minutesRead } = Astro.props;
+const dateStr = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+const updatedStr = updatedDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<div class="post-meta">
+  <time datetime={pubDate.toISOString()}>{dateStr}</time>
+  {updatedDate && <span>· 更新于 {updatedStr}</span>}
+  {minutesRead && <span>· {minutesRead}</span>}
+  {tags.length > 0 && (
+    <span class="post-meta-tags">
+      {tags.map(tag => <a href={`/tags/${tag}`} class="tag">#{tag}</a>)}
+    </span>
+  )}
+</div>
+
+<style>
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    margin-bottom: 2rem;
+  }
+  .tag {
+    color: var(--c-accent);
+    text-decoration: none;
+  }
+  .tag:hover { text-decoration: underline; }
+  .post-meta-tags { display: flex; gap: 0.4rem; }
+</style>
