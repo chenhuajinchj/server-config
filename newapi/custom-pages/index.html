@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XC API - Claude 模型 API 中继服务</title>
+    <meta name="description" content="XC API 提供稳定快速的 Claude 模型 API 中继服务，支持 OpenAI 和 Anthropic 双协议。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --border: #1e1e2a;
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --text: #f0f0f5;
+            --text-secondary: #8888a0;
+            --success: #22c55e;
+            --badge: #f59e0b;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        a { color: inherit; text-decoration: none; }
+        code, .code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+        /* === Fade-in animation === */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up {
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out forwards;
+        }
+        .fade-up-d1 { animation-delay: 0.1s; }
+        .fade-up-d2 { animation-delay: 0.2s; }
+        .fade-up-d3 { animation-delay: 0.3s; }
+        .fade-up-d4 { animation-delay: 0.4s; }
+
+        /* === Navbar === */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0 24px;
+            height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom-color: var(--border);
+        }
+        .navbar-logo {
+            font-size: 18px; font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+        .navbar-logo span { color: var(--primary); }
+        .navbar-links {
+            display: flex; align-items: center; gap: 24px;
+        }
+        .navbar-links a {
+            font-size: 14px; font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+        .navbar-links a:hover { color: var(--text); }
+        .btn-console {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 14px; font-weight: 600;
+            border-radius: 8px;
+            border: none; cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-console:hover { background: var(--primary-hover); }
+        .btn-console:active { transform: scale(0.97); }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column; gap: 5px;
+            background: none; border: none; cursor: pointer; padding: 4px;
+        }
+        .hamburger span {
+            display: block; width: 20px; height: 2px;
+            background: var(--text-secondary);
+            border-radius: 1px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed; top: 64px; left: 0; right: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            flex-direction: column; gap: 16px;
+            z-index: 99;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            font-size: 16px; font-weight: 500;
+            color: var(--text-secondary);
+            padding: 8px 0;
+        }
+
+        /* === Hero === */
+        .hero {
+            padding: 140px 24px 80px;
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 56px; font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .hero h1 span { color: var(--primary); }
+        .hero .subtitle {
+            font-size: 20px; font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            line-height: 1.5;
+        }
+        .hero-buttons {
+            display: flex; gap: 12px;
+            justify-content: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 16px; font-weight: 600;
+            border-radius: 10px;
+            border: none; cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-outline {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px;
+            background: transparent;
+            color: var(--text);
+            font-size: 16px; font-weight: 600;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .btn-outline:hover {
+            border-color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* Base URL pill */
+        .url-pill {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 10px 12px 10px 20px;
+            font-size: 14px;
+        }
+        .url-pill code {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .url-pill button {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--primary);
+            transition: background 0.2s;
+        }
+        .url-pill button:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+        .url-pill button.copied {
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        /* === Section shared === */
+        .section {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+        .section-title {
+            font-size: 28px; font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+        .section-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        /* === Trust cards (Section 2) === */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .trust-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .trust-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+        .trust-card .icon-wrap {
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        .trust-card .icon-wrap svg {
+            width: 22px; height: 22px;
+            color: var(--primary);
+        }
+        .trust-card h3 {
+            font-size: 16px; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .trust-card p {
+            font-size: 14px; line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* === Quick Start (Section 3) === */
+        .quickstart {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .code-block {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .code-block .kw { color: var(--primary); }
+        .code-block .str { color: #22c55e; }
+        .code-block .cm { color: #555; }
+        .code-block .cmd { color: var(--text); }
+        .copy-btn {
+            position: absolute; top: 12px; right: 12px;
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 12px; font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: rgba(99, 102, 241, 0.2); }
+        .copy-btn.copied {
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+        .quickstart-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .quickstart-footer a {
+            color: var(--primary);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .quickstart-footer a:hover { color: var(--primary-hover); }
+
+        /* === Models (Section 4) === */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .model-tag {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+        .model-tag:hover { border-color: rgba(99, 102, 241, 0.3); }
+        .model-badge {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px; font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .model-badge.new { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .model-badge.hot { background: rgba(245, 158, 11, 0.15); color: var(--badge); }
+        .models-footer {
+            text-align: center;
+            margin-top: 32px;
+        }
+        .models-footer a {
+            font-size: 15px; font-weight: 500;
+            color: var(--primary);
+            transition: color 0.2s;
+        }
+        .models-footer a:hover { color: var(--primary-hover); }
+
+        /* === Footer === */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            .navbar-links { display: none; }
+            .hamburger { display: flex; }
+            .hero { padding: 120px 20px 60px; }
+            .hero h1 { font-size: 36px; }
+            .hero .subtitle { font-size: 16px; }
+            .trust-grid { grid-template-columns: 1fr; }
+            .model-grid { grid-template-columns: 1fr; }
+            .section { padding: 60px 20px; }
+            .url-pill { flex-direction: row; }
+            .url-pill code { font-size: 12px; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 28px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-logo">XC <span>API</span></div>
+        <div class="navbar-links">
+            <a href="https://docs.newapi.pro" target="_blank">文档</a>
+            <a href="/pricing">定价</a>
+            <a href="/panel" class="btn-console">进入控制台 →</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="菜单">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="https://docs.newapi.pro" target="_blank">文档</a>
+        <a href="/pricing">定价</a>
+        <a href="/panel" class="btn-console" style="text-align:center;">进入控制台 →</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 class="fade-up">XC <span>API</span></h1>
+        <p class="subtitle fade-up fade-up-d1">Claude 模型 API 中继服务</p>
+        <div class="hero-buttons fade-up fade-up-d2">
+            <a href="/panel" class="btn-primary">进入控制台 →</a>
+            <a href="https://docs.newapi.pro" target="_blank" class="btn-outline">查看文档</a>
+        </div>
+        <div class="fade-up fade-up-d3">
+            <div class="url-pill">
+                <code>https://api.xiaochens.com</code>
+                <button onclick="copyUrl(this)" aria-label="复制 URL">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Signals -->
+    <section class="section">
+        <div class="trust-grid">
+            <div class="trust-card fade-up">
+                <div class="icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <h3>9 个 Claude 模型</h3>
+                <p>涵盖 Opus、Sonnet、Haiku 全系列，包括最新 4.6 版本</p>
+            </div>
+            <div class="trust-card fade-up fade-up-d1">
+                <div class="icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                </div>
+                <h3>双协议兼容</h3>
+                <p>同时支持 OpenAI 和 Anthropic 协议格式，无缝切换</p>
+            </div>
+            <div class="trust-card fade-up fade-up-d2">
+                <div class="icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>稳定快速</h3>
+                <p>优化的中继架构，低延迟、高可用，保障开发体验</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="section">
+        <h2 class="section-title fade-up">3 行开始使用</h2>
+        <p class="section-desc fade-up fade-up-d1">配置环境变量，即可通过 Claude Code 直接使用</p>
+        <div class="quickstart fade-up fade-up-d2">
+            <div class="code-block" id="codeBlock">
+                <button class="copy-btn" onclick="copyCode(this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    复制
+                </button>
+<span class="kw">export</span> <span class="cmd">ANTHROPIC_BASE_URL</span>=<span class="str">https://api.xiaochens.com</span>
+<span class="kw">export</span> <span class="cmd">ANTHROPIC_AUTH_TOKEN</span>=<span class="str">sk-xxxxx</span>
+<span class="cmd">claude</span></div>
+            <p class="quickstart-footer">完整文档请查看 <a href="https://docs.newapi.pro" target="_blank">docs.newapi.pro →</a></p>
+        </div>
+    </section>
+
+    <!-- Available Models -->
+    <section class="section">
+        <h2 class="section-title fade-up">可用模型</h2>
+        <p class="section-desc fade-up fade-up-d1">全系列 Claude 模型，双协议支持</p>
+        <div class="model-grid fade-up fade-up-d2">
+            <div class="model-tag">claude-opus-4-6 <span class="model-badge new">NEW</span></div>
+            <div class="model-tag">claude-sonnet-4-6 <span class="model-badge new">NEW</span></div>
+            <div class="model-tag">claude-sonnet-4-5</div>
+            <div class="model-tag">claude-sonnet-4-5-20250929</div>
+            <div class="model-tag">claude-opus-4-5</div>
+            <div class="model-tag">claude-opus-4-5-20251101</div>
+            <div class="model-tag">claude-haiku-4-5 <span class="model-badge hot">HOT</span></div>
+            <div class="model-tag">claude-haiku-4-5-20251001</div>
+            <div class="model-tag">claude-sonnet-4-20250514</div>
+        </div>
+        <div class="models-footer fade-up fade-up-d3">
+            <a href="/pricing">查看完整定价 →</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 XC API</p>
+    </footer>
+
+    <script>
+    // Navbar scroll effect
+    var navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+        navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile hamburger menu
+    var hamburger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+    });
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+        });
+    });
+
+    // SVG icons as constants (safe, no user input)
+    var ICON_COPY_16 = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+    var ICON_CHECK_16 = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    var ICON_COPY_14 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+    var ICON_CHECK_14 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    // Copy Base URL
+    function copyUrl(btn) {
+        navigator.clipboard.writeText('https://api.xiaochens.com').then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = ICON_CHECK_16;
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = ICON_COPY_16;
+            }, 1500);
+        });
+    }
+
+    // Copy code block
+    function copyCode(btn) {
+        var block = btn.parentElement;
+        var code = block.textContent.replace(/复制|已复制/g, '').trim();
+        navigator.clipboard.writeText(code).then(function() {
+            btn.classList.add('copied');
+            btn.innerHTML = ICON_CHECK_14 + ' 已复制';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.innerHTML = ICON_COPY_14 + ' 复制';
+            }, 1500);
+        });
+    }
+
+    // Scroll fade-in animation with IntersectionObserver
+    var fadeObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(function(el) {
+        fadeObserver.observe(el);
+    });
+    </script>
+</body>
+</html>

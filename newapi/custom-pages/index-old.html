@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="scroll-behavior:smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XC API - Pixel Gateway</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Press Start 2P", system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            background-attachment: fixed;
+            color: #cccccc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        canvas#stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .container {
+            position: relative; z-index: 1;
+            max-width: 800px; margin: 0 auto;
+            padding: 40px 20px; text-align: center;
+        }
+        .avatar {
+            width: 80px; height: 80px; margin: 0 auto 20px;
+            image-rendering: pixelated;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .title {
+            font-size: 28px; color: #f0d040;
+            text-shadow: 3px 3px 0 #c8102e, -1px -1px 0 #000;
+            margin-bottom: 8px;
+            animation: blink-title 4s infinite;
+        }
+        @keyframes blink-title {
+            0%,90%,100% { opacity: 1; } 95% { opacity: 0.6; }
+        }
+        .subtitle {
+            font-size: 10px; color: #88c070;
+            margin-bottom: 40px; letter-spacing: 2px;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; margin-bottom: 40px;
+        }
+        .card {
+            background: #1a1a3e;
+            border: 2px solid #3a3a6e;
+            border-radius: 12px;
+            padding: 24px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #cccccc;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(100,100,200,0.15);
+        }
+        .card:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .card .icon { font-size: 36px; margin-bottom: 12px; display: block; }
+        .card .label { font-size: 14px; display: block; margin-bottom: 6px; }
+        .card .url { font-size: 8px; color: #88c070; display: block; }
+        .card.blog { border-color: #d04848; background: linear-gradient(180deg, #2a1a1a 0%, #1a1a3e 100%); border-radius: 12px; }
+        .card.blog:hover { border-color: #e85d5d; box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(232,93,93,0.2); }
+        .card.blog .label { color: #e85d5d; }
+        .card.img { border-color: #3a96d0; background: linear-gradient(180deg, #1a1a2a 0%, #1a1a3e 100%); border-radius: 12px; }
+        .card.img:hover { border-color: #5ab0e8; box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(90,176,232,0.2); }
+        .card.img .label { color: #5ab0e8; }
+        .card.api { border-color: #3ac090; background: linear-gradient(180deg, #1a2a2a 0%, #1a1a3e 100%); border-radius: 12px; }
+        .card.api:hover { border-color: #5ad4a8; box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(90,212,168,0.2); }
+        .card.api .label { color: #5ad4a8; }
+        .card.shop { border-color: #e0c840; background: linear-gradient(180deg, #2a2a1a 0%, #1a1a3e 100%); border-radius: 12px; }
+        .card.shop:hover { border-color: #e8d45a; box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(232,212,90,0.2); }
+        .card.shop .label { color: #e8d45a; }
+        .card::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 12px;
+            opacity: 0; transition: opacity 0.3s;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.06) 0%, transparent 70%);
+        }
+        .card:hover::after {
+            opacity: 1;
+        }
+        @keyframes sparkle { /* removed - using soft glow instead */ }
+        /* ground and character removed for soft pixel style */
+        .footer {
+            font-size: 8px; color: #555;
+            padding-bottom: 30px;
+        }
+        .footer a { color: #88c070; text-decoration: none; }
+        .coin {
+            display: inline-block;
+            animation: coin-spin 0.8s steps(4) infinite;
+        }
+        @keyframes coin-spin {
+            0% { transform: scaleX(1); } 25% { transform: scaleX(0.3); }
+            50% { transform: scaleX(1); } 75% { transform: scaleX(0.3); }
+        }
+        .press-start {
+            font-size: 10px; color: #f0d040;
+            margin-bottom: 30px;
+            animation: blink 1s steps(1) infinite;
+        }
+        @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+        .hp-bar {
+            display: inline-block; margin-bottom: 30px;
+            font-size: 8px; color: #aaa;
+        }
+        .hp-bar .bar {
+            display: inline-block; width: 120px; height: 12px;
+            background: #333; border: 1px solid #666;
+            border-radius: 6px;
+            position: relative; vertical-align: middle; margin-left: 8px;
+            overflow: hidden;
+        }
+        .hp-bar .bar-fill {
+            position: absolute; top: 0; left: 0;
+            height: 100%; width: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #38c838, #70e870);
+            animation: hp-pulse 2s ease-in-out infinite;
+        }
+        @keyframes hp-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+        /* === Docs Area === */
+        .pixel-divider {
+            position: relative; z-index: 1;
+            max-width: 800px; margin: 0 auto;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #3a3a6e 0px, #3a3a6e 8px, transparent 8px, transparent 16px);
+        }
+        .docs-area {
+            position: relative; z-index: 1;
+            max-width: 800px; margin: 0 auto;
+            padding: 40px 20px 120px;
+            text-align: left;
+        }
+        .doc-nav {
+            position: sticky; top: 0; z-index: 10;
+            background: rgba(26,26,46,0.95);
+            backdrop-filter: blur(8px);
+            border: 2px solid #3a3a6e;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 32px;
+            display: flex; gap: 8px; flex-wrap: wrap;
+            justify-content: center;
+        }
+        .doc-nav a {
+            font-family: "Press Start 2P", monospace;
+            font-size: 9px; color: #88c070;
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 2px solid #3a3a6e;
+            border-radius: 6px;
+            background: #1a1a3e;
+            transition: all 0.1s;
+        }
+        .doc-nav a:hover, .doc-nav a.active {
+            color: #f0d040;
+            border-color: #f0d040;
+            background: #2a2a1a;
+        }
+        .doc-section { margin-bottom: 48px; }
+        .doc-section-title {
+            font-family: "Press Start 2P", monospace;
+            font-size: 16px; color: #f0d040;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3a3a6e;
+        }
+        .doc-section-sub {
+            font-family: "Press Start 2P", monospace;
+            font-size: 11px; color: #60c0ff;
+            margin: 24px 0 12px;
+        }
+        .doc-text {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 14px; line-height: 1.8;
+            color: #bbb; margin-bottom: 16px;
+        }
+        .doc-step {
+            display: inline-block;
+            font-family: "Press Start 2P", monospace;
+            font-size: 8px; color: #0f0f23;
+            background: #f0d040;
+            padding: 3px 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        .code-block {
+            position: relative;
+            background: #0d1117;
+            border: 1px solid #3a3a6e;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0 20px;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 13px; line-height: 1.6;
+            color: #88c070;
+        }
+        .code-block .cm { color: #666; }
+        .code-block .hl { color: #f0d040; }
+        .copy-btn {
+            position: absolute; top: 8px; right: 8px;
+            font-family: "Press Start 2P", monospace;
+            font-size: 7px; color: #888;
+            background: #1a1a3e;
+            border: 1px solid #3a3a6e;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
+        .copy-btn:hover { color: #f0d040; border-color: #f0d040; }
+        .copy-btn.copied { color: #40e040; border-color: #40e040; }
+        .pixel-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 12px 0 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+        }
+        .pixel-table th {
+            background: #1a1a3e;
+            color: #f0d040;
+            font-family: "Press Start 2P", monospace;
+            font-size: 8px;
+            padding: 10px 8px;
+            border-bottom: 1px solid #3a3a6e;
+            text-align: left;
+        }
+        .pixel-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(58,58,110,0.5);
+            color: #bbb;
+        }
+        .pixel-table tr:hover td { background: rgba(90,130,230,0.08); }
+        .badge {
+            font-family: "Press Start 2P", monospace;
+            font-size: 6px;
+            padding: 2px 5px;
+            margin-left: 6px;
+            vertical-align: middle;
+            border-radius: 3px;
+        }
+        .badge.hot { background: #d04848; color: #fff; }
+        .badge.new { background: #3ac090; color: #0f0f23; }
+        .info-box {
+            border: 1px solid #3a96d0;
+            border-radius: 8px;
+            background: rgba(58,150,208,0.08);
+            padding: 12px 16px;
+            margin: 12px 0 20px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 13px; line-height: 1.7;
+            color: #8cc;
+        }
+        .info-box.warn {
+            border-color: #e0c840;
+            background: rgba(224,200,64,0.08);
+            color: #cc8;
+        }
+        .reveal {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 600px) {
+            .title { font-size: 18px; }
+            .nav-grid { grid-template-columns: 1fr; gap: 16px; }
+            .card { padding: 20px 12px; }
+            .card .icon { font-size: 28px; }
+            .card .label { font-size: 12px; }
+            .container { padding: 30px 16px; }
+            .docs-area { padding: 24px 12px 120px; }
+            .doc-nav { gap: 6px; padding: 8px; }
+            .doc-nav a { font-size: 7px; padding: 5px 8px; }
+            .doc-section-title { font-size: 12px; }
+            .code-block { font-size: 11px; padding: 12px; }
+            .pixel-table { font-size: 10px; }
+            .pixel-table th { font-size: 7px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars"></canvas>
+    <div class="container">
+        <!-- Pixel Robot/Server Avatar -->
+        <svg class="avatar" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <!-- Antenna -->
+            <rect x="7" y="0" width="2" height="1" fill="#f0d040"/>
+            <rect x="6" y="1" width="4" height="1" fill="#f0d040"/>
+            <!-- Head -->
+            <rect x="3" y="2" width="10" height="5" fill="#607090"/>
+            <rect x="4" y="2" width="8" height="1" fill="#8090a0"/>
+            <!-- Eyes (LED) -->
+            <rect x="5" y="3" width="2" height="2" fill="#40e040"/>
+            <rect x="9" y="3" width="2" height="2" fill="#40e040"/>
+            <!-- Mouth grid -->
+            <rect x="5" y="6" width="1" height="1" fill="#40e040"/>
+            <rect x="7" y="6" width="1" height="1" fill="#40e040"/>
+            <rect x="9" y="6" width="1" height="1" fill="#40e040"/>
+            <!-- Body -->
+            <rect x="2" y="8" width="12" height="5" fill="#4060c0"/>
+            <rect x="3" y="8" width="10" height="1" fill="#5070d0"/>
+            <!-- Chest indicator -->
+            <rect x="7" y="9" width="2" height="2" fill="#e04040"/>
+            <!-- Server lines -->
+            <rect x="4" y="12" width="8" height="1" fill="#3050a0"/>
+            <!-- Feet -->
+            <rect x="3" y="13" width="4" height="2" fill="#505050"/>
+            <rect x="9" y="13" width="4" height="2" fill="#505050"/>
+            <rect x="3" y="15" width="4" height="1" fill="#404040"/>
+            <rect x="9" y="15" width="4" height="1" fill="#404040"/>
+        </svg>
+
+        <h1 class="title">XC API</h1>
+        <p class="subtitle">- AI 模型网关 -</p>
+
+        <div class="hp-bar">
+            接口 <span class="bar"><span class="bar-fill"></span></span> 在线
+        </div>
+
+        <p class="press-start">- 选择你的服务 -</p>
+
+        <div class="nav-grid">
+            <a href="/panel" class="card blog" onclick="playClick()">
+                <span class="icon">🎮</span>
+                <span class="label">控制台</span>
+                <span class="url">/panel</span>
+            </a>
+            <a href="/pricing" class="card shop" onclick="playClick()">
+                <span class="icon">💰</span>
+                <span class="label">定价</span>
+                <span class="url">/pricing</span>
+            </a>
+            <a href="https://docs.newapi.pro" class="card img" onclick="playClick()">
+                <span class="icon">📖</span>
+                <span class="label">文档</span>
+                <span class="url">docs.newapi.pro</span>
+            </a>
+            <a href="https://xiaochens.com" class="card api" onclick="playClick()">
+                <span class="icon">🏠</span>
+                <span class="label">主页</span>
+                <span class="url">xiaochens.com</span>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="pixel-divider"></div>
+
+    <div class="docs-area">
+        <nav class="doc-nav" id="docNav">
+            <a href="#claude-code">Claude Code</a>
+            <a href="#openclaw">OpenClaw</a>
+            <a href="#models">模型列表</a>
+        </nav>
+
+        <!-- Claude Code Section -->
+        <section id="claude-code" class="doc-section reveal">
+            <h2 class="doc-section-title">Claude Code 接入</h2>
+            <p class="doc-text">Claude Code 是 Anthropic 官方 CLI 工具，支持通过环境变量配置 API 端点。只需 3 步即可接入 XC API。</p>
+
+            <div class="doc-step">STEP 1 — 获取 API Key</div>
+            <p class="doc-text">登录 <a href="/panel" style="color:#60ffc0">控制台</a> ，在「令牌」页面创建一个新的 API Key。</p>
+
+            <div class="doc-step">STEP 2 — 设置环境变量</div>
+            <p class="doc-text">在终端中执行以下命令（添加到 ~/.bashrc 或 ~/.zshrc 以持久化）：</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<span class="cm"># XC API 配置</span>
+<span class="hl">export</span> ANTHROPIC_BASE_URL=https://api.xiaochens.com
+<span class="hl">export</span> ANTHROPIC_AUTH_TOKEN=sk-xxxxx</div>
+
+            <div class="doc-step">STEP 3 — 启动 Claude Code</div>
+            <p class="doc-text">重新打开终端或 source 配置文件后，直接运行：</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+<span class="hl">source</span> ~/.zshrc
+claude</div>
+
+            <div class="info-box">
+                提示：Claude Code 会自动使用 ANTHROPIC_BASE_URL 作为 API 端点。无需修改任何代码或配置文件。
+            </div>
+        </section>
+
+        <!-- OpenClaw Section -->
+        <section id="openclaw" class="doc-section reveal">
+            <h2 class="doc-section-title">OpenClaw 接入</h2>
+            <p class="doc-text">OpenClaw 是开源的 Claude Code 替代方案，支持自定义 Provider 配置。</p>
+
+            <div class="doc-step">STEP 1 — 安装 OpenClaw</div>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+npm install -g openclaw</div>
+
+            <div class="doc-step">STEP 2 — 配置 Provider</div>
+            <p class="doc-text">编辑配置文件 ~/.openclaw/openclaw.json：</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+{
+  <span class="hl">"provider"</span>: {
+    <span class="hl">"name"</span>: <span style="color:#e04040">"ciprohtna"</span>,
+    <span class="hl">"baseURL"</span>: <span style="color:#e04040">"https://api.xiaochens.com"</span>,
+    <span class="hl">"apiKey"</span>: <span style="color:#e04040">"sk-xxxxx"</span>
+  }
+}</div>
+
+            <div class="doc-step">STEP 3 — 启动</div>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+openclaw</div>
+
+            <div class="info-box warn">
+                注意：Provider name 必须填写 "ciprohtna"（Anthropic 反写），这是 OpenClaw 识别 Anthropic 兼容 API 的标识。
+            </div>
+        </section>
+
+        <!-- Models Section -->
+        <section id="models" class="doc-section reveal">
+            <h2 class="doc-section-title">模型列表</h2>
+            <p class="doc-text">以下为当前可用模型及倍率。倍率越高，消耗额度越多。</p>
+
+            <table class="pixel-table">
+                <thead>
+                    <tr>
+                        <th>模型</th>
+                        <th>输入倍率</th>
+                        <th>补全倍率</th>
+                        <th>协议</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>claude-opus-4-6 <span class="badge new">NEW</span></td>
+                        <td>2.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-sonnet-4-6 <span class="badge new">NEW</span></td>
+                        <td>37.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-sonnet-4-5</td>
+                        <td>37.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-sonnet-4-5-20250929</td>
+                        <td>1.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-opus-4-5</td>
+                        <td>37.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-opus-4-5-20251101</td>
+                        <td>2.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-haiku-4-5 <span class="badge hot">HOT</span></td>
+                        <td>37.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-haiku-4-5-20251001</td>
+                        <td>0.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                    <tr>
+                        <td>claude-sonnet-4-20250514</td>
+                        <td>1.5</td>
+                        <td>5x</td>
+                        <td>OpenAI / Anthropic</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                所有模型均支持 OpenAI 和 Anthropic 两种协议格式。Base URL 统一为 https://api.xiaochens.com
+            </div>
+        </section>
+    </div>
+
+    <div class="footer" style="position:relative;z-index:1;text-align:center;padding-bottom:40px;">
+        <p>&copy; 2026 XC API <span class="coin">&#x1FA99;</span> 小陈出品</p>
+    </div>
+
+    <script>
+    // Pixel star field (matching main site)
+    (function() {
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        for (let i = 0; i < 60; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() > 0.9 ? 3 : (Math.random() > 0.6 ? 2 : 1),
+                speed: 0.1 + Math.random() * 0.3,
+                twinkle: Math.random() * Math.PI * 2,
+                color: ["#ffffff","#f0d040","#60c0ff","#ff8080"][Math.floor(Math.random()*4)]
+            });
+        }
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const t = Date.now() * 0.001;
+            stars.forEach(function(s) {
+                s.y += s.speed;
+                if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
+                const alpha = 0.2 + 0.4 * Math.abs(Math.sin(t * 2 + s.twinkle));
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = alpha;
+                ctx.fillRect(Math.floor(s.x), Math.floor(s.y), s.size, s.size);
+                if (s.size >= 3 && Math.sin(t * 3 + s.twinkle) > 0.7) {
+                    ctx.fillRect(Math.floor(s.x) - 2, Math.floor(s.y), 1, 1);
+                    ctx.fillRect(Math.floor(s.x) + 3, Math.floor(s.y), 1, 1);
+                    ctx.fillRect(Math.floor(s.x), Math.floor(s.y) - 2, 1, 1);
+                    ctx.fillRect(Math.floor(s.x), Math.floor(s.y) + 3, 1, 1);
+                }
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+    })();
+
+    // 8-bit click sound
+    function playClick() {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(660, ac.currentTime);
+            osc.frequency.setValueAtTime(880, ac.currentTime + 0.05);
+            osc.frequency.setValueAtTime(1100, ac.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, ac.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.2);
+            osc.start(ac.currentTime);
+            osc.stop(ac.currentTime + 0.2);
+        } catch(e) {}
+    }
+    document.querySelectorAll('.card').forEach(function(c) {
+        c.addEventListener('mouseenter', playClick);
+    });
+
+    // Copy code to clipboard with 8-bit sound
+    function copyCode(btn) {
+        var block = btn.parentElement;
+        var code = block.textContent.replace('COPY','').replace('COPIED','').trim();
+        navigator.clipboard.writeText(code).then(function() {
+            btn.textContent = 'COPIED';
+            btn.classList.add('copied');
+            try {
+                var ac = new (window.AudioContext || window.webkitAudioContext)();
+                var osc = ac.createOscillator();
+                var g = ac.createGain();
+                osc.connect(g); g.connect(ac.destination);
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(523, ac.currentTime);
+                osc.frequency.setValueAtTime(659, ac.currentTime + 0.06);
+                osc.frequency.setValueAtTime(784, ac.currentTime + 0.12);
+                g.gain.setValueAtTime(0.08, ac.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+                osc.start(ac.currentTime);
+                osc.stop(ac.currentTime + 0.25);
+            } catch(e){}
+            setTimeout(function(){ btn.textContent='COPY'; btn.classList.remove('copied'); }, 1500);
+        });
+    }
+
+    // Scroll reveal
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+    // TOC highlight on scroll
+    var docSections = document.querySelectorAll('.doc-section');
+    var navLinks = document.querySelectorAll('.doc-nav a');
+    window.addEventListener('scroll', function() {
+        var scrollPos = window.scrollY + 80;
+        docSections.forEach(function(sec, i) {
+            if (sec.offsetTop <= scrollPos && sec.offsetTop + sec.offsetHeight > scrollPos) {
+                navLinks.forEach(function(a){ a.classList.remove('active'); });
+                navLinks[i].classList.add('active');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
