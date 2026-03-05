@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>陈与小金 - Pixel Portal</title>
+    <title>陈与小金 - Neo Terminal</title>
     <!-- SEO Meta -->
     <meta name="description" content="陈与小金的数字工坊 — 博客、图床、AI 服务、API 接口、数字商店，一站式个人数字服务门户。">
     <meta name="keywords" content="陈与小金, 数字工坊, 博客, 图床, AI服务, API接口, xiaochens">
@@ -12,7 +12,7 @@
     <link rel="canonical" href="https://www.xiaochens.com/">
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="陈与小金 - Pixel Portal">
+    <meta property="og:title" content="陈与小金 - Neo Terminal">
     <meta property="og:description" content="陈与小金的数字工坊 — 博客、图床、AI 服务、API 接口、数字商店，一站式个人数字服务门户。">
     <meta property="og:image" content="https://www.xiaochens.com/avatar.png">
     <meta property="og:url" content="https://www.xiaochens.com/">
@@ -20,377 +20,494 @@
     <meta property="og:locale" content="zh_CN">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="陈与小金 - Pixel Portal">
+    <meta name="twitter:title" content="陈与小金 - Neo Terminal">
     <meta name="twitter:description" content="陈与小金的数字工坊 — 博客、图床、AI 服务、API 接口、数字商店。">
     <meta name="twitter:image" content="https://www.xiaochens.com/avatar.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "陈与小金",
+      "alternateName": "Neo Terminal",
+      "url": "https://www.xiaochens.com/",
+      "description": "陈与小金的数字工坊 — 博客、图床、AI 服务、API 接口、数字商店，一站式个人数字服务门户。"
+    }
+    </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        :root{--bg:#0a0a1a;--gold:#f0d040;--red:#ff4060;--blue:#40a0ff;--purple:#a060ff;--green:#40e0a0;--cyan:#60e0e0}
+        :root{
+            --bg:#0F0F13;--green:#00ff88;--pink:#ff2d78;--yellow:#f0d040;
+            --card-bg:#16161d;--border:#2a2a35;--text:#b0b0c0;--text-dim:#555568;
+            --gap:4px;
+        }
         html{scroll-behavior:smooth}
-        body{font-family:"Press Start 2P",monospace;background:var(--bg);color:#e0e0e0;overflow-x:hidden;image-rendering:pixelated}
-        canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+        body{
+            font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);
+            overflow-x:hidden;min-height:100vh;
+            cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 16 16'%3E%3Crect x='5' y='0' width='6' height='3' fill='%2300ff88'/%3E%3Crect x='3' y='3' width='10' height='2' fill='%2300ff88'/%3E%3Crect x='1' y='5' width='14' height='3' fill='%2300ff88'/%3E%3Crect x='1' y='8' width='5' height='2' fill='%2300ff88'/%3E%3Crect x='7' y='8' width='3' height='4' fill='%2300ff88'/%3E%3Crect x='11' y='8' width='4' height='2' fill='%2300ff88'/%3E%3C/svg%3E") 8 4, auto;
+        }
+        /* CRT Scanlines */
+        body::after{
+            content:"";position:fixed;top:0;left:0;width:100%;height:100%;
+            background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+            pointer-events:none;z-index:9999;
+        }
+        /* Ripple canvas */
+        #ripple-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;pointer-events:none;opacity:0.12}
 
-        /* HERO */
-        .hero{position:relative;z-index:1;height:100vh;min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
-        .avatar{width:96px;height:96px;margin-bottom:24px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(240,208,64,.3));border-radius:8px;transition:filter 0.2s}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-        .hero h1{font-size:32px;color:var(--gold);text-shadow:4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.2);margin-bottom:10px;letter-spacing:2px}
-        .hero .sub{font-size:10px;color:#88c070;letter-spacing:4px;margin-bottom:32px;opacity:0;animation:fadeUp .8s .5s forwards}
-        .hp-bar{font-size:8px;color:#aaa;margin-bottom:36px;opacity:0;animation:fadeUp .8s .8s forwards}
-        .hp-bar .bar{display:inline-block;width:120px;height:12px;background:#222;border:2px solid #555;position:relative;vertical-align:middle;margin-left:8px;overflow:hidden}
-        .hp-bar .fill{position:absolute;top:0;left:0;height:100%;width:100%;background:linear-gradient(90deg,#40e040,#80ff80);animation:pulse 2s ease-in-out infinite}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
-        .blink{font-size:10px;color:var(--gold);animation:blink 1s steps(1) infinite;margin-bottom:12px;opacity:0;animation:fadeUp .8s 1s forwards,blink 1s 1.8s steps(1) infinite}
-        @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
-        .scroll-hint{position:absolute;bottom:40px;font-size:8px;color:#555;animation:bounce 2s infinite}
-        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        /* ===== HERO ===== */
+        .hero{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:80px 48px 60px;max-width:1100px;margin:0 auto;min-height:50vh;
+        }
+        .hero-left{flex:1}
+        .hero-right{flex:0 0 auto;margin-left:48px}
+        .status{
+            display:inline-flex;align-items:center;gap:8px;
+            font-size:11px;letter-spacing:3px;color:var(--green);
+            margin-bottom:24px;text-transform:uppercase;
+        }
+        .status-dot{
+            width:8px;height:8px;background:var(--green);border-radius:50%;
+            box-shadow:0 0 8px var(--green),0 0 20px rgba(0,255,136,0.3);
+            animation:pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+        .hero-title{
+            font-family:'Anton',sans-serif;font-size:clamp(48px,8vw,80px);
+            color:#fff;line-height:0.95;letter-spacing:2px;margin-bottom:16px;
+        }
+        .terminal-lines{
+            font-size:12px;color:var(--text-dim);line-height:2;
+            border-left:2px solid var(--green);padding-left:16px;
+        }
+        .terminal-lines .line{opacity:0;transform:translateX(-8px);white-space:nowrap;overflow:hidden}
+        .terminal-lines .line.visible{opacity:1;transform:translateX(0);transition:opacity 0.4s,transform 0.4s}
+        .terminal-lines .prompt{color:var(--green)}
+        .terminal-lines .val{color:var(--yellow)}
+        .cursor-blink{animation:blink-cursor 1s steps(1) infinite}
+        @keyframes blink-cursor{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-        /* SECTION */
-        .section{position:relative;z-index:1;padding:80px 20px;max-width:900px;margin:0 auto}
-        .section-title{font-size:16px;color:var(--gold);text-align:center;margin-bottom:12px;text-shadow:2px 2px 0 rgba(0,0,0,.5)}
-        .section-sub{font-size:8px;color:#666;text-align:center;margin-bottom:48px;letter-spacing:2px}
-        .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s}
-        .reveal.visible{opacity:1;transform:translateY(0)}
-</style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "陈与小金",
-  "alternateName": "Pixel Portal",
-  "url": "https://www.xiaochens.com/",
-  "description": "陈与小金的数字工坊 — 博客、图床、AI 服务、API 接口、数字商店，一站式个人数字服务门户。"
-}
-</script>
+        /* 3D Coin */
+        .coin-container{perspective:600px;width:96px;height:96px}
+        .coin-3d{
+            width:96px;height:96px;position:relative;
+            transform-style:preserve-3d;animation:coin-flip 3s ease-in-out infinite;
+        }
+        @keyframes coin-flip{0%{transform:rotateY(0)}50%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+        .coin-face{
+            position:absolute;width:100%;height:100%;backface-visibility:hidden;
+            border-radius:50%;display:flex;align-items:center;justify-content:center;
+        }
+        .coin-front{
+            background:radial-gradient(circle at 35% 35%,#ffe066,#f0d040 40%,#c8a020 100%);
+            box-shadow:0 0 30px rgba(240,208,64,0.3),inset 0 2px 4px rgba(255,255,255,0.3);
+        }
+        .coin-front img{width:72px;height:72px;border-radius:50%;image-rendering:auto}
+        .coin-back{
+            transform:rotateY(180deg);
+            background:radial-gradient(circle at 35% 35%,#ffe066,#f0d040 40%,#c8a020 100%);
+            box-shadow:0 0 30px rgba(240,208,64,0.3),inset 0 2px 4px rgba(255,255,255,0.3);
+            font-size:40px;
+        }
+
+        /* ===== BENTO GRID ===== */
+        .bento-section{padding:0 48px 60px;max-width:1100px;margin:0 auto}
+        .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+        .bento-card{
+            background:var(--card-bg);border:1px solid var(--border);
+            padding:28px 24px;position:relative;overflow:hidden;
+            text-decoration:none;color:var(--text);transition:border-color 0.2s;
+            display:flex;flex-direction:column;justify-content:space-between;min-height:180px;
+        }
+        .bento-card.wide{grid-column:span 2}
+        .bento-card:hover{border-color:var(--pink);z-index:2}
+        .bento-card:hover .card-label{animation:glitch-text 0.3s steps(2) forwards}
+        @keyframes glitch-text{
+            0%{text-shadow:2px 0 var(--pink),-2px 0 var(--green)}
+            25%{text-shadow:-2px 0 var(--pink),2px 0 var(--green)}
+            50%{text-shadow:1px 0 var(--green),-1px 0 var(--pink)}
+            100%{text-shadow:none}
+        }
+        .card-top{display:flex;align-items:center;gap:10px;margin-bottom:auto}
+        .card-icon{font-size:28px}
+        .card-label{
+            font-family:'Anton',sans-serif;font-size:20px;color:#fff;
+            letter-spacing:1px;text-transform:uppercase;
+        }
+        .card-desc{font-size:11px;color:var(--text-dim);margin:12px 0;line-height:1.7}
+        .card-url{font-size:10px;color:var(--text-dim);transition:color 0.2s}
+        .bento-card:hover .card-url{color:var(--green)}
+
+        /* Blog latest */
+        .blog-latest{
+            margin-top:8px;padding:10px 12px;background:rgba(0,255,136,0.04);
+            border-left:2px solid var(--green);font-size:10px;color:var(--text-dim);line-height:1.6;
+        }
+        .blog-latest .post-title{color:var(--green);font-weight:700}
+        /* AI status */
+        .ai-status{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:var(--green)}
+        .ai-bars{display:flex;gap:2px;align-items:flex-end;height:16px}
+        .ai-bar{width:3px;background:var(--green);animation:ai-eq 0.8s ease-in-out infinite}
+        .ai-bar:nth-child(1){height:6px;animation-delay:0s}
+        .ai-bar:nth-child(2){height:12px;animation-delay:0.1s}
+        .ai-bar:nth-child(3){height:8px;animation-delay:0.2s}
+        .ai-bar:nth-child(4){height:14px;animation-delay:0.3s}
+        .ai-bar:nth-child(5){height:10px;animation-delay:0.15s}
+        @keyframes ai-eq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.3)}}
+        /* Shop image */
+        .shop-img{width:48px;height:auto;border-radius:4px;opacity:0.8;transition:opacity 0.2s}
+        .bento-card:hover .shop-img{opacity:1}
+        /* Particle canvas per card */
+        .particle-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+        /* ===== CRT TRANSITION ===== */
+        .crt-overlay{
+            position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;
+            pointer-events:none;display:none;
+        }
+        .crt-overlay.active{display:block;pointer-events:all}
+        .crt-overlay .white-line{
+            position:absolute;top:50%;left:0;width:100%;height:2px;
+            background:#fff;transform:scaleX(0);
+        }
+        .crt-overlay .black-bg{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0}
+
+        /* Easter egg */
+        body.inverted{filter:invert(1) hue-rotate(180deg)}
+        body.inverted #ripple-canvas,body.inverted .crt-overlay{filter:invert(1) hue-rotate(180deg)}
+
+        /* ===== FOOTER ===== */
+        .footer{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:24px 48px;max-width:1100px;margin:0 auto;
+            font-size:10px;color:var(--text-dim);border-top:1px solid var(--border);
+        }
+        .footer-left{display:flex;align-items:center;gap:4px}
+        .footer-coin{cursor:pointer;font-size:14px;transition:transform 0.15s}
+        .footer-coin:hover{transform:scale(1.2)}
+        .footer-right{text-align:right;letter-spacing:1px}
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:768px){
+            .hero{flex-direction:column;text-align:center;padding:60px 20px 40px}
+            .hero-left{order:2}
+            .hero-right{order:1;margin:0 0 32px 0}
+            .terminal-lines{border-left:none;padding-left:0;text-align:left}
+            .bento-section{padding:0 12px 40px}
+            .bento{grid-template-columns:1fr;gap:var(--gap)}
+            .bento-card.wide{grid-column:span 1}
+            .bento-card{min-height:140px;padding:20px 16px}
+            .card-label{font-size:16px}
+            .footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
+            .footer-right{text-align:center}
+        }
+        @media(min-width:769px) and (max-width:1024px){
+            .hero{padding:60px 32px 40px}
+            .bento-section{padding:0 32px 40px}
+            .bento{grid-template-columns:repeat(2,1fr)}
+            .bento-card.wide{grid-column:span 2}
+            .footer{padding:24px 32px}
+        }
+    </style>
 </head>
 <body>
-<!-- MORE_CSS -->
-<style>
-        /* CARDS */
-        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-        .card{background:linear-gradient(180deg,#1a1a3e,#10102a);border:3px solid #3a3a6e;padding:28px 20px;cursor:pointer;text-decoration:none;color:#ccc;position:relative;transition:transform .15s,border-color .3s,box-shadow .3s;box-shadow:inset -3px -3px 0 rgba(0,0,0,.4),inset 3px 3px 0 rgba(255,255,255,.08),6px 6px 0 rgba(0,0,0,.5);overflow:hidden}
-        .card::before{content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);transition:left .5s}
-        .card:hover::before{left:120%}
-        .card:hover{transform:translate(-3px,-3px);box-shadow:inset -3px -3px 0 rgba(0,0,0,.4),inset 3px 3px 0 rgba(255,255,255,.12),10px 10px 0 rgba(0,0,0,.5)}
-        .card:active{transform:translate(2px,2px);box-shadow:3px 3px 0 rgba(0,0,0,.5)}
-        .card .icon{font-size:40px;display:block;margin-bottom:14px;transition:transform .3s}
-        .card:hover .icon{transform:scale(1.15)}
-        .card .label{font-size:14px;display:block;margin-bottom:8px;transition:color .3s}
-        .card .desc{font-size:7px;color:#777;display:block;margin-bottom:10px;line-height:1.8}
-        .card .url{font-size:7px;color:#555;display:block;transition:color .3s}
-        .card:hover .url{color:#88c070}
-        .card .glow{position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:-1}
-        .card:hover .glow{opacity:1}
-        /* card colors */
-        .card.blog{border-color:#e04040;background:linear-gradient(180deg,#2a1a1a,#10102a)}.card.blog:hover{border-color:#ff6060}.card.blog .label{color:#ff6060}.card.blog .glow{box-shadow:0 0 20px rgba(255,64,96,.15)}
-        .card.img{border-color:#40a0e0;background:linear-gradient(180deg,#1a1a2e,#10102a)}.card.img:hover{border-color:#60c0ff}.card.img .label{color:#60c0ff}.card.img .glow{box-shadow:0 0 20px rgba(64,160,255,.15)}
-        .card.ai{border-color:#a040e0;background:linear-gradient(180deg,#2a1a2e,#10102a)}.card.ai:hover{border-color:#c060ff}.card.ai .label{color:#c060ff}.card.ai .glow{box-shadow:0 0 20px rgba(160,96,255,.15)}
-        .card.api{border-color:#40e0a0;background:linear-gradient(180deg,#1a2a2a,#10102a)}.card.api:hover{border-color:#60ffc0}.card.api .label{color:#60ffc0}.card.api .glow{box-shadow:0 0 20px rgba(64,224,160,.15)}
-        .card.shop{border-color:#f0d040;background:linear-gradient(180deg,#2a2a1a,#10102a)}.card.shop:hover{border-color:#ffe060}.card.shop .label{color:#ffe060}.card.shop .glow{box-shadow:0 0 20px rgba(240,208,64,.15)}
-        /* sparkle */
-        .card .sparkle{position:absolute;top:10px;right:10px;width:6px;height:6px;opacity:0;transition:opacity .3s}
-        .card:hover .sparkle{opacity:1;animation:sparkle .6s steps(2) infinite}
-        @keyframes sparkle{0%{box-shadow:0 0 0 #fff}50%{box-shadow:0 0 0 #fff,6px 0 0 #fff,-6px 0 0 #fff,0 6px 0 #fff,0 -6px 0 #fff}100%{box-shadow:0 0 0 #fff}}
-
-        /* PIXEL DIVIDER */
-        .divider{height:4px;background:repeating-linear-gradient(90deg,#333 0,#333 8px,transparent 8px,transparent 16px);margin:0 auto;max-width:400px;opacity:.5}
-
-        /* CITYSCAPE */
-        .city{position:fixed;bottom:0;left:0;width:100%;z-index:1;pointer-events:none}
-
-        /* FOOTER */
-        .footer{position:relative;z-index:2;text-align:center;padding:40px 20px 100px;font-size:8px;color:#444}
-        .footer a{color:#88c070;text-decoration:none}
-        .footer .coin{display:inline-block;animation:spin .8s steps(4) infinite}
-        @keyframes spin{0%{transform:scaleX(1)}25%{transform:scaleX(.3)}50%{transform:scaleX(1)}75%{transform:scaleX(.3)}}
-
-        /* GROUND */
-        .ground{position:fixed;bottom:0;left:0;width:100%;height:48px;z-index:1;background:repeating-linear-gradient(90deg,#2d5a1e 0,#2d5a1e 32px,#3a6e28 32px,#3a6e28 64px);border-top:3px solid #1a3a10;box-shadow:inset 0 3px 0 rgba(255,255,255,.08)}
-        .ground::before{content:"";position:absolute;top:-12px;left:0;width:100%;height:12px;background:repeating-linear-gradient(90deg,transparent 0,transparent 28px,#3a6e28 28px,#3a6e28 36px,transparent 36px,transparent 64px)}
-
-        /* WALKING CHARACTER */
-        .walker{position:fixed;bottom:52px;z-index:4;width:28px;height:28px;image-rendering:pixelated;left:-40px;transition:filter 0.1s,transform 0.1s}
-
-        /* LASER CANVAS */
-        #laser-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none}
-
-        /* RESPONSIVE */
-        @media(max-width:600px){
-            .hero h1{font-size:20px}
-            .grid{grid-template-columns:1fr;gap:16px}
-            .card{padding:22px 16px}
-            .card .icon{font-size:32px}
-            .card .label{font-size:12px}
-            .section{padding:60px 16px}
-            .section-title{font-size:13px}
-        }
-</style>
-    <canvas id="bg"></canvas>
-    <canvas id="laser-canvas"></canvas>
-
-    <!-- Walking pixel character -->
-    <svg id="walker" class="walker" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <rect x="5" y="0" width="6" height="2" fill="#f0d040"/>
-        <rect x="4" y="2" width="8" height="2" fill="#f0d040"/>
-        <rect x="4" y="2" width="2" height="2" fill="#fff"/><rect x="8" y="2" width="2" height="2" fill="#fff"/>
-        <rect x="5" y="2" width="1" height="1" fill="#222"/><rect x="9" y="2" width="1" height="1" fill="#222"/>
-        <rect x="6" y="4" width="4" height="1" fill="#ffb080"/>
-        <rect x="3" y="5" width="10" height="2" fill="#e04040"/>
-        <rect x="4" y="7" width="8" height="3" fill="#e04040"/><rect x="6" y="7" width="4" height="3" fill="#f0d040"/>
-        <rect x="4" y="10" width="3" height="2" fill="#4040c0"/><rect x="9" y="10" width="3" height="2" fill="#4040c0"/>
-        <rect x="4" y="12" width="3" height="2" fill="#804020"/><rect x="9" y="12" width="3" height="2" fill="#804020"/>
-    </svg>
-
-    <!-- HERO -->
-    <section class="hero">
-        <img class="avatar" src="avatar.png" alt="陈与小金" />
-        <h1 id="title"></h1>
-        <div class="sub">- 数字工坊 · DIGITAL WORKSHOP -</div>
-        <div class="hp-bar">SERVER <span class="bar"><span class="fill"></span></span> ONLINE</div>
-        <div class="blink">▼ 选择你的目的地 ▼</div>
-        <div class="scroll-hint">↓ SCROLL ↓</div>
-    </section>
-
-    <!-- SERVICES -->
-    <section class="section">
-        <div class="reveal"><div class="section-title">◆ SERVICES ◆</div></div>
-        <div class="reveal"><div class="section-sub">— 传送门已就绪 —</div></div>
-        <div class="reveal"><div class="divider"></div></div>
-        <div style="height:32px"></div>
-        <nav class="grid">
-            <a href="https://blog.xiaochens.com" class="card blog reveal">
-                <div class="glow"></div><div class="sparkle"></div>
-                <span class="icon">📝</span>
-                <span class="label">博客 BLOG</span>
-                <span class="desc">记录技术探索与生活碎片</span>
-                <span class="url">blog.xiaochens.com →</span>
-            </a>
-            <a href="https://img.xiaochens.com" class="card img reveal">
-                <div class="glow"></div><div class="sparkle"></div>
-                <span class="icon">🖼️</span>
-                <span class="label">图床 IMAGE</span>
-                <span class="desc">图片托管与管理服务</span>
-                <span class="url">img.xiaochens.com →</span>
-            </a>
-            <a href="https://ai.xiaochens.com" class="card ai reveal">
-                <div class="glow"></div><div class="sparkle"></div>
-                <span class="icon">🤖</span>
-                <span class="label">AI 中心</span>
-                <span class="desc">AI 模型接口与对话服务</span>
-                <span class="url">ai.xiaochens.com →</span>
-            </a>
-            <a href="https://api.xiaochens.com" class="card api reveal">
-                <div class="glow"></div><div class="sparkle"></div>
-                <span class="icon">⚡</span>
-                <span class="label">API 接口</span>
-                <span class="desc">API 中转与管理平台</span>
-                <span class="url">api.xiaochens.com →</span>
-            </a>
-            <a href="https://shop.xiaochens.com" class="card shop reveal">
-                <div class="glow"></div><div class="sparkle"></div>
-                <span class="icon"><img src="shop-card.png?v=2" alt="Shop" style="width:56px;height:auto;border-radius:4px;image-rendering:pixelated"></span>
-                <span class="label">商店 SHOP</span>
-                <span class="desc">数字商品自动发卡</span>
-                <span class="url">shop.xiaochens.com →</span>
-            </a>
-        </nav>
-    </section>
-
-    <!-- FOOTER -->
-    <div class="footer reveal">
-        <p>&copy; 2026 陈与小金 <span class="coin">🪙</span></p>
-        <p style="margin-top:8px;color:#333">BUILT WITH PIXELS & PASSION</p>
+    <canvas id="ripple-canvas"></canvas>
+    <!-- CRT Transition Overlay -->
+    <div class="crt-overlay" id="crt-overlay">
+        <div class="black-bg" id="crt-black"></div>
+        <div class="white-line" id="crt-line"></div>
     </div>
 
-    <div class="ground"></div>
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-left">
+            <div class="status"><span class="status-dot"></span> SERVER ONLINE</div>
+            <h1 class="hero-title">陈与小金</h1>
+            <div class="terminal-lines" id="terminal">
+                <div class="line"><span class="prompt">$ </span>whoami<br><span class="val">digital_workshop</span></div>
+                <div class="line"><span class="prompt">$ </span>cat services.log<br><span class="val">5 nodes operational ✓</span></div>
+                <div class="line"><span class="prompt">$ </span>uptime<br><span class="val">365d 24h — 99.9% SLA</span></div>
+                <div class="line"><span class="prompt">$ </span><span class="cursor-blink">█</span></div>
+            </div>
+        </div>
+        <div class="hero-right">
+            <div class="coin-container" id="coin-trigger">
+                <div class="coin-3d">
+                    <div class="coin-face coin-front"><img src="avatar.png" alt="陈与小金"></div>
+                    <div class="coin-face coin-back">🪙</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BENTO GRID -->
+    <main class="bento-section">
+        <nav class="bento" id="bento-grid">
+            <a href="https://blog.xiaochens.com" class="bento-card wide" data-color="#ff4060" id="card-blog">
+                <div>
+                    <div class="card-top"><span class="card-icon">📝</span><span class="card-label">Blog</span></div>
+                    <div class="card-desc">记录技术探索与生活碎片</div>
+                    <div class="blog-latest" id="blog-latest"><span class="post-title">Loading latest post...</span></div>
+                </div>
+                <span class="card-url">blog.xiaochens.com →</span>
+            </a>
+            <a href="https://ai.xiaochens.com" class="bento-card wide" data-color="#a060ff" id="card-ai">
+                <div>
+                    <div class="card-top"><span class="card-icon">🤖</span><span class="card-label">AI Center</span></div>
+                    <div class="card-desc">AI 模型接口与对话服务</div>
+                    <div class="ai-status">
+                        <div class="ai-bars"><div class="ai-bar"></div><div class="ai-bar"></div><div class="ai-bar"></div><div class="ai-bar"></div><div class="ai-bar"></div></div>
+                        <span>MODELS ACTIVE</span>
+                    </div>
+                </div>
+                <span class="card-url">ai.xiaochens.com →</span>
+            </a>
+            <a href="https://img.xiaochens.com" class="bento-card" data-color="#40a0ff" id="card-img">
+                <div>
+                    <div class="card-top"><span class="card-icon">🖼️</span><span class="card-label">Image</span></div>
+                    <div class="card-desc">图片托管与管理</div>
+                </div>
+                <span class="card-url">img.xiaochens.com →</span>
+            </a>
+            <a href="https://api.xiaochens.com" class="bento-card" data-color="#00ff88" id="card-api">
+                <div>
+                    <div class="card-top"><span class="card-icon">⚡</span><span class="card-label">API</span></div>
+                    <div class="card-desc">API 中转与管理平台</div>
+                </div>
+                <span class="card-url">api.xiaochens.com →</span>
+            </a>
+            <a href="https://shop.xiaochens.com" class="bento-card wide" data-color="#f0d040" id="card-shop">
+                <div>
+                    <div class="card-top"><img src="shop-card.png?v=2" alt="Shop" class="shop-img"><span class="card-label">Shop</span></div>
+                    <div class="card-desc">数字商品自动发卡</div>
+                </div>
+                <span class="card-url">shop.xiaochens.com →</span>
+            </a>
+        </nav>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-left">© 2026 陈与小金 <span class="footer-coin" id="footer-coin">🪙</span> BUILT WITH PIXELS &amp; PASSION</div>
+        <div class="footer-right">SYS.LOAD: <span id="load-time">0.00</span>s | IP_PROXY: ACTIVE | NODE: LAX-01</div>
+    </footer>
+
     <script>
-    // ===== STAR FIELD WITH SHOOTING STARS =====
-    const C=document.getElementById("bg"),X=C.getContext("2d");let stars=[];
-    function resize(){C.width=innerWidth;C.height=innerHeight}
-    addEventListener("resize",resize);resize();
-    for(let i=0;i<150;i++)stars.push({x:Math.random()*C.width,y:Math.random()*C.height,s:Math.random()>.92?3:Math.random()>.6?2:1,sp:.08+Math.random()*.25,tw:Math.random()*Math.PI*2,c:["#fff","#f0d040","#60c0ff","#ff8080","#a060ff"][Math.floor(Math.random()*5)]});
-    let shooters=[];
-    function addShooter(){if(Math.random()<.008)shooters.push({x:Math.random()*C.width,y:Math.random()*C.height*.3,vx:3+Math.random()*4,vy:1+Math.random()*2,life:30+Math.random()*20})}
-    function drawBg(){
-        X.clearRect(0,0,C.width,C.height);
-        const t=Date.now()*.001;
-        // stars
-        stars.forEach(s=>{s.y+=s.sp;if(s.y>C.height){s.y=0;s.x=Math.random()*C.width}
-            const a=.3+.7*Math.abs(Math.sin(t*2+s.tw));X.fillStyle=s.c;X.globalAlpha=a;
-            X.fillRect(Math.floor(s.x),Math.floor(s.y),s.s,s.s);
-            if(s.s>=3&&Math.sin(t*3+s.tw)>.7){X.fillRect(Math.floor(s.x)-2,Math.floor(s.y),1,1);X.fillRect(Math.floor(s.x)+3,Math.floor(s.y),1,1);X.fillRect(Math.floor(s.x),Math.floor(s.y)-2,1,1);X.fillRect(Math.floor(s.x),Math.floor(s.y)+3,1,1)}
+    /* ===== PERFORMANCE TIMER ===== */
+    var _t0 = performance.now();
+
+    /* ===== CRT RIPPLE CANVAS ===== */
+    (function(){
+        var RC = document.getElementById('ripple-canvas');
+        var RX = RC.getContext('2d');
+        var mouseX = -1, mouseY = -1;
+        function resizeRC(){ RC.width = innerWidth; RC.height = innerHeight; }
+        addEventListener('resize', resizeRC); resizeRC();
+        addEventListener('mousemove', function(e){ mouseX = e.clientX; mouseY = e.clientY; });
+
+        function drawRipple(){
+            RX.clearRect(0, 0, RC.width, RC.height);
+            if(mouseX >= 0){
+                var grad = RX.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 200);
+                grad.addColorStop(0, 'rgba(0,255,136,0.06)');
+                grad.addColorStop(0.5, 'rgba(0,255,136,0.02)');
+                grad.addColorStop(1, 'transparent');
+                RX.fillStyle = grad;
+                RX.fillRect(mouseX - 200, mouseY - 200, 400, 400);
+                for(var i = -80; i < 80; i += 4){
+                    var y = mouseY + i;
+                    var dist = Math.abs(i) / 80;
+                    var alpha = 0.08 * (1 - dist);
+                    RX.fillStyle = 'rgba(0,255,136,' + alpha + ')';
+                    RX.fillRect(0, y, RC.width, 1);
+                }
+            }
+            requestAnimationFrame(drawRipple);
+        }
+        drawRipple();
+    })();
+
+    /* ===== TERMINAL TYPING ===== */
+    (function(){
+        var lines = document.querySelectorAll('#terminal .line');
+        for(var i = 0; i < lines.length; i++){
+            (function(idx){
+                setTimeout(function(){ lines[idx].classList.add('visible'); }, 400 + idx * 600);
+            })(i);
+        }
+    })();
+
+    /* ===== BLOG LATEST POST (safe DOM) ===== */
+    (function(){
+        var el = document.getElementById('blog-latest');
+        var titleSpan = el.querySelector('.post-title');
+        fetch('https://blog.xiaochens.com/apis/api.console.halo.run/v1alpha1/posts?page=1&size=1&sort=metadata.creationTimestamp%2Cdesc', {
+            signal: AbortSignal.timeout(4000)
+        }).then(function(res){
+            if(!res.ok) throw new Error('fail');
+            return res.json();
+        }).then(function(data){
+            var post = data.items && data.items[0];
+            if(post){
+                var title = (post.post && post.post.spec && post.post.spec.title) || (post.spec && post.spec.title) || 'New Post';
+                titleSpan.textContent = '> ' + title;
+            } else {
+                titleSpan.textContent = '> latest: check blog →';
+            }
+        }).catch(function(){
+            titleSpan.textContent = '> latest: check blog →';
         });
-        // shooting stars
-        addShooter();
-        shooters=shooters.filter(s=>{s.x+=s.vx;s.y+=s.vy;s.life--;
-            for(let i=0;i<4;i++){const a=(s.life/(30+20))*(1-i*.25);X.globalAlpha=a;X.fillStyle="#fff";X.fillRect(Math.floor(s.x-s.vx*i*.6),Math.floor(s.y-s.vy*i*.6),2,1)}
-            return s.life>0&&s.x<C.width+20});
-        X.globalAlpha=1;
+    })();
+
+    /* ===== 8-BIT SOUND ENGINE ===== */
+    var ACtx = window.AudioContext || window.webkitAudioContext;
+    function beep(f1, f2, dur, type, vol){
+        type = type || 'square'; vol = vol || 0.06;
+        try{
+            var a = new ACtx(), o = a.createOscillator(), g = a.createGain();
+            o.connect(g); g.connect(a.destination);
+            o.type = type;
+            o.frequency.setValueAtTime(f1, a.currentTime);
+            if(f2 !== f1) o.frequency.setValueAtTime(f2, a.currentTime + dur * 0.3);
+            g.gain.setValueAtTime(vol, a.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + dur);
+            o.start(a.currentTime); o.stop(a.currentTime + dur);
+        } catch(e){}
+    }
+    function coinSound(){
+        try{
+            var a = new ACtx(), o1 = a.createOscillator(), o2 = a.createOscillator();
+            var g = a.createGain();
+            o1.connect(g); o2.connect(g); g.connect(a.destination);
+            o1.type = 'square'; o2.type = 'square';
+            o1.frequency.setValueAtTime(988, a.currentTime);
+            o1.frequency.setValueAtTime(1319, a.currentTime + 0.08);
+            o2.frequency.setValueAtTime(0, a.currentTime);
+            o2.frequency.setValueAtTime(1319, a.currentTime + 0.08);
+            g.gain.setValueAtTime(0.06, a.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + 0.4);
+            o1.start(a.currentTime); o1.stop(a.currentTime + 0.4);
+            o2.start(a.currentTime + 0.08); o2.stop(a.currentTime + 0.4);
+        } catch(e){}
     }
 
-    // ===== TYPING EFFECT =====
-    const txt="陈与小金",el=document.getElementById("title");let ci=0;
-    function typeChar(){if(ci<txt.length){el.textContent+=txt[ci];ci++;setTimeout(typeChar,120)}else{el.style.textShadow="4px 4px 0 #c8102e,-1px -1px 0 #000,0 0 30px rgba(240,208,64,.4)"}}
-    setTimeout(typeChar,300);
+    /* ===== CARD HOVER SOUNDS ===== */
+    document.querySelectorAll('.bento-card').forEach(function(c){
+        c.addEventListener('mouseenter', function(){ beep(660, 880, 0.1); });
+    });
 
-    // ===== SCROLL REVEAL =====
-    const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");obs.unobserve(e.target)}})},{threshold:.15});
-    document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+    /* ===== PIXEL PARTICLE SYSTEM ===== */
+    document.querySelectorAll('.bento-card').forEach(function(card){
+        var cvs = document.createElement('canvas');
+        cvs.className = 'particle-canvas';
+        card.appendChild(cvs);
+        var ctx = cvs.getContext('2d');
+        var particles = [], animId = null;
+        var color = card.getAttribute('data-color') || '#00ff88';
 
-    // ===== 8-BIT SOUND =====
-    const AC=window.AudioContext||window.webkitAudioContext;
-    function beep(f1,f2,dur){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="square";o.frequency.setValueAtTime(f1,a.currentTime);o.frequency.setValueAtTime(f2,a.currentTime+dur*.3);g.gain.setValueAtTime(.06,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.start(a.currentTime);o.stop(a.currentTime+dur)}catch(e){}}
-    document.querySelectorAll(".card").forEach(c=>c.addEventListener("mouseenter",()=>beep(660,880,.12)));
+        function resizeCvs(){ cvs.width = card.offsetWidth; cvs.height = card.offsetHeight; }
 
-    // ===== LASER CANVAS INIT =====
-    const LC=document.getElementById("laser-canvas"),LX=LC.getContext("2d");
-    function resizeLaser(){LC.width=innerWidth;LC.height=innerHeight}
-    addEventListener("resize",resizeLaser);resizeLaser();
+        card.addEventListener('mouseenter', function(e){
+            resizeCvs();
+            var rect = card.getBoundingClientRect();
+            var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            for(var i = 0; i < 12; i++){
+                particles.push({
+                    x: mx, y: my,
+                    vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,
+                    life: 20 + Math.random() * 20, size: 2 + Math.random() * 2
+                });
+            }
+            if(!animId) animParticles();
+        });
 
-    // ===== SOUND EFFECTS =====
-    function laserSound(){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="sawtooth";o.frequency.setValueAtTime(880,a.currentTime);o.frequency.exponentialRampToValueAtTime(220,a.currentTime+.15);g.gain.setValueAtTime(.04,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.2);o.start(a.currentTime);o.stop(a.currentTime+.2)}catch(e){}}
-    function explosionSound(){try{const a=new AC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="square";o.frequency.setValueAtTime(200,a.currentTime);o.frequency.exponentialRampToValueAtTime(50,a.currentTime+.3);g.gain.setValueAtTime(.06,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.3);o.start(a.currentTime);o.stop(a.currentTime+.3)}catch(e){}}
-
-    // ===== GAME STATE =====
-    const walkerEl=document.getElementById("walker");
-    const avatarEl=document.querySelector(".avatar");
-    const game={
-        walker:{x:-40,state:"walking",vy:0,jumpY:0,deathTimer:0,deadTimer:0,speed:innerWidth/22/60},
-        laser:{timer:Math.floor(180+Math.random()*120),active:false,x1:0,y1:0,x2:0,y2:0,frame:0,maxFrames:12,hit:false},
-        avatarGlow:0
-    };
-    addEventListener("resize",()=>{game.walker.speed=innerWidth/22/60});
-
-    // ===== WALKER STATE MACHINE =====
-    function updateWalker(){
-        const w=game.walker;
-        const bottomY=52;
-        switch(w.state){
-            case "walking":
-                w.x+=w.speed;
-                if(w.x>innerWidth+40){w.x=-40}
-                walkerEl.style.left=w.x+"px";
-                walkerEl.style.bottom=bottomY+"px";
-                walkerEl.style.opacity="1";
-                walkerEl.style.transform="scaleX(1)";
-                walkerEl.style.filter="none";
-                break;
-            case "jumping":
-                w.x+=w.speed;
-                w.vy+=0.4;
-                w.jumpY+=w.vy;
-                if(w.jumpY>=0){w.jumpY=0;w.state="walking"}
-                walkerEl.style.left=w.x+"px";
-                walkerEl.style.bottom=(bottomY-w.jumpY)+"px";
-                break;
-            case "dying":
-                w.deathTimer++;
-                if(w.deathTimer<8){
-                    walkerEl.style.filter="brightness(3)";
-                }else if(w.deathTimer<25){
-                    const s=1+(w.deathTimer-8)*0.06;
-                    const o=1-(w.deathTimer-8)/17;
-                    walkerEl.style.transform="scale("+s+")";
-                    walkerEl.style.opacity=o;
-                    walkerEl.style.filter="brightness(2)";
-                }else{
-                    w.state="dead";w.deadTimer=0;
-                    walkerEl.style.opacity="0";
-                }
-                break;
-            case "dead":
-                w.deadTimer++;
-                if(w.deadTimer>120){
-                    w.state="walking";w.x=-40;w.jumpY=0;
-                    walkerEl.style.opacity="1";
-                    walkerEl.style.transform="scaleX(1)";
-                    walkerEl.style.filter="none";
-                    walkerEl.style.bottom=bottomY+"px";
-                }
-                break;
-        }
-    }
-
-    // ===== LASER SYSTEM =====
-    function getAvatarEyePos(){
-        const r=avatarEl.getBoundingClientRect();
-        return{x:r.left+r.width/2,y:r.top+r.height*0.35};
-    }
-    function getWalkerCenter(){
-        const r=walkerEl.getBoundingClientRect();
-        return{x:r.left+r.width/2,y:r.top+r.height/2};
-    }
-    function updateLaserTimer(){
-        const w=game.walker;const l=game.laser;
-        if(l.active)return;
-        if(w.state!=="walking")return;
-        if(w.x<0||w.x>innerWidth)return;
-        l.timer--;
-        if(l.timer<=0){
-            l.timer=180+Math.floor(Math.random()*120);
-            const dodge=Math.random()<0.5;
-            const eye=getAvatarEyePos();
-            const wc=getWalkerCenter();
-            l.x1=eye.x;l.y1=eye.y;l.x2=wc.x;l.y2=wc.y;
-            l.active=true;l.frame=0;l.hit=!dodge;
-            laserSound();
-            game.avatarGlow=15;
-            if(dodge){
-                w.state="jumping";w.vy=-8;w.jumpY=0;
-            }else{
-                setTimeout(()=>{
-                    w.state="dying";w.deathTimer=0;
-                    explosionSound();
-                },100);
+        function animParticles(){
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            particles = particles.filter(function(p){
+                p.x += p.vx; p.y += p.vy; p.life--;
+                ctx.fillStyle = color;
+                ctx.globalAlpha = p.life / 40;
+                ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
+                return p.life > 0;
+            });
+            ctx.globalAlpha = 1;
+            if(particles.length > 0){
+                animId = requestAnimationFrame(animParticles);
+            } else {
+                animId = null;
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
             }
         }
-    }
-    function drawLasers(){
-        LX.clearRect(0,0,LC.width,LC.height);
-        const l=game.laser;
-        if(l.active){
-            l.frame++;
-            const progress=l.frame/l.maxFrames;
-            const alpha=1-progress;
-            // main beam
-            LX.save();
-            LX.strokeStyle="rgba(255,40,40,"+alpha+")";
-            LX.lineWidth=3;
-            LX.shadowColor="#ff0000";
-            LX.shadowBlur=20*alpha;
-            LX.beginPath();LX.moveTo(l.x1,l.y1);LX.lineTo(l.x2,l.y2);LX.stroke();
-            // inner bright core
-            LX.strokeStyle="rgba(255,200,200,"+alpha*0.8+")";
-            LX.lineWidth=1;
-            LX.beginPath();LX.moveTo(l.x1,l.y1);LX.lineTo(l.x2,l.y2);LX.stroke();
-            // hit flash
-            if(l.hit&&l.frame<4){
-                LX.fillStyle="rgba(255,255,255,"+(0.8-l.frame*0.2)+")";
-                LX.beginPath();LX.arc(l.x2,l.y2,20+l.frame*8,0,Math.PI*2);LX.fill();
-            }
-            LX.restore();
-            if(l.frame>=l.maxFrames){l.active=false}
-        }
-        // avatar glow
-        if(game.avatarGlow>0){
-            game.avatarGlow--;
-            avatarEl.style.filter="drop-shadow(0 0 24px rgba(240,208,64,.3)) drop-shadow(0 0 12px rgba(255,0,0,"+(game.avatarGlow/15)*0.6+"))";
-            if(game.avatarGlow<=0){avatarEl.style.filter="drop-shadow(0 0 24px rgba(240,208,64,.3))"}
-        }
-    }
+    });
 
-    // ===== UNIFIED GAME LOOP =====
-    function gameLoop(){
-        drawBg();
-        updateWalker();
-        updateLaserTimer();
-        drawLasers();
-        requestAnimationFrame(gameLoop);
-    }
-    gameLoop();
+    /* ===== CRT SHUTDOWN TRANSITION ===== */
+    (function(){
+        var crtOverlay = document.getElementById('crt-overlay');
+        var crtBlack = document.getElementById('crt-black');
+        var crtLine = document.getElementById('crt-line');
+
+        function crtNavigate(url){
+            beep(200, 50, 0.3, 'sawtooth', 0.04);
+            crtOverlay.classList.add('active');
+            crtBlack.style.transition = 'none';
+            crtBlack.style.opacity = '1';
+            document.body.style.transition = 'transform 0.3s ease-in';
+            document.body.style.transform = 'scaleY(0.01)';
+            document.body.style.transformOrigin = 'center center';
+
+            setTimeout(function(){
+                crtLine.style.transition = 'transform 0.15s ease-out, opacity 0.15s';
+                crtLine.style.transform = 'scaleX(1)';
+                crtLine.style.opacity = '1';
+            }, 300);
+
+            setTimeout(function(){
+                crtLine.style.opacity = '0';
+            }, 500);
+
+            setTimeout(function(){
+                window.location.href = url;
+            }, 650);
+        }
+
+        document.querySelectorAll('.bento-card').forEach(function(card){
+            card.addEventListener('click', function(e){
+                e.preventDefault();
+                crtNavigate(card.href);
+            });
+        });
+    })();
+
+    /* ===== EASTER EGG: TRIPLE COIN CLICK ===== */
+    (function(){
+        var coinClicks = 0, coinTimer = null;
+        var coinEl = document.getElementById('coin-trigger');
+        var footerCoin = document.getElementById('footer-coin');
+
+        function handleCoinClick(){
+            coinClicks++;
+            coinSound();
+            if(coinTimer) clearTimeout(coinTimer);
+            if(coinClicks >= 3){
+                coinClicks = 0;
+                document.body.classList.toggle('inverted');
+            } else {
+                coinTimer = setTimeout(function(){ coinClicks = 0; }, 800);
+            }
+        }
+        coinEl.addEventListener('click', handleCoinClick);
+        footerCoin.addEventListener('click', handleCoinClick);
+    })();
+
+    /* ===== LOAD TIME ===== */
+    window.addEventListener('load', function(){
+        var loadTime = ((performance.now() - _t0) / 1000).toFixed(2);
+        document.getElementById('load-time').textContent = loadTime;
+    });
     </script>
 </body>
 </html>
