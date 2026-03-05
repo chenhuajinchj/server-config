@@ -341,20 +341,22 @@
         }
     })();
 
-    /* ===== BLOG LATEST POST (safe DOM) ===== */
+    /* ===== BLOG LATEST POST (RSS feed) ===== */
     (function(){
         var el = document.getElementById('blog-latest');
         var titleSpan = el.querySelector('.post-title');
-        fetch('https://blog.xiaochens.com/apis/api.console.halo.run/v1alpha1/posts?page=1&size=1&sort=metadata.creationTimestamp%2Cdesc', {
+        fetch('https://blog.xiaochens.com/rss.xml', {
             signal: AbortSignal.timeout(4000)
         }).then(function(res){
             if(!res.ok) throw new Error('fail');
-            return res.json();
-        }).then(function(data){
-            var post = data.items && data.items[0];
-            if(post){
-                var title = (post.post && post.post.spec && post.post.spec.title) || (post.spec && post.spec.title) || 'New Post';
-                titleSpan.textContent = '> ' + title;
+            return res.text();
+        }).then(function(text){
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            var item = xml.querySelector('item');
+            if(item){
+                var title = item.querySelector('title');
+                titleSpan.textContent = '> ' + (title ? title.textContent : 'New Post');
             } else {
                 titleSpan.textContent = '> latest: check blog →';
             }
