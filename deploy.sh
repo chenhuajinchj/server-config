@@ -2,6 +2,7 @@
 set -euo pipefail
 
 SERVER="root@107.172.86.147"
+SSH_PORT=2222
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Colors
@@ -39,8 +40,8 @@ deploy_project() {
             ;;
         homepage-v2)
             info "Deploying homepage-v2 (full project rsync)..."
-            ssh "$SERVER" "mkdir -p ${remote_dir}"
-            rsync -avz --delete \
+            ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${remote_dir}"
+            rsync -avz -e "ssh -p $SSH_PORT" --delete \
                 --exclude='node_modules' \
                 --exclude='.next' \
                 --exclude='.git' \
@@ -48,10 +49,10 @@ deploy_project() {
                 "${local_dir}/" "${SERVER}:${remote_dir}/"
             if [[ -f "${local_dir}/.env" ]]; then
                 info "Syncing .env → ${SERVER}:${remote_dir}/.env"
-                rsync -avz "${local_dir}/.env" "${SERVER}:${remote_dir}/.env"
+                rsync -avz -e "ssh -p $SSH_PORT" "${local_dir}/.env" "${SERVER}:${remote_dir}/.env"
             fi
             info "Building and starting containers for homepage-v2..."
-            ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --build"
+            ssh -p "$SSH_PORT" "$SERVER" "cd ${remote_dir} && docker compose up -d --build"
             success "Deploy complete: homepage-v2"
             return 0
             ;;
@@ -64,15 +65,15 @@ deploy_project() {
         blog)
             info "Building blog..."
             (cd "${local_dir}" && pnpm build)
-            ssh "$SERVER" "mkdir -p ${remote_dir}"
+            ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${remote_dir}"
             info "Syncing dist/ → ${SERVER}:${remote_dir}/dist/"
-            rsync -avz --delete "${local_dir}/dist/" "${SERVER}:${remote_dir}/dist/"
+            rsync -avz -e "ssh -p $SSH_PORT" --delete "${local_dir}/dist/" "${SERVER}:${remote_dir}/dist/"
             for f in docker-compose.yml nginx.conf; do
                 info "Syncing ${f} → ${SERVER}:${remote_dir}/${f}"
-                rsync -avz "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
+                rsync -avz -e "ssh -p $SSH_PORT" "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
             done
             info "Restarting containers for blog..."
-            ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
+            ssh -p "$SSH_PORT" "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
             success "Deploy complete: blog"
             return 0
             ;;
@@ -83,11 +84,11 @@ deploy_project() {
             if [[ -d "$custom_src" ]]; then
                 local npm_custom="/opt/npm/data/nginx/custom-pages/newapi"
                 local newapi_custom="${remote_dir}/custom-pages"
-                ssh "$SERVER" "mkdir -p ${newapi_custom} ${npm_custom}"
+                ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${newapi_custom} ${npm_custom}"
                 info "Syncing custom-pages → ${SERVER}:${newapi_custom}/"
-                rsync -avz "${custom_src}/" "${SERVER}:${newapi_custom}/"
+                rsync -avz -e "ssh -p $SSH_PORT" "${custom_src}/" "${SERVER}:${newapi_custom}/"
                 info "Syncing custom-pages → ${SERVER}:${npm_custom}/"
-                rsync -avz "${custom_src}/" "${SERVER}:${npm_custom}/"
+                rsync -avz -e "ssh -p $SSH_PORT" "${custom_src}/" "${SERVER}:${npm_custom}/"
             fi
             ;;
         blog-landing)
@@ -124,17 +125,17 @@ deploy_project() {
     fi
 
     # Ensure remote directory exists
-    ssh "$SERVER" "mkdir -p ${remote_dir}"
+    ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${remote_dir}"
 
     # Sync files
     for f in "${synced_files[@]}"; do
         info "Syncing ${f} → ${SERVER}:${remote_dir}/${f}"
-        rsync -avz "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
+        rsync -avz -e "ssh -p $SSH_PORT" "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
     done
 
     # Always restart to refresh bind mounts (rsync creates new inodes)
     info "Restarting containers for ${project}..."
-    ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
+    ssh -p "$SSH_PORT" "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
 
     success "Deploy complete: ${project}"
 }
