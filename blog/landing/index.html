@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小金 — 创作者 / 开发者</title>
+  <meta name="description" content="AI + 认知融合内容创作者，独立开发者。用技术理解世界，用内容连接人。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+    :root {
+      --bg: #F5F1EB;
+      --bg-elevated: #FFFDF9;
+      --text: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #A8A29E;
+      --accent: #C84B31;
+      --accent-hover: #A33D28;
+      --accent-light: rgba(200,75,49,0.08);
+      --border: #E7E0D6;
+      --border-strong: #D6CFC4;
+      --tag-bg: #EDE8E0;
+      --tag-text: #57534E;
+      --grain-opacity: 0.03;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121110;
+      --bg-elevated: #1A1816;
+      --text: #E7E0D4;
+      --text-secondary: #8C857C;
+      --text-tertiary: #5C5650;
+      --accent: #E8714F;
+      --accent-hover: #F28C6E;
+      --accent-light: rgba(232,113,79,0.1);
+      --border: #2A2623;
+      --border-strong: #3A3530;
+      --tag-bg: #242120;
+      --tag-text: #A09890;
+      --grain-opacity: 0.04;
+    }
+
+    html { scroll-behavior: smooth }
+
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      transition: background 0.4s ease, color 0.4s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Paper grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: var(--grain-opacity);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 0 28px }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+
+    .nav-logo::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-logo:hover::after { transform: scaleX(1) }
+
+    .nav-right { display: flex; align-items: center; gap: 28px }
+
+    .nav-right a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      position: relative;
+    }
+
+    .nav-right a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
+    }
+
+    .nav-right a:hover { color: var(--text) }
+    .nav-right a:hover::after { transform: scaleX(1) }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--text-secondary);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .theme-toggle svg { width: 18px; height: 18px }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 56px;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 24px;
+      height: 1.5px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 6vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      line-height: 1.75;
+    }
+
+    .social-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 28px;
+    }
+
+    .social-row a {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      transition: all 0.25s ease;
+    }
+
+    .social-row a:hover {
+      color: var(--accent);
+      background: var(--accent-light);
+      transform: translateY(-2px);
+    }
+
+    .social-row svg { width: 18px; height: 18px }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 8px 0;
+    }
+
+    /* ── Section ── */
+    section { padding: 40px 0 }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Featured Cards ── */
+    .featured-stack { display: flex; flex-direction: column; gap: 20px }
+
+    .featured-card {
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .featured-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0;
+      transition: height 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .featured-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px -8px rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] .featured-card:hover {
+      box-shadow: 0 12px 40px -8px rgba(0,0,0,0.3);
+    }
+
+    .featured-card:hover::before { height: 100% }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+    }
+
+    .card-arrow {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--accent-light);
+      color: var(--accent);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+    }
+
+    .featured-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .card-arrow svg { width: 14px; height: 14px }
+
+    .featured-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .featured-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .tags { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Article List ── */
+    .article-list { display: flex; flex-direction: column }
+
+    .article-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .article-item::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translateY(-50%) scale(0);
+      transition: transform 0.25s ease;
+    }
+
+    .article-item:hover::before { transform: translateY(-50%) scale(1) }
+    .article-item:last-child { border-bottom: none }
+
+    .article-item:hover { padding-left: 4px }
+
+    .article-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+      transition: color 0.2s;
+    }
+
+    .article-item:hover .article-title { color: var(--accent) }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .article-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    /* ── Projects ── */
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .project-card {
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px -8px rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] .project-card:hover {
+      box-shadow: 0 12px 40px -8px rgba(0,0,0,0.3);
+    }
+
+    .project-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 16px;
+    }
+
+    .project-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .project-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 40px;
+      padding: 40px 0 28px;
+    }
+
+    footer .container { border-top: 1px solid var(--border); padding-top: 32px }
+
+    .footer-grid {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    .footer-brand .nav-logo { font-size: 18px }
+
+    .footer-links-col { display: flex; gap: 48px }
+
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 3px 0;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--accent) }
+
+    .footer-bottom {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered delays for children */
+    .stagger > *:nth-child(1) { transition-delay: 0s }
+    .stagger > *:nth-child(2) { transition-delay: 0.08s }
+    .stagger > *:nth-child(3) { transition-delay: 0.16s }
+    .stagger > *:nth-child(4) { transition-delay: 0.24s }
+    .stagger > *:nth-child(5) { transition-delay: 0.32s }
+    .stagger > *:nth-child(6) { transition-delay: 0.40s }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .hero { padding: 56px 0 40px }
+      .hero h1 { font-size: 32px }
+      .project-grid { grid-template-columns: 1fr }
+      .nav-right { gap: 18px }
+      .nav-right a { font-size: 12px }
+      .article-item { flex-direction: column; gap: 6px }
+      .article-meta { align-self: flex-start }
+      .footer-grid { flex-direction: column; gap: 24px }
+      .footer-links-col { gap: 32px }
+      .featured-card { padding: 22px }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav>
+    <div class="container">
+      <a href="#" class="nav-logo">小金</a>
+      <div class="nav-right">
+        <a href="#writing">写作</a>
+        <a href="#projects">项目</a>
+        <a href="#about">关于</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+          <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="about">
+    <div class="container">
+      <div class="hero-eyebrow reveal">创作者 / 开发者 / 数字游民</div>
+      <h1 class="reveal">用技术理解世界，<br>用<em>内容</em>连接人</h1>
+      <p class="hero-desc reveal">我是小金，AI + 认知融合内容创作者，独立开发者。正在从程序员走向数字游民的路上。我相信第一性原理，相信好内容是认知资产。</p>
+      <div class="social-row reveal">
+        <a href="https://github.com/chenhuajin" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a href="https://x.com" target="_blank" rel="noopener" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12z"/></svg>
+        </a>
+        <a href="#" aria-label="公众号" title="公众号：小金的认知实验室">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.952-7.062-6.122zm-2.59 2.826c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Featured Writing -->
+  <section id="writing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">精选</span>
+        <span class="section-line"></span>
+        <span class="section-count">03 篇</span>
+      </div>
+      <div class="featured-stack stagger">
+        <a href="#" class="featured-card reveal">
+          <div class="card-top">
+            <span class="card-date">2026.03.20</span>
+            <span class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+          </div>
+          <h3>我如何用 Claude Code 构建完整的视频制作流水线</h3>
+          <p>从选题到发布，一套 AI Agent 驱动的视频工作流。48 个自定义 Skill，覆盖调研、写稿、配音、剪辑全流程。</p>
+          <div class="tags">
+            <span class="tag">AI</span>
+            <span class="tag">Claude Code</span>
+            <span class="tag">工作流</span>
+          </div>
+        </a>
+        <a href="#" class="featured-card reveal">
+          <div class="card-top">
+            <span class="card-date">2026.03.15</span>
+            <span class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+          </div>
+          <h3>从程序员到数字游民：我的路径规划</h3>
+          <p>为什么选择自媒体作为过渡路径，如何用 AI 加速内容生产，以及一个人做内容的真实体验。</p>
+          <div class="tags">
+            <span class="tag">数字游民</span>
+            <span class="tag">认知</span>
+          </div>
+        </a>
+        <a href="#" class="featured-card reveal">
+          <div class="card-top">
+            <span class="card-date">2026.03.08</span>
+            <span class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></span>
+          </div>
+          <h3>认知杠杆：用第一性原理重新理解内容创作</h3>
+          <p>大多数人在"做内容"，少数人在"构建认知资产"。这篇文章拆解两者的本质区别。</p>
+          <div class="tags">
+            <span class="tag">认知</span>
+            <span class="tag">第一性原理</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- All Articles -->
+  <section id="articles">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">文章</span>
+        <span class="section-line"></span>
+        <span class="section-count">06 篇</span>
+      </div>
+      <div class="article-list stagger">
+        <a href="#" class="article-item reveal">
+          <span class="article-title">Gemini + Opus 混合架构：字幕修正成本降低 90%</span>
+          <div class="article-meta">
+            <span class="tag">AI</span>
+            <span class="article-date">03.22</span>
+          </div>
+        </a>
+        <a href="#" class="article-item reveal">
+          <span class="article-title">达芬奇 Resolve 20 的 IntelliScript 到底能做什么</span>
+          <div class="article-meta">
+            <span class="tag">视频</span>
+            <span class="article-date">03.18</span>
+          </div>
+        </a>
+        <a href="#" class="article-item reveal">
+          <span class="article-title">短视频开头的 3 秒法则：为什么你的视频没人看完</span>
+          <div class="article-meta">
+            <span class="tag">内容</span>
+            <span class="article-date">03.12</span>
+          </div>
+        </a>
+        <a href="#" class="article-item reveal">
+          <span class="article-title">一个人做自媒体的工具栈 2026 版</span>
+          <div class="article-meta">
+            <span class="tag">工具</span>
+            <span class="article-date">03.05</span>
+          </div>
+        </a>
+        <a href="#" class="article-item reveal">
+          <span class="article-title">为什么我选择 Claude Code 而不是 Cursor</span>
+          <div class="article-meta">
+            <span class="tag">开发</span>
+            <span class="article-date">02.28</span>
+          </div>
+        </a>
+        <a href="#" class="article-item reveal">
+          <span class="article-title">知识原子化：我的 Obsidian 知识管理系统</span>
+          <div class="article-meta">
+            <span class="tag">认知</span>
+            <span class="article-date">02.20</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">项目</span>
+        <span class="section-line"></span>
+        <span class="section-count">04 个</span>
+      </div>
+      <div class="project-grid stagger">
+        <a href="https://github.com/chenhuajin/davinci-subtitle-fixer" target="_blank" rel="noopener" class="project-card reveal">
+          <div class="project-icon">🎬</div>
+          <h3>DaVinci Subtitle Fixer</h3>
+          <p>达芬奇字幕智能修正工具，Gemini + Opus 混合架构，成本降低 90%</p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">AI</span>
+          </div>
+        </a>
+        <a href="#" class="project-card reveal">
+          <div class="project-icon">🤖</div>
+          <h3>Video Agent Pipeline</h3>
+          <p>AI 驱动的视频全流程制作系统，48 个 Claude Code Skill 协同工作</p>
+          <div class="tags">
+            <span class="tag">Claude Code</span>
+            <span class="tag">Workflow</span>
+          </div>
+        </a>
+        <a href="https://xiaochens.com" target="_blank" rel="noopener" class="project-card reveal">
+          <div class="project-icon">🌐</div>
+          <h3>xiaochens.com</h3>
+          <p>个人门户站，复古终端风格，零依赖纯手写</p>
+          <div class="tags">
+            <span class="tag">HTML</span>
+            <span class="tag">CSS</span>
+          </div>
+        </a>
+        <a href="#" class="project-card reveal">
+          <div class="project-icon">🔑</div>
+          <h3>Antigravity Manager</h3>
+          <p>AI 多账号管理 + API 代理工具</p>
+          <div class="tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">API</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo">小金</span>
+          <p>AI + 认知融合创作者</p>
+        </div>
+        <div class="footer-links-col">
+          <div class="footer-col">
+            <h4>社交</h4>
+            <a href="https://github.com/chenhuajin" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://x.com" target="_blank" rel="noopener">X / Twitter</a>
+            <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
+          </div>
+          <div class="footer-col">
+            <h4>链接</h4>
+            <a href="https://xiaochens.com" target="_blank" rel="noopener">门户站</a>
+            <a href="https://blog.xiaochens.com" target="_blank" rel="noopener">博客</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2026 小金. Crafted with intention.</div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Theme ──
+    const toggle = document.getElementById('themeToggle');
+    const sun = document.getElementById('sunIcon');
+    const moon = document.getElementById('moonIcon');
+    const html = document.documentElement;
+
+    function setTheme(t) {
+      html.setAttribute('data-theme', t);
+      sun.style.display = t === 'dark' ? 'none' : 'block';
+      moon.style.display = t === 'dark' ? 'block' : 'none';
+      localStorage.setItem('theme', t);
+    }
+
+    const saved = localStorage.getItem('theme');
+    if (saved) setTheme(saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+
+    toggle.addEventListener('click', () => {
+      setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // ── Scroll Reveal ──
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Smooth scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+  </script>
+</body>
+</html>

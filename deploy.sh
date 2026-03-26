@@ -63,19 +63,7 @@ deploy_project() {
             files=(config.yaml)
             ;;
         blog)
-            info "Building blog..."
-            (cd "${local_dir}" && pnpm build)
-            ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${remote_dir}"
-            info "Syncing dist/ → ${SERVER}:${remote_dir}/dist/"
-            rsync -avz -e "ssh -p $SSH_PORT" --delete "${local_dir}/dist/" "${SERVER}:${remote_dir}/dist/"
-            for f in docker-compose.yml nginx.conf; do
-                info "Syncing ${f} → ${SERVER}:${remote_dir}/${f}"
-                rsync -avz -e "ssh -p $SSH_PORT" "${local_dir}/${f}" "${SERVER}:${remote_dir}/${f}"
-            done
-            info "Restarting containers for blog..."
-            ssh -p "$SSH_PORT" "$SERVER" "cd ${remote_dir} && docker compose up -d --force-recreate"
-            success "Deploy complete: blog"
-            return 0
+            files=(landing/index.html landing/robots.txt docker-compose.yml nginx.conf)
             ;;
         newapi)
             files=(docker-compose.yml)
