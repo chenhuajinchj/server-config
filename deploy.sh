@@ -14,7 +14,7 @@ info()    { echo -e "${YELLOW}[INFO]${NC} $*"; }
 success() { echo -e "${GREEN}[OK]${NC} $*"; }
 error()   { echo -e "${RED}[ERROR]${NC} $*"; }
 
-ALL_PROJECTS=(homepage halo lsky newapi aiclient dujiaoka npm cliproxyapi blog)
+ALL_PROJECTS=(homepage homepage-v2 halo lsky newapi aiclient dujiaoka npm cliproxyapi blog blog-landing)
 
 usage() {
     echo "Usage: $0 <project|all>"
@@ -37,6 +37,24 @@ deploy_project() {
         homepage)
             files=(index.html avatar.png shop-card.png robots.txt sitemap.xml google36cc04761872de85.html docker-compose.yml)
             ;;
+        homepage-v2)
+            info "Deploying homepage-v2 (full project rsync)..."
+            ssh "$SERVER" "mkdir -p ${remote_dir}"
+            rsync -avz --delete \
+                --exclude='node_modules' \
+                --exclude='.next' \
+                --exclude='.git' \
+                --exclude='.env' \
+                "${local_dir}/" "${SERVER}:${remote_dir}/"
+            if [[ -f "${local_dir}/.env" ]]; then
+                info "Syncing .env → ${SERVER}:${remote_dir}/.env"
+                rsync -avz "${local_dir}/.env" "${SERVER}:${remote_dir}/.env"
+            fi
+            info "Building and starting containers for homepage-v2..."
+            ssh "$SERVER" "cd ${remote_dir} && docker compose up -d --build"
+            success "Deploy complete: homepage-v2"
+            return 0
+            ;;
         dujiaoka)
             files=(docker-compose.yml .env pixel-theme.css install.lock shop-logo.png)
             ;;
@@ -58,7 +76,24 @@ deploy_project() {
             success "Deploy complete: blog"
             return 0
             ;;
-        halo|lsky|newapi|aiclient|npm)
+        newapi)
+            files=(docker-compose.yml)
+            # Also sync custom-pages to both newapi and NPM paths
+            local custom_src="${local_dir}/custom-pages"
+            if [[ -d "$custom_src" ]]; then
+                local npm_custom="/opt/npm/data/nginx/custom-pages/newapi"
+                local newapi_custom="${remote_dir}/custom-pages"
+                ssh "$SERVER" "mkdir -p ${newapi_custom} ${npm_custom}"
+                info "Syncing custom-pages → ${SERVER}:${newapi_custom}/"
+                rsync -avz "${custom_src}/" "${SERVER}:${newapi_custom}/"
+                info "Syncing custom-pages → ${SERVER}:${npm_custom}/"
+                rsync -avz "${custom_src}/" "${SERVER}:${npm_custom}/"
+            fi
+            ;;
+        blog-landing)
+            files=(index.html docker-compose.yml robots.txt)
+            ;;
+        halo|lsky|aiclient|npm)
             files=(docker-compose.yml)
             ;;
         *)
