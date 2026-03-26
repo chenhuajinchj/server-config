@@ -1,0 +1,10 @@
+services:
+  blog-landing:
+    image: nginx:alpine
+    container_name: blog-landing
+    restart: unless-stopped
+    ports:
+      - "8091:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./robots.txt:/usr/share/nginx/html/robots.txt:ro
