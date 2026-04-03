@@ -25,7 +25,7 @@
     <meta name="twitter:image" content="https://www.xiaochens.com/avatar.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -39,49 +39,70 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{
-            --bg:#0F0F13;--green:#00ff88;--pink:#ff2d78;--yellow:#f0d040;
-            --card-bg:#16161d;--border:#2a2a35;--text:#b0b0c0;--text-dim:#555568;
-            --gap:4px;
+            --bg:#1a1b26;--green:#9ece6a;--pink:#f7768e;--yellow:#e0af68;
+            --card-bg:#1f2335;--border:#292e42;--text:#a9b1d6;--text-dim:#565f89;
+            --gap:8px;
         }
         html{scroll-behavior:smooth}
         body{
-            font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);
-            overflow-x:hidden;min-height:100vh;
+            font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+            overflow-x:hidden;min-height:100vh;padding-bottom:50px;
             cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 16 16'%3E%3Crect x='5' y='0' width='6' height='3' fill='%2300ff88'/%3E%3Crect x='3' y='3' width='10' height='2' fill='%2300ff88'/%3E%3Crect x='1' y='5' width='14' height='3' fill='%2300ff88'/%3E%3Crect x='1' y='8' width='5' height='2' fill='%2300ff88'/%3E%3Crect x='7' y='8' width='3' height='4' fill='%2300ff88'/%3E%3Crect x='11' y='8' width='4' height='2' fill='%2300ff88'/%3E%3C/svg%3E") 8 4, auto;
         }
-        /* CRT Scanlines */
+        /* CRT Scanlines - subtle */
         body::after{
             content:"";position:fixed;top:0;left:0;width:100%;height:100%;
-            background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+            background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.03) 3px,rgba(0,0,0,0.03) 6px);
             pointer-events:none;z-index:9999;
         }
         /* Ripple canvas */
-        #ripple-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;pointer-events:none;opacity:0.12}
+        #ripple-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;pointer-events:none;opacity:0.06}
+
+        /* ===== TOP BAR ===== */
+        .top-bar{
+            position:sticky;top:0;z-index:100;
+            background:var(--bg);border-bottom:1px solid var(--border);
+        }
+        .top-bar-wrap{
+            display:flex;align-items:center;gap:16px;
+            padding:10px 48px;max-width:1100px;margin:0 auto;
+            font-size:11px;color:var(--text-dim);
+        }
+        .top-bar-inner{
+            display:flex;align-items:center;gap:16px;width:100%;
+        }
+        .top-status{display:flex;align-items:center;gap:6px;color:var(--green);letter-spacing:2px;text-transform:uppercase;font-size:10px}
+        .top-status .status-dot{
+            width:6px;height:6px;background:var(--green);border-radius:50%;
+            box-shadow:0 0 4px var(--green);animation:pulse-dot 2s ease-in-out infinite;
+        }
+        .badge{
+            display:inline-flex;align-items:center;gap:6px;
+            padding:4px 12px;border-radius:999px;
+            background:var(--card-bg);border:1px solid var(--border);
+            font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);
+            letter-spacing:0.5px;
+        }
+        .badge .badge-label{color:var(--text-dim);opacity:0.6}
+        .badge .badge-val{color:var(--text)}
+        .top-spacer{flex:1}
 
         /* ===== HERO ===== */
         .hero{
             display:flex;align-items:center;justify-content:space-between;
-            padding:80px 48px 60px;max-width:1100px;margin:0 auto;min-height:50vh;
+            padding:40px 48px 60px;max-width:1100px;margin:0 auto;min-height:45vh;
         }
         .hero-left{flex:1}
         .hero-right{flex:0 0 auto;margin-left:48px}
-        .status{
-            display:inline-flex;align-items:center;gap:8px;
-            font-size:11px;letter-spacing:3px;color:var(--green);
-            margin-bottom:24px;text-transform:uppercase;
-        }
-        .status-dot{
-            width:8px;height:8px;background:var(--green);border-radius:50%;
-            box-shadow:0 0 8px var(--green),0 0 20px rgba(0,255,136,0.3);
-            animation:pulse-dot 2s ease-in-out infinite;
-        }
         @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
         .hero-title{
             font-family:'Anton',sans-serif;font-size:clamp(48px,8vw,80px);
-            color:#fff;line-height:0.95;letter-spacing:2px;margin-bottom:16px;
+            color:#c0caf5;line-height:0.95;letter-spacing:2px;margin-bottom:20px;
         }
+
         .terminal-lines{
-            font-size:12px;color:var(--text-dim);line-height:2;
+            font-family:'JetBrains Mono',monospace;
+            font-size:12px;color:var(--text-dim);line-height:2.2;
             border-left:2px solid var(--green);padding-left:16px;
         }
         .terminal-lines .line{opacity:0;transform:translateX(-8px);white-space:nowrap;overflow:hidden}
@@ -118,13 +139,13 @@
         .bento-section{padding:0 48px 60px;max-width:1100px;margin:0 auto}
         .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
         .bento-card{
-            background:var(--card-bg);border:1px solid var(--border);
-            padding:28px 24px;position:relative;overflow:hidden;
-            text-decoration:none;color:var(--text);transition:border-color 0.2s;
+            background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
+            padding:36px 32px;position:relative;overflow:hidden;
+            text-decoration:none;color:var(--text);transition:border-color 0.2s,box-shadow 0.3s;
             display:flex;flex-direction:column;justify-content:space-between;min-height:180px;
         }
         .bento-card.wide{grid-column:span 2}
-        .bento-card:hover{border-color:var(--pink);z-index:2}
+        .bento-card:hover{border-color:var(--pink);z-index:2;box-shadow:0 0 20px rgba(247,118,142,0.08),0 0 40px rgba(247,118,142,0.04)}
         .bento-card:hover .card-label{animation:glitch-text 0.3s steps(2) forwards}
         @keyframes glitch-text{
             0%{text-shadow:2px 0 var(--pink),-2px 0 var(--green)}
@@ -135,16 +156,16 @@
         .card-top{display:flex;align-items:center;gap:10px;margin-bottom:auto}
         .card-icon{font-size:28px}
         .card-label{
-            font-family:'Anton',sans-serif;font-size:20px;color:#fff;
+            font-family:'Anton',sans-serif;font-size:20px;color:#c0caf5;
             letter-spacing:1px;text-transform:uppercase;
         }
-        .card-desc{font-size:11px;color:var(--text-dim);margin:12px 0;line-height:1.7}
-        .card-url{font-size:10px;color:var(--text-dim);transition:color 0.2s}
+        .card-desc{font-size:11px;color:var(--text-dim);margin:14px 0;line-height:1.8;letter-spacing:0.3px}
+        .card-url{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);transition:color 0.2s}
         .bento-card:hover .card-url{color:var(--green)}
 
         /* Blog latest */
         .blog-latest{
-            margin-top:8px;padding:10px 12px;background:rgba(0,255,136,0.04);
+            margin-top:8px;padding:10px 12px;background:rgba(158,206,106,0.04);
             border-left:2px solid var(--green);font-size:10px;color:var(--text-dim);line-height:1.6;
         }
         .blog-latest .post-title{color:var(--green);font-weight:700}
@@ -189,24 +210,55 @@
         .footer-left{display:flex;align-items:center;gap:4px}
         .footer-coin{cursor:pointer;font-size:14px;transition:transform 0.15s}
         .footer-coin:hover{transform:scale(1.2)}
-        .footer-right{text-align:right;letter-spacing:1px}
+        .footer-right{font-family:'JetBrains Mono',monospace;text-align:right;letter-spacing:1px}
+
+        /* ===== COMMAND BAR ===== */
+        .cmd-bar{
+            position:fixed;bottom:0;left:0;width:100%;z-index:100;
+            background:var(--card-bg);border-top:1px solid var(--border);
+            padding:10px 48px;
+        }
+        .cmd-bar-inner{
+            display:flex;align-items:center;gap:8px;
+            max-width:1100px;margin:0 auto;
+            font-family:'JetBrains Mono',monospace;font-size:13px;
+        }
+        .cmd-prefix{color:var(--text-dim);white-space:nowrap}
+        .cmd-slash{color:var(--green)}
+        .cmd-input{
+            flex:1;background:transparent;border:none;outline:none;
+            color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;
+            caret-color:var(--green);
+        }
+        .cmd-input::placeholder{color:var(--text-dim);opacity:0.5}
+        .cmd-hint{color:var(--text-dim);font-size:11px;opacity:0.5;white-space:nowrap}
+        .cmd-bar.error{animation:cmd-shake 0.3s ease}
+        @keyframes cmd-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
         /* ===== RESPONSIVE ===== */
         @media(max-width:768px){
-            .hero{flex-direction:column;text-align:center;padding:60px 20px 40px}
+            .top-bar-wrap{padding:8px 16px}
+            .top-bar-inner{flex-wrap:wrap;gap:8px}
+            .badge{padding:3px 8px;font-size:9px}
+            .hero{flex-direction:column;text-align:center;padding:30px 20px 40px}
             .hero-left{order:2}
             .hero-right{order:1;margin:0 0 32px 0}
             .terminal-lines{border-left:none;padding-left:0;text-align:left}
             .bento-section{padding:0 12px 40px}
             .bento{grid-template-columns:1fr;gap:var(--gap)}
             .bento-card.wide{grid-column:span 1}
-            .bento-card{min-height:140px;padding:20px 16px}
+            .bento-card{min-height:140px;padding:20px 16px;border-radius:6px}
             .card-label{font-size:16px}
             .footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
             .footer-right{text-align:center}
+            .cmd-bar{padding:8px 16px}
+            .cmd-prefix{font-size:11px}
+            .cmd-input{font-size:12px}
         }
         @media(min-width:769px) and (max-width:1024px){
-            .hero{padding:60px 32px 40px}
+            .top-bar-wrap{padding:8px 32px}
+            .cmd-bar{padding:10px 32px}
+            .hero{padding:30px 32px 40px}
             .bento-section{padding:0 32px 40px}
             .bento{grid-template-columns:repeat(2,1fr)}
             .bento-card.wide{grid-column:span 2}
@@ -222,16 +274,27 @@
         <div class="white-line" id="crt-line"></div>
     </div>
 
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-bar-wrap">
+            <div class="top-bar-inner">
+                <div class="top-status"><span class="status-dot"></span> ONLINE</div>
+                <div class="badge"><span class="badge-label">NODE</span><span class="badge-val">LAX-01</span></div>
+                <div class="badge"><span class="badge-label">SYS.LOAD</span><span class="badge-val" id="load-badge">0.00s</span></div>
+                <div class="badge"><span class="badge-label">IP_PROXY</span><span class="badge-val">ACTIVE</span></div>
+            </div>
+        </div>
+    </div>
+
     <!-- HERO -->
     <header class="hero">
         <div class="hero-left">
-            <div class="status"><span class="status-dot"></span> SERVER ONLINE</div>
             <h1 class="hero-title">陈与小金</h1>
             <div class="terminal-lines" id="terminal">
-                <div class="line"><span class="prompt">$ </span>whoami<br><span class="val">digital_workshop</span></div>
-                <div class="line"><span class="prompt">$ </span>cat services.log<br><span class="val">5 nodes operational ✓</span></div>
-                <div class="line"><span class="prompt">$ </span>uptime<br><span class="val">365d 24h — 99.9% SLA</span></div>
-                <div class="line"><span class="prompt">$ </span><span class="cursor-blink">█</span></div>
+                <div class="line"><span class="prompt">~ </span>curl status.xiaochens.com<br><span class="val">{"services":5,"status":"operational"}</span></div>
+                <div class="line"><span class="prompt">~ </span>echo $STACK<br><span class="val">halo · lsky · newapi · nginx · dujiaoka</span></div>
+                <div class="line"><span class="prompt">~ </span>cat /etc/motd<br><span class="val">Welcome to 小金的数字工坊 🔧</span></div>
+                <div class="line"><span class="prompt">~ </span><span class="cursor-blink">█</span></div>
             </div>
         </div>
         <div class="hero-right">
@@ -292,9 +355,18 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <div class="footer-left">© 2026 陈与小金 <span class="footer-coin" id="footer-coin">🪙</span> BUILT WITH PIXELS &amp; PASSION</div>
-        <div class="footer-right">SYS.LOAD: <span id="load-time">0.00</span>s | IP_PROXY: ACTIVE | NODE: LAX-01</div>
+        <div class="footer-left">© 2026 陈与小金 <span class="footer-coin" id="footer-coin">🪙</span></div>
+        <div class="footer-right">BUILT WITH PIXELS &amp; PASSION</div>
     </footer>
+
+    <!-- COMMAND BAR -->
+    <div class="cmd-bar" id="cmd-bar">
+        <div class="cmd-bar-inner">
+            <span class="cmd-prefix">xiaochens.com <span class="cmd-slash">/</span></span>
+            <input class="cmd-input" id="cmd-input" type="text" placeholder="blog · ai · img · api · shop" autocomplete="off" spellcheck="false">
+            <span class="cmd-hint">⏎ Enter</span>
+        </div>
+    </div>
 
     <script>
     /* ===== PERFORMANCE TIMER ===== */
@@ -313,8 +385,8 @@
             RX.clearRect(0, 0, RC.width, RC.height);
             if(mouseX >= 0){
                 var grad = RX.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 200);
-                grad.addColorStop(0, 'rgba(0,255,136,0.06)');
-                grad.addColorStop(0.5, 'rgba(0,255,136,0.02)');
+                grad.addColorStop(0, 'rgba(158,206,106,0.06)');
+                grad.addColorStop(0.5, 'rgba(158,206,106,0.02)');
                 grad.addColorStop(1, 'transparent');
                 RX.fillStyle = grad;
                 RX.fillRect(mouseX - 200, mouseY - 200, 400, 400);
@@ -322,7 +394,7 @@
                     var y = mouseY + i;
                     var dist = Math.abs(i) / 80;
                     var alpha = 0.08 * (1 - dist);
-                    RX.fillStyle = 'rgba(0,255,136,' + alpha + ')';
+                    RX.fillStyle = 'rgba(158,206,106,' + alpha + ')';
                     RX.fillRect(0, y, RC.width, 1);
                 }
             }
@@ -330,6 +402,7 @@
         }
         drawRipple();
     })();
+
 
     /* ===== TERMINAL TYPING ===== */
     (function(){
@@ -446,41 +519,76 @@
         }
     });
 
-    /* ===== CRT SHUTDOWN TRANSITION ===== */
+    /* ===== CRT SHUTDOWN TRANSITION (global) ===== */
+    var crtOverlay = document.getElementById('crt-overlay');
+    var crtBlack = document.getElementById('crt-black');
+    var crtLine = document.getElementById('crt-line');
+
+    function crtNavigate(url){
+        beep(200, 50, 0.3, 'sawtooth', 0.04);
+        crtOverlay.classList.add('active');
+        crtBlack.style.transition = 'none';
+        crtBlack.style.opacity = '1';
+        document.body.style.transition = 'transform 0.3s ease-in';
+        document.body.style.transform = 'scaleY(0.01)';
+        document.body.style.transformOrigin = 'center center';
+
+        setTimeout(function(){
+            crtLine.style.transition = 'transform 0.15s ease-out, opacity 0.15s';
+            crtLine.style.transform = 'scaleX(1)';
+            crtLine.style.opacity = '1';
+        }, 300);
+
+        setTimeout(function(){
+            crtLine.style.opacity = '0';
+        }, 500);
+
+        setTimeout(function(){
+            window.location.href = url;
+        }, 650);
+    }
+
+    document.querySelectorAll('.bento-card').forEach(function(card){
+        card.addEventListener('click', function(e){
+            e.preventDefault();
+            crtNavigate(card.href);
+        });
+    });
+
+    /* ===== COMMAND BAR ===== */
     (function(){
-        var crtOverlay = document.getElementById('crt-overlay');
-        var crtBlack = document.getElementById('crt-black');
-        var crtLine = document.getElementById('crt-line');
+        var cmdRoutes = {
+            'blog': 'https://blog.xiaochens.com',
+            'ai': 'https://ai.xiaochens.com',
+            'img': 'https://img.xiaochens.com',
+            'api': 'https://api.xiaochens.com',
+            'shop': 'https://shop.xiaochens.com'
+        };
+        var cmdInput = document.getElementById('cmd-input');
+        var cmdBar = document.getElementById('cmd-bar');
 
-        function crtNavigate(url){
-            beep(200, 50, 0.3, 'sawtooth', 0.04);
-            crtOverlay.classList.add('active');
-            crtBlack.style.transition = 'none';
-            crtBlack.style.opacity = '1';
-            document.body.style.transition = 'transform 0.3s ease-in';
-            document.body.style.transform = 'scaleY(0.01)';
-            document.body.style.transformOrigin = 'center center';
+        cmdInput.addEventListener('keydown', function(e){
+            if(e.key === 'Enter'){
+                var val = cmdInput.value.trim().toLowerCase();
+                if(cmdRoutes[val]){
+                    crtNavigate(cmdRoutes[val]);
+                } else {
+                    beep(150, 80, 0.15, 'square', 0.05);
+                    cmdBar.classList.add('error');
+                    cmdInput.value = '';
+                    cmdInput.placeholder = 'unknown command — try blog · ai · img · api · shop';
+                    setTimeout(function(){ cmdBar.classList.remove('error'); }, 300);
+                    setTimeout(function(){ cmdInput.placeholder = 'blog · ai · img · api · shop'; }, 2000);
+                }
+            }
+        });
 
-            setTimeout(function(){
-                crtLine.style.transition = 'transform 0.15s ease-out, opacity 0.15s';
-                crtLine.style.transform = 'scaleX(1)';
-                crtLine.style.opacity = '1';
-            }, 300);
-
-            setTimeout(function(){
-                crtLine.style.opacity = '0';
-            }, 500);
-
-            setTimeout(function(){
-                window.location.href = url;
-            }, 650);
-        }
-
-        document.querySelectorAll('.bento-card').forEach(function(card){
-            card.addEventListener('click', function(e){
+        // Global "/" key to focus command bar
+        document.addEventListener('keydown', function(e){
+            if(e.key === '/' && document.activeElement !== cmdInput){
                 e.preventDefault();
-                crtNavigate(card.href);
-            });
+                cmdInput.focus();
+            }
         });
     })();
 
@@ -508,7 +616,8 @@
     /* ===== LOAD TIME ===== */
     window.addEventListener('load', function(){
         var loadTime = ((performance.now() - _t0) / 1000).toFixed(2);
-        document.getElementById('load-time').textContent = loadTime;
+        var lb = document.getElementById('load-badge');
+        if(lb) lb.textContent = loadTime + 's';
     });
     </script>
 </body>

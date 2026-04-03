@@ -64,6 +64,14 @@ deploy_project() {
             ;;
         blog)
             files=(landing/index.html landing/robots.txt docker-compose.yml nginx.conf)
+            # Also sync slides directory
+            local slides_src="${local_dir}/landing/slides"
+            if [[ -d "$slides_src" ]]; then
+                local slides_dest="${remote_dir}/landing/slides"
+                ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${slides_dest}"
+                info "Syncing slides → ${SERVER}:${slides_dest}/"
+                rsync -avz -e "ssh -p $SSH_PORT" --delete "${slides_src}/" "${SERVER}:${slides_dest}/"
+            fi
             ;;
         newapi)
             files=(docker-compose.yml)

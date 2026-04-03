@@ -1,0 +1,155 @@
+---
+// CompassClock.astro - Decorative compass clock (inspired by NKX design)
+const cx = 400;
+const cy = 400;
+const hourNumR = 255;
+const minTickOuterR = 378;
+const minTickInnerR = 366;
+const fiveMinTickInnerR = 348;
+const fiveMinNumR = 330;
+const outerCircleR = 385;
+
+const hourPositions = Array.from({ length: 12 }, (_, i) => {
+  const h = i + 1;
+  const rad = ((h * 30) - 90) * Math.PI / 180;
+  return { num: h, x: cx + hourNumR * Math.cos(rad), y: cy + hourNumR * Math.sin(rad) };
+});
+
+const tickPositions = Array.from({ length: 60 }, (_, i) => {
+  const rad = ((i * 6) - 90) * Math.PI / 180;
+  const is5 = i % 5 === 0;
+  return {
+    x1: cx + minTickOuterR * Math.cos(rad),
+    y1: cy + minTickOuterR * Math.sin(rad),
+    x2: cx + (is5 ? fiveMinTickInnerR : minTickInnerR) * Math.cos(rad),
+    y2: cy + (is5 ? fiveMinTickInnerR : minTickInnerR) * Math.sin(rad),
+    is5,
+  };
+});
+
+const fiveMinPositions = Array.from({ length: 12 }, (_, i) => {
+  const m = (i + 1) * 5;
+  const rad = ((m * 6) - 90) * Math.PI / 180;
+  return { num: m, x: cx + fiveMinNumR * Math.cos(rad), y: cy + fiveMinNumR * Math.sin(rad) };
+});
+---
+
+<div class="compass-clock" aria-hidden="true">
+  <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <circle cx={cx} cy={cy} r={outerCircleR} fill="none" class="cc-ring" />
+    {tickPositions.map(t => (
+      <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+        class={t.is5 ? 'cc-tick cc-tick5' : 'cc-tick'} />
+    ))}
+    {fiveMinPositions.map(n => (
+      <text x={n.x} y={n.y} text-anchor="middle" dominant-baseline="central"
+        class="cc-min">{n.num}</text>
+    ))}
+    {hourPositions.map(n => (
+      <text x={n.x} y={n.y} text-anchor="middle" dominant-baseline="central"
+        class="cc-hour">{n.num}</text>
+    ))}
+    <text x={cx} y={cy - 85} text-anchor="middle" dominant-baseline="central"
+      class="cc-utc">UTC+8</text>
+    <line id="compass-hour-hand" x1={cx} y1={cy + 40} x2={cx} y2={cy - 160}
+      class="cc-hand cc-hand-h" />
+    <line id="compass-min-hand" x1={cx} y1={cy + 55} x2={cx} y2={cy - 240}
+      class="cc-hand cc-hand-m" />
+    <circle cx={cx} cy={cy} r="5" class="cc-dot" />
+  </svg>
+</div>
+
+<style>
+  .compass-clock {
+    position: fixed;
+    width: 110vh;
+    height: 110vh;
+    top: -10vh;
+    right: -40vh;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .compass-clock svg {
+    width: 100%;
+    height: 100%;
+  }
+  .cc-ring {
+    stroke: var(--c-text, #1a1a1a);
+    stroke-width: 1;
+    opacity: 0.06;
+  }
+  .cc-tick {
+    stroke: var(--c-text, #1a1a1a);
+    stroke-width: 1;
+    opacity: 0.08;
+  }
+  .cc-tick5 {
+    stroke-width: 1.5;
+    opacity: 0.14;
+  }
+  .cc-hour {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 100px;
+    font-weight: 300;
+    fill: var(--c-text, #1a1a1a);
+    opacity: 0.1;
+  }
+  .cc-min {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    fill: var(--c-text, #1a1a1a);
+    opacity: 0.13;
+  }
+  .cc-utc {
+    font-family: var(--font-body, sans-serif);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    fill: var(--c-text, #1a1a1a);
+    opacity: 0.16;
+  }
+  .cc-hand {
+    stroke: var(--c-text, #1a1a1a);
+    stroke-linecap: round;
+  }
+  .cc-hand-h {
+    stroke-width: 3;
+    opacity: 0.13;
+  }
+  .cc-hand-m {
+    stroke-width: 2;
+    opacity: 0.10;
+  }
+  .cc-dot {
+    fill: var(--c-text, #1a1a1a);
+    opacity: 0.13;
+  }
+  @media (max-width: 1100px) {
+    .compass-clock { display: none; }
+  }
+</style>
+
+<script>
+  let _ccInterval: ReturnType<typeof setInterval> | null = null;
+
+  function initCompassClock() {
+    if (_ccInterval) { clearInterval(_ccInterval); _ccInterval = null; }
+    const hh = document.getElementById('compass-hour-hand');
+    const mh = document.getElementById('compass-min-hand');
+    if (!hh || !mh) return;
+
+    function tick() {
+      const now = new Date();
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      const t = new Date(utc + 8 * 3600000);
+      const h = t.getHours(), m = t.getMinutes(), s = t.getSeconds();
+      hh.setAttribute('transform', `rotate(${(h % 12) * 30 + m * 0.5} 400 400)`);
+      mh.setAttribute('transform', `rotate(${m * 6 + s * 0.1} 400 400)`);
+    }
+
+    tick();
+    _ccInterval = setInterval(tick, 1000);
+  }
+
+  document.addEventListener('astro:page-load', initCompassClock);
+  initCompassClock();
+</script>

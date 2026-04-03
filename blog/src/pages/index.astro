@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import CompassClock from '../components/CompassClock.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
@@ -9,6 +10,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
 ---
 
 <BaseLayout title="小陈的博客" description="技术笔记、项目经验和一些有趣的想法">
+  <CompassClock />
   <section class="hero">
     <h1>你好，我是小陈 👋</h1>
     <p>这里记录技术笔记、项目经验和一些有趣的想法。</p>
@@ -32,6 +34,8 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
 <style>
   .hero {
     padding: 2rem 0 3rem;
+    position: relative;
+    z-index: 1;
   }
   .hero h1 {
     font-size: 2rem;
@@ -46,6 +50,10 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+  }
+  .recent-posts {
+    position: relative;
+    z-index: 1;
   }
   .view-all {
     display: inline-block;

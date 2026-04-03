@@ -24,3 +24,10 @@ auth/
 
 # Dependencies
 node_modules/
+
+# Build output
+blog/.astro/
+blog/dist/
+
+# IDE / tool config
+.serena/

@@ -89,6 +89,7 @@
             border: none; cursor: pointer;
             transition: background 0.2s, transform 0.1s;
         }
+        .navbar-links a.btn-console { color: #fff; }
         .btn-console:hover { background: var(--primary-hover); }
         .btn-console:active { transform: scale(0.97); }
 
@@ -282,6 +283,8 @@
             border-radius: var(--radius);
             padding: 24px;
             overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
             font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
             line-height: 1.8;
@@ -385,6 +388,117 @@
             z-index: 1;
         }
 
+        /* === Docs Tabs === */
+        .docs-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 36px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .docs-tab-btn {
+            padding: 12px 24px;
+            font-size: 14px; font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-secondary);
+            background: none; border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+        .docs-tab-btn:hover { color: var(--text); }
+        .docs-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .docs-tab-content { display: none; }
+        .docs-tab-content.active { display: block; }
+        .docs-tab-content .tab-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .docs-tab-content .tab-header h3 {
+            font-size: 20px; font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .docs-tab-content .tab-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .doc-step {
+            margin-bottom: 24px;
+        }
+        .doc-step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 13px; font-weight: 700;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .doc-step-title {
+            font-size: 15px; font-weight: 600;
+            color: var(--text);
+            vertical-align: middle;
+        }
+        .doc-step-body {
+            margin-top: 10px;
+            padding-left: 38px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .doc-step-body a {
+            color: var(--primary);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .doc-step-body a:hover { color: var(--primary-hover); }
+        .doc-step-body .code-block {
+            margin-top: 8px;
+        }
+        .doc-tip {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .btn-ai-copy {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin: 28px auto 0;
+            padding: 10px 22px;
+            background: transparent;
+            color: var(--primary);
+            font-size: 14px; font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .btn-ai-copy:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--primary);
+        }
+        .btn-ai-copy.copied {
+            color: var(--success);
+            border-color: rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .btn-ai-copy svg { flex-shrink: 0; }
+        .docs-tab-footer {
+            text-align: center;
+        }
+
         /* === Responsive === */
         @media (max-width: 768px) {
             .navbar-links { display: none; }
@@ -397,6 +511,9 @@
             .section { padding: 60px 20px; }
             .url-pill { flex-direction: row; }
             .url-pill code { font-size: 12px; }
+            .docs-tabs { justify-content: flex-start; }
+            .docs-tab-btn { padding: 12px 16px; font-size: 13px; }
+            .doc-step-body { padding-left: 0; }
         }
         @media (max-width: 480px) {
             .hero h1 { font-size: 28px; }
@@ -411,7 +528,7 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-logo">XC <span>API</span></div>
         <div class="navbar-links">
-            <a href="https://docs.newapi.pro" target="_blank">文档</a>
+            <a href="#docs">文档</a>
             <a href="/pricing">定价</a>
             <a href="/panel" class="btn-console">进入控制台 →</a>
         </div>
@@ -420,7 +537,7 @@
         </button>
     </nav>
     <div class="mobile-menu" id="mobileMenu">
-        <a href="https://docs.newapi.pro" target="_blank">文档</a>
+        <a href="#docs">文档</a>
         <a href="/pricing">定价</a>
         <a href="/panel" class="btn-console" style="text-align:center;">进入控制台 →</a>
     </div>
@@ -431,7 +548,7 @@
         <p class="subtitle fade-up fade-up-d1">Claude 模型 API 中继服务</p>
         <div class="hero-buttons fade-up fade-up-d2">
             <a href="/panel" class="btn-primary">进入控制台 →</a>
-            <a href="https://docs.newapi.pro" target="_blank" class="btn-outline">查看文档</a>
+            <a href="#docs" class="btn-outline">查看文档</a>
         </div>
         <div class="fade-up fade-up-d3">
             <div class="url-pill">
@@ -470,20 +587,204 @@
         </div>
     </section>
 
-    <!-- Quick Start -->
-    <section class="section">
-        <h2 class="section-title fade-up">3 行开始使用</h2>
-        <p class="section-desc fade-up fade-up-d1">配置环境变量，即可通过 Claude Code 直接使用</p>
-        <div class="quickstart fade-up fade-up-d2">
-            <div class="code-block" id="codeBlock">
-                <button class="copy-btn" onclick="copyCode(this)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                    复制
-                </button>
-<span class="kw">export</span> <span class="cmd">ANTHROPIC_BASE_URL</span>=<span class="str">https://api.xiaochens.com</span>
-<span class="kw">export</span> <span class="cmd">ANTHROPIC_AUTH_TOKEN</span>=<span class="str">sk-xxxxx</span>
-<span class="cmd">claude</span></div>
-            <p class="quickstart-footer">完整文档请查看 <a href="https://docs.newapi.pro" target="_blank">docs.newapi.pro →</a></p>
+    <!-- Docs -->
+    <section class="section" id="docs">
+        <h2 class="section-title fade-up">使用文档</h2>
+        <p class="section-desc fade-up fade-up-d1">选择你的使用场景，按步骤配置即可开始</p>
+        <div class="fade-up fade-up-d2">
+            <div class="docs-tabs">
+                <button class="docs-tab-btn active" onclick="switchTab('claude-code')">Claude Code</button>
+                <button class="docs-tab-btn" onclick="switchTab('openclaw')">OpenClaw</button>
+                <button class="docs-tab-btn" onclick="switchTab('ide')">IDE 插件</button>
+            </div>
+
+            <!-- Tab 1: Claude Code -->
+            <div class="docs-tab-content active" id="tab-claude-code">
+                <div class="tab-header">
+                    <h3>Claude Code</h3>
+                    <p>命令行 AI 编程助手</p>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">1</span>
+                    <span class="doc-step-title">注册并获取 API Key</span>
+                    <div class="doc-step-body">
+                        前往<a href="/panel">控制台</a>注册账号，在「令牌」页面创建 API Key
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">2</span>
+                    <span class="doc-step-title">安装 Claude Code</span>
+                    <div class="doc-step-body">
+                        macOS / Linux，打开终端输入：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">curl -fsSL https://claude.ai/install.sh | bash</span></div>
+                        Windows PowerShell 打开终端输入：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">irm https://claude.ai/install.ps1 | iex</span></div>
+                        <div class="doc-tip">💡 也可以用 npm install -g @anthropic-ai/claude-code 安装</div>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">3</span>
+                    <span class="doc-step-title">配置 API</span>
+                    <div class="doc-step-body">
+                        创建或编辑配置文件：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "<span class="str">sk-你的密钥</span>",
+    "ANTHROPIC_BASE_URL": "<span class="str">https://api.xiaochens.com</span>"
+  }
+}</span></div>
+                        <div class="doc-tip">💡 文件位置：<br>macOS / Linux：~/.claude/settings.json<br>Windows：C:\Users\你的用户名\.claude\settings.json</div>
+                        <div class="doc-tip">💡 备选方式：只在当前终端会话生效，重启终端后会消失，在终端输入：<br>export ANTHROPIC_BASE_URL=https://api.xiaochens.com<br>export ANTHROPIC_AUTH_TOKEN=sk-你的密钥</div>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">4</span>
+                    <span class="doc-step-title">启动</span>
+                    <div class="doc-step-body">
+                        在终端输入：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">claude</span></div>
+                    </div>
+                </div>
+                <div class="docs-tab-footer">
+                    <button class="btn-ai-copy" onclick="copyPrompt('claude-code', this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2 4 4 0 0 0-4-4z"/><path d="M12 8v8"/><circle cx="12" cy="20" r="2"/><path d="M6 12h12"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg>
+                        复制给 AI 帮你配置
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 2: OpenClaw -->
+            <div class="docs-tab-content" id="tab-openclaw">
+                <div class="tab-header">
+                    <h3>OpenClaw</h3>
+                    <p>开源 AI 编码终端</p>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">1</span>
+                    <span class="doc-step-title">注册并获取 API Key</span>
+                    <div class="doc-step-body">
+                        前往<a href="/panel">控制台</a>注册账号，在「令牌」页面创建 API Key
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">2</span>
+                    <span class="doc-step-title">安装 OpenClaw</span>
+                    <div class="doc-step-body">
+                        macOS / Linux：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install-cli.sh | bash</span></div>
+                        或通过 npm：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">npm install -g openclaw@latest</span></div>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">3</span>
+                    <span class="doc-step-title">初始化</span>
+                    <div class="doc-step-body">
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">openclaw onboard --install-daemon</span></div>
+                        <div class="doc-tip">💡 首次运行会引导你完成基本设置，按提示操作即可</div>
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">4</span>
+                    <span class="doc-step-title">配置 XC API</span>
+                    <div class="doc-step-body">
+                        编辑 ~/.openclaw/openclaw.json，填入以下内容：
+                        <div class="code-block"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cmd">{
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "xcapi": {
+        "baseUrl": "<span class="str">https://api.xiaochens.com</span>",
+        "apiKey": "<span class="str">sk-你的密钥</span>",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "claude-opus-4-6",
+            "name": "Claude Opus 4.6",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          },
+          {
+            "id": "claude-sonnet-4-5",
+            "name": "Claude Sonnet 4.5",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          },
+          {
+            "id": "claude-haiku-4-5",
+            "name": "Claude Haiku 4.5",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "xcapi/claude-sonnet-4-5"
+      }
+    }
+  }
+}</span></div>
+                    </div>
+                </div>
+                <div class="docs-tab-footer">
+                    <button class="btn-ai-copy" onclick="copyPrompt('openclaw', this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2 4 4 0 0 0-4-4z"/><path d="M12 8v8"/><circle cx="12" cy="20" r="2"/><path d="M6 12h12"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg>
+                        复制给 AI 帮你配置
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 3: IDE 插件 -->
+            <div class="docs-tab-content" id="tab-ide">
+                <div class="tab-header">
+                    <h3>IDE 插件</h3>
+                    <p>在 VS Code / Cursor / Windsurf 中使用</p>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">1</span>
+                    <span class="doc-step-title">注册并获取 API Key</span>
+                    <div class="doc-step-body">
+                        前往<a href="/panel">控制台</a>注册账号，在「令牌」页面创建 API Key
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">2</span>
+                    <span class="doc-step-title">安装插件</span>
+                    <div class="doc-step-body">
+                        在 VS Code / Cursor / Windsurf 的扩展市场搜索 "Claude" 或 "Continue" 安装
+                    </div>
+                </div>
+                <div class="doc-step">
+                    <span class="doc-step-num">3</span>
+                    <span class="doc-step-title">配置插件</span>
+                    <div class="doc-step-body">
+                        打开插件设置，填入以下信息：
+                        <div class="code-block" style="margin-top:8px;line-height:2;"><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制</button><span class="cm">API Base URL:</span> <span class="str">https://api.xiaochens.com</span>
+<span class="cm">API Key:</span>      <span class="str">sk-你的密钥</span>
+<span class="cm">协议类型:</span>    <span class="cmd">Anthropic</span>（也支持 OpenAI 格式）</div>
+                        <div class="doc-tip">💡 Cursor 用户：在 Settings → Models → OpenAI API Key 中填入 Key，Override OpenAI Base URL 填入 https://api.xiaochens.com/v1</div>
+                    </div>
+                </div>
+                <div class="docs-tab-footer">
+                    <button class="btn-ai-copy" onclick="copyPrompt('ide', this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2 4 4 0 0 0-4-4z"/><path d="M12 8v8"/><circle cx="12" cy="20" r="2"/><path d="M6 12h12"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg>
+                        复制给 AI 帮你配置
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -534,20 +835,44 @@
         });
     });
 
-    // SVG icons as constants (safe, no user input)
-    var ICON_COPY_16 = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
-    var ICON_CHECK_16 = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-    var ICON_COPY_14 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
-    var ICON_CHECK_14 = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    // SVG icon creators (safe DOM methods, no innerHTML)
+    function createSvgCopy16() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('width','16'); svg.setAttribute('height','16');
+        svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2');
+        svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+        var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x','9'); rect.setAttribute('y','9');
+        rect.setAttribute('width','13'); rect.setAttribute('height','13');
+        rect.setAttribute('rx','2'); rect.setAttribute('ry','2');
+        var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1');
+        svg.appendChild(rect); svg.appendChild(path);
+        return svg;
+    }
+    function createSvgCheck16() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('width','16'); svg.setAttribute('height','16');
+        svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2');
+        svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+        poly.setAttribute('points','20 6 9 17 4 12');
+        svg.appendChild(poly);
+        return svg;
+    }
 
     // Copy Base URL
     function copyUrl(btn) {
         navigator.clipboard.writeText('https://api.xiaochens.com').then(function() {
             btn.classList.add('copied');
-            btn.innerHTML = ICON_CHECK_16;
+            while (btn.firstChild) btn.removeChild(btn.firstChild);
+            btn.appendChild(createSvgCheck16());
             setTimeout(function() {
                 btn.classList.remove('copied');
-                btn.innerHTML = ICON_COPY_16;
+                while (btn.firstChild) btn.removeChild(btn.firstChild);
+                btn.appendChild(createSvgCopy16());
             }, 1500);
         });
     }
@@ -558,11 +883,74 @@
         var code = block.textContent.replace(/复制|已复制/g, '').trim();
         navigator.clipboard.writeText(code).then(function() {
             btn.classList.add('copied');
-            btn.innerHTML = ICON_CHECK_14 + ' 已复制';
+            // Safe: static SVG icon, no user input
+            btn.firstChild.replaceWith(createSvgCheck14());
+            btn.lastChild.textContent = ' 已复制';
             setTimeout(function() {
                 btn.classList.remove('copied');
-                btn.innerHTML = ICON_COPY_14 + ' 复制';
+                btn.firstChild.replaceWith(createSvgCopy14());
+                btn.lastChild.textContent = ' 复制';
             }, 1500);
+        });
+    }
+
+    // Helper: create SVG elements safely (no innerHTML)
+    function createSvgCopy14() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('width','14'); svg.setAttribute('height','14');
+        svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2');
+        svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+        var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x','9'); rect.setAttribute('y','9');
+        rect.setAttribute('width','13'); rect.setAttribute('height','13');
+        rect.setAttribute('rx','2'); rect.setAttribute('ry','2');
+        var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1');
+        svg.appendChild(rect); svg.appendChild(path);
+        return svg;
+    }
+    function createSvgCheck14() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('width','14'); svg.setAttribute('height','14');
+        svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2');
+        svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+        poly.setAttribute('points','20 6 9 17 4 12');
+        svg.appendChild(poly);
+        return svg;
+    }
+
+    // Docs tab switching
+    function switchTab(tabName) {
+        document.querySelectorAll('.docs-tab-btn').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll('.docs-tab-content').forEach(function(panel) {
+            panel.classList.remove('active');
+        });
+        document.getElementById('tab-' + tabName).classList.add('active');
+        var labels = {'claude-code':'Claude Code','ide':'IDE 插件','openclaw':'OpenClaw'};
+        document.querySelectorAll('.docs-tab-btn').forEach(function(btn) {
+            if (btn.textContent.trim() === labels[tabName]) btn.classList.add('active');
+        });
+    }
+
+    // AI prompt copy
+    var AI_PROMPTS = {
+        'claude-code': '我需要配置 Claude Code（命令行 AI 编程助手）来使用 XC API 服务。\n\nAPI 地址：https://api.xiaochens.com\n我的 API Key：（在 https://api.xiaochens.com/panel 的「令牌」页面获取）\n\n请帮我完成以下配置：\n1. 安装 Claude Code（推荐用原生安装脚本，也可以用 npm）\n2. 编辑 ~/.claude/settings.json 配置 API 地址和密钥\n3. 验证配置是否生效\n\n请先问我的操作系统（macOS/Windows/Linux），然后一步步教我。',
+        'ide': '我需要在 IDE 中配置 Claude 插件来使用 XC API 服务。\n\nAPI 地址：https://api.xiaochens.com\nOpenAI 兼容地址：https://api.xiaochens.com/v1\n我的 API Key：（在 https://api.xiaochens.com/panel 的「令牌」页面获取）\n\n请帮我完成插件的安装和配置。先问我用的是哪个 IDE（VS Code / Cursor / Windsurf / JetBrains），然后一步步教我。',
+        'openclaw': '我需要配置 OpenClaw（开源 AI 编码终端）来使用 XC API 服务。\n\nAPI 地址：https://api.xiaochens.com\n我的 API Key：（在 https://api.xiaochens.com/panel 的「令牌」页面获取）\n\n请帮我完成以下配置：\n1. 安装 OpenClaw\n2. 运行初始化（openclaw onboard）\n3. 编辑 ~/.openclaw/openclaw.json 配置 XC API 作为模型提供方\n\n请先问我的操作系统（macOS/Windows/Linux），然后一步步教我。'
+    };
+    function copyPrompt(tabName, btn) {
+        navigator.clipboard.writeText(AI_PROMPTS[tabName]).then(function() {
+            btn.classList.add('copied');
+            btn.childNodes[1].textContent = ' 已复制，粘贴给任意 AI 即可';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                btn.childNodes[1].textContent = ' 复制给 AI 帮你配置';
+            }, 2000);
         });
     }
 

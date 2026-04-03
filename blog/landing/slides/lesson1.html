@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1课：Claude Code 能干什么</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<style>
+  @import url('https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.css');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Fira+Code:wght@400;700&display=swap');
+
+  :root {
+    --bg: #07080d;
+    --r-background-color: #07080d;
+    --blue: #0066ff;
+    --cyan: #00ffff;
+    --amber: #ff8c00;
+    --text: #ffffff;
+    --text-dim: rgba(255,255,255,0.45);
+    --glass-bg: rgba(255,255,255,0.03);
+    --glass-border: rgba(255,255,255,0.07);
+    --r-main-font: 'Smiley Sans', 'Inter', -apple-system, sans-serif;
+    --r-heading-font: 'Smiley Sans', 'Inter', -apple-system, sans-serif;
+    --r-code-font: 'Fira Code', 'SF Mono', monospace;
+    --r-main-font-size: 34px;
+    --r-main-color: #ffffff;
+    --r-heading-color: #ffffff;
+    --r-link-color: #00ffff;
+  }
+
+  /* === Base === */
+  .reveal { font-weight: 400; }
+  .reveal h1, .reveal h2, .reveal h3 { font-weight: 700; letter-spacing: 0; }
+  .reveal h2 { margin-bottom: 0.5em; font-size: 1.6em; }
+  .reveal code { font-family: var(--r-code-font); font-size: 0.9em; }
+  .reveal pre { box-shadow: none; font-size: 0.55em; }
+  .reveal pre code { padding: 1em 1.2em; border-radius: 12px; }
+  .reveal ul, .reveal ol { text-align: left; }
+  .reveal li { margin-bottom: 0.4em; line-height: 1.6; }
+
+  /* === Gradient text === */
+  .g { background: linear-gradient(135deg, var(--blue), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .g-amber { background: linear-gradient(135deg, var(--amber), #ffb347);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .dim { color: var(--text-dim); }
+  .sm { font-size: 0.7em; }
+
+  /* === Ambient glow (on body to avoid reveal.js transform issues) === */
+  body::before {
+    content: ''; position: fixed; top: -30%; left: -20%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse, rgba(0,102,255,0.08) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; bottom: -30%; right: -15%;
+    width: 50%; height: 50%;
+    background: radial-gradient(ellipse, rgba(0,255,255,0.05) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* === Grid background === */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: -1; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(0,102,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,102,255,0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* === Glassmorphism === */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    padding: 1.2em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .glass:hover {
+    border-color: rgba(0,102,255,0.25);
+    box-shadow: 0 0 40px rgba(0,102,255,0.08);
+  }
+  .glass-glow {
+    box-shadow: 0 0 0 1px rgba(0,255,255,0.1), 0 0 60px rgba(0,102,255,0.06);
+  }
+
+  /* === Animations === */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes breathe { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+  @keyframes typing { from { width:0; } to { width:100%; } }
+  @keyframes blink { 50% { border-color:transparent; } }
+  @keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(0,102,255,0.4); } 50% { box-shadow:0 0 20px 4px rgba(0,102,255,0.15); } }
+  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+  @keyframes checkPop { 0% { transform:scale(0); } 60% { transform:scale(1.2); } 100% { transform:scale(1); } }
+  @keyframes scanline { 0% { transform:translateY(-100%); } 100% { transform:translateY(100%); } }
+  @keyframes gradientShift { 0% { background-position:0% 50%; } 50% { background-position:100% 50%; } 100% { background-position:0% 50%; } }
+
+  .reveal .slides section.present .stagger { animation: fadeUp 0.5s ease both; }
+  .stagger:nth-child(1) { animation-delay:0.08s; }
+  .stagger:nth-child(2) { animation-delay:0.16s; }
+  .stagger:nth-child(3) { animation-delay:0.24s; }
+  .stagger:nth-child(4) { animation-delay:0.32s; }
+
+  .typewriter {
+    overflow:hidden; white-space:nowrap;
+    border-right:2px solid var(--cyan);
+    animation: typing 1.8s steps(20) 0.5s both, blink 0.8s step-end infinite;
+    display:inline-block;
+  }
+
+  /* === Terminal === */
+  .term {
+    background: rgba(10,12,20,0.9);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; overflow: hidden; text-align: left;
+    font-family: var(--r-code-font);
+  }
+  .term-bar {
+    background: rgba(255,255,255,0.04);
+    padding: 8px 14px; display:flex; gap:6px; align-items:center;
+  }
+  .term-dot { width:10px; height:10px; border-radius:50%; }
+  .term-dot.r { background:#ff5f56; }
+  .term-dot.y { background:#ffbd2e; }
+  .term-dot.g { background:#27c93f; }
+  .term-title { color:var(--text-dim); font-size:0.5em; margin-left:8px; }
+  .term-body { padding:1em 1.2em; font-size:0.55em; line-height:1.8; color:#b0b0b0; }
+  .term-body .p { color:var(--cyan); }
+  .term-body .c { color:#27c93f; }
+
+  /* === Card grid === */
+  .cg { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1em; margin-top:0.8em; }
+  .cg .glass { text-align:left; }
+  .cg .glass h3 { margin:0.3em 0 0.15em; font-size:0.95em; color:#fff; }
+  .cg .glass p { font-size:0.6em; color:var(--text-dim); margin:0; line-height:1.5; }
+
+  /* === VS layout === */
+  .vs { display:flex; align-items:center; gap:0.8em; margin:0.6em 0; }
+  .vs-box { flex:1; padding:1.2em; border-radius:16px; text-align:center; }
+  .vs-box.old { background:rgba(255,140,0,0.05); border:1px solid rgba(255,140,0,0.15); }
+  .vs-box.new { background:rgba(0,102,255,0.05); border:1px solid rgba(0,102,255,0.15); }
+  .vs-arr { font-size:1.8em; color:var(--text-dim); animation:breathe 2s ease-in-out infinite; }
+
+  /* === SVG icon === */
+  .ic { width:36px; height:36px; stroke:var(--cyan); fill:none;
+    stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  .ic.amber { stroke:var(--amber); }
+
+  /* === Step list === */
+  .steps { text-align:left; font-size:0.85em; }
+  .steps .s { display:flex; align-items:flex-start; gap:0.8em; margin-bottom:0.9em; }
+  .sn { background:linear-gradient(135deg,var(--blue),var(--cyan));
+    color:#fff; font-weight:700; width:1.8em; height:1.8em;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; font-size:0.85em; }
+
+  /* === Demo tag === */
+  .tag {
+    display:inline-block;
+    background:linear-gradient(135deg,var(--amber),#ffb347);
+    color:#000; font-size:0.45em; font-weight:700;
+    padding:0.2em 0.8em; border-radius:99px;
+    vertical-align:middle; margin-right:0.4em;
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+
+  /* === Columns === */
+  .cols { display:flex; gap:2em; align-items:flex-start; }
+  .cols .col { flex:1; }
+
+  /* === Homework === */
+  .hw {
+    background:var(--glass-bg);
+    border-left:3px solid; border-image:linear-gradient(to bottom,var(--blue),var(--cyan)) 1;
+    border-radius:0 12px 12px 0;
+    padding:0.7em 1.2em; margin-bottom:0.5em; text-align:left; font-size:0.8em;
+  }
+  .hw .n { font-weight:700; margin-right:0.5em;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+  /* === Highlight box === */
+  .hbox { background:rgba(0,102,255,0.05); border:1px solid rgba(0,102,255,0.12);
+    border-radius:16px; padding:0.8em 1.5em; margin:0.6em 0; text-align:left; }
+
+  /* === Cover === */
+  .cover-badge {
+    display:inline-block; font-size:0.4em;
+    padding:0.3em 1.2em; border-radius:99px;
+    background: rgba(0,102,255,0.1);
+    border:1px solid rgba(0,102,255,0.2);
+    color:rgba(255,255,255,0.6);
+    letter-spacing:0.15em; margin-bottom:0.5em;
+  }
+
+  /* === Footer === */
+  .slide-footer {
+    position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:var(--text-dim); opacity:0.35;
+    z-index:100; letter-spacing:0.12em;
+  }
+  .reveal .progress { height:3px; }
+  .reveal .progress span { background:linear-gradient(90deg,var(--blue),var(--cyan)); }
+
+  /* === Check icon === */
+  .chk { display:inline-block; width:18px; height:18px;
+    border:2px solid var(--cyan); border-radius:50%;
+    position:relative; margin-right:0.5em; vertical-align:middle; }
+  .fragment.visible .chk::after {
+    content:''; position:absolute; left:4px; top:1px; width:6px; height:10px;
+    border:solid var(--cyan); border-width:0 2px 2px 0;
+    transform:rotate(45deg); animation:checkPop 0.4s ease both;
+  }
+
+  /* === Decorative orbs per slide (subtle, no position issues) === */
+  section[data-bg]::before {
+    content:''; position:absolute; width:500px; height:500px;
+    border-radius:50%; pointer-events:none;
+    opacity: 0.5; filter:blur(80px);
+  }
+  section[data-bg="orb1"]::before {
+    top:-20%; right:-15%;
+    background: rgba(0,102,255,0.15);
+  }
+  section[data-bg="orb2"]::before {
+    bottom:-20%; left:-15%;
+    background: rgba(0,255,255,0.1);
+  }
+  section[data-bg="orb-amber"]::before {
+    top:-10%; right:-10%;
+    background: rgba(255,140,0,0.1);
+  }
+
+  /* === Number highlight === */
+  .big-num {
+    font-size:2.5em; font-weight:900;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    line-height:1;
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="reveal">
+<div class="slides">
+
+<!-- ====== Slide 1: Cover ====== -->
+<section>
+  <div class="cover-badge">LESSON 01</div>
+  <div class="term" style="margin:0 auto 1em; max-width:420px;">
+    <div class="term-bar">
+      <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+      <span class="term-title">Terminal</span>
+    </div>
+    <div class="term-body">
+      <span class="p">~</span> <span class="c typewriter">claude</span>
+    </div>
+  </div>
+  <h1 style="font-size:2.4em; margin:0;">
+    Claude Code<br><span class="g">能干什么</span>
+  </h1>
+  <p style="font-size:0.85em; color:var(--text-dim); margin-top:0.3em;">
+    从 AI 聊天到 AI 干活 — 第 1 课
+  </p>
+  <p style="font-size:0.5em; color:var(--text-dim); margin-top:2em; letter-spacing:0.2em;">
+    小金的 Claude Code 实战课 · 2026
+  </p>
+</section>
+
+<!-- ====== Slide 2: Survey ====== -->
+<section data-bg="orb1">
+  <h2>先做个小调查</h2>
+  <div style="font-size:1.05em; line-height:2.6;">
+    <p class="fragment fade-up">
+      <span class="big-num" style="font-size:1.4em; margin-right:0.3em;">1</span>
+      用过 <span class="g" style="font-weight:700;">AI 聊天</span> 的，扣 1
+    </p>
+    <p class="fragment fade-up">
+      <span class="big-num" style="font-size:1.4em; margin-right:0.3em;">2</span>
+      用 AI <span class="g" style="font-weight:700;">写过代码</span> 的，扣 2
+    </p>
+    <p class="fragment fade-up">
+      <span class="big-num" style="font-size:1.4em; margin-right:0.3em;">3</span>
+      让 AI 做出 <span class="g" style="font-weight:700;">完整成品</span> 的，扣 3
+    </p>
+  </div>
+  <p class="fragment fade-up dim" style="margin-top:1.2em; font-size:0.75em;">
+    今天的目标：让你从 1 直接跳到 3
+  </p>
+</section>
+
+<!-- ====== Slide 3: Core comparison ====== -->
+<section data-bg="orb2">
+  <h2>从「<span class="dim">给答案</span>」到「<span class="g">给结果</span>」</h2>
+  <div class="vs">
+    <div class="vs-box old glass">
+      <svg class="ic amber" style="width:36px;height:36px;margin:0 auto 0.3em;" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <h3 style="color:var(--amber); font-size:0.9em;">AI 聊天工具</h3>
+      <p class="sm dim">你问一句，它答一句<br>复制 → 粘贴 → 手动改<br>你是<strong style="color:#fff;"> 执行者</strong></p>
+    </div>
+    <div class="vs-arr">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M5 12h14M13 5l7 7-7 7"/>
+      </svg>
+    </div>
+    <div class="vs-box new glass glass-glow">
+      <svg class="ic" style="width:36px;height:36px;margin:0 auto 0.3em;" viewBox="0 0 24 24">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+      <h3 style="font-size:0.9em;" class="g">Claude Code</h3>
+      <p class="sm dim">你说目标，它直接做<br>读文件 → 写代码 → 建项目<br>你是<strong style="color:#fff;"> 指挥官</strong></p>
+    </div>
+  </div>
+  <p class="fragment" style="margin-top:0.8em; font-size:0.85em;">
+    不是更好的聊天，是<span class="g" style="font-weight:700;">完全不同的工作方式</span>
+  </p>
+</section>
+
+<!-- ====== Slide 4: Install ====== -->
+<section data-bg="orb1">
+  <h2>
+    <svg class="ic" style="width:30px;height:30px;vertical-align:middle;margin-right:6px;" viewBox="0 0 24 24">
+      <path d="M4 17l6-6-6-6"/><path d="M12 19h8"/>
+    </svg>
+    下载安装
+  </h2>
+  <div class="steps">
+    <div class="s fragment">
+      <div class="sn">1</div>
+      <div>
+        <strong>安装 Claude Code</strong><br>
+        <div class="term" style="margin-top:0.4em;">
+          <div class="term-bar">
+            <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+          </div>
+          <div class="term-body" style="padding:0.5em 1em;">
+            <span class="p">$</span> <span class="c">npm install -g @anthropic-ai/claude-code</span>
+          </div>
+        </div>
+        <span class="dim sm">需要先装 Node.js（推荐 v18+）</span>
+      </div>
+    </div>
+    <div class="s fragment">
+      <div class="sn">2</div>
+      <div>
+        <strong>启动</strong><br>
+        <code style="color:var(--cyan);">claude</code>
+        <span class="dim sm" style="margin-left:0.5em;">在终端输入一个词就行</span>
+      </div>
+    </div>
+    <div class="s fragment">
+      <div class="sn">3</div>
+      <div>
+        <strong>登录账号</strong><br>
+        <span class="dim sm">Claude Pro / Max 订阅即可（API key 也行）</span>
+      </div>
+    </div>
+  </div>
+  <div class="fragment hbox" style="font-size:0.7em; text-align:center;">
+    不需要 VS Code，不需要浏览器 — <span class="g" style="font-weight:600;">终端就是你的工作台</span>
+  </div>
+</section>
+
+<!-- ====== Slide 5: Models ====== -->
+<section data-bg="orb2">
+  <h2>背后的模型</h2>
+  <div class="cg">
+    <div class="glass fragment stagger" style="border-top:2px solid rgba(0,102,255,0.3);">
+      <svg class="ic" style="width:28px;height:28px;" viewBox="0 0 24 24">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      <h3>Opus 4.6</h3>
+      <p>Claude 最强模型<br>复杂推理、架构设计、大项目</p>
+    </div>
+    <div class="glass fragment stagger" style="border-top:2px solid rgba(0,255,255,0.3);">
+      <svg class="ic" style="width:28px;height:28px;" viewBox="0 0 24 24">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      <h3>Sonnet 4.6</h3>
+      <p>速度与质量平衡<br>日常开发首选</p>
+    </div>
+    <div class="glass fragment stagger" style="border-top:2px solid rgba(255,140,0,0.3);">
+      <svg class="ic" style="width:28px;height:28px;" viewBox="0 0 24 24">
+        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      <h3>模型切换</h3>
+      <p>对话中输入 <code style="color:var(--cyan);">/model</code><br>按需选择最合适的模型</p>
+    </div>
+  </div>
+  <p class="fragment dim" style="font-size:0.6em; margin-top:0.8em;">
+    Pro 订阅有用量限制，Max 订阅放开限制 · 按需选择
+  </p>
+</section>
+
+<!-- ====== Slide 6: Demo 1 ====== -->
+<section data-bg="orb-amber">
+  <h2><span class="tag">LIVE</span> 做个桌面小应用</h2>
+  <div class="cols" style="margin-top:0.6em;">
+    <div class="col" style="flex:1.2;">
+      <div class="glass" style="font-size:0.75em;">
+        <p style="margin:0; color:var(--text-dim); font-size:0.85em;">我对 Claude Code 说：</p>
+        <p style="margin:0.4em 0 0; font-size:1.05em; color:#fff;">
+          "帮我做一个番茄钟桌面应用，<br>
+          25 分钟倒计时，到时间播放提示音，<br>
+          界面要好看"
+        </p>
+      </div>
+    </div>
+    <div class="col fragment" style="text-align:center;">
+      <svg style="width:72px;height:72px;margin-bottom:0.3em;animation:float 3s ease-in-out infinite;" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="35" stroke="url(#g1)" stroke-width="2.5"/>
+        <path d="M40 20v20l12 12" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="80" y2="80">
+          <stop stop-color="#0066ff"/><stop offset="1" stop-color="#00ffff"/>
+        </linearGradient></defs>
+      </svg>
+      <p class="dim sm">几分钟后 → 一个可运行的 App</p>
+      <p class="g" style="font-weight:700;">你没写一行代码</p>
+    </div>
+  </div>
+  <p class="fragment dim sm" style="margin-top:0.6em;">
+    关键不是"帮我写代码" — 是"帮我做出一个东西"
+  </p>
+</section>
+
+<!-- ====== Slide 7: Demo 2 ====== -->
+<section data-bg="orb1">
+  <h2><span class="tag">LIVE</span> 生成个人简历网页</h2>
+  <div class="cols" style="margin-top:0.6em;">
+    <div class="col" style="flex:1.2;">
+      <div class="glass" style="font-size:0.75em;">
+        <p style="margin:0; color:var(--text-dim); font-size:0.85em;">我对 Claude Code 说：</p>
+        <p style="margin:0.4em 0 0; font-size:1.05em; color:#fff;">
+          "根据我的简历 PDF，<br>
+          帮我生成一个现代风格的个人网页，<br>
+          深色主题，响应式布局"
+        </p>
+      </div>
+    </div>
+    <div class="col fragment" style="text-align:center;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:0.4em;">
+        <svg style="width:44px;height:44px;" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <svg style="width:28px;height:28px;animation:breathe 2s ease-in-out infinite;" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="1.5">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+        <svg style="width:44px;height:44px;" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <p class="dim sm">读取 PDF → 提取信息 → 生成网页</p>
+      <p class="g" style="font-weight:700;">直接部署上线</p>
+    </div>
+  </div>
+  <p class="fragment dim sm" style="margin-top:0.6em;">
+    CC 能读你的文件，理解内容，然后把它变成新东西
+  </p>
+</section>
+
+<!-- ====== Slide 8: Demo 3 ====== -->
+<section data-bg="orb2">
+  <h2><span class="tag">LIVE</span> 不只写代码，帮你干活</h2>
+  <div class="cg" style="grid-template-columns:1fr 1fr;">
+    <div class="glass fragment stagger">
+      <svg class="ic" style="width:24px;height:24px;" viewBox="0 0 24 24">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+      <h3>批量重命名文件</h3>
+      <p>"把这个文件夹里的照片<br>按日期重新命名"</p>
+    </div>
+    <div class="glass fragment stagger">
+      <svg class="ic" style="width:24px;height:24px;" viewBox="0 0 24 24">
+        <path d="M18 20V10M12 20V4M6 20v-6"/>
+      </svg>
+      <h3>处理 Excel 数据</h3>
+      <p>"把这份表格里的重复项<br>标记出来，导出新文件"</p>
+    </div>
+    <div class="glass fragment stagger">
+      <svg class="ic" style="width:24px;height:24px;" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <h3>搜索整理信息</h3>
+      <p>"帮我查一下最近一周的<br>AI 新闻，整理成表格"</p>
+    </div>
+    <div class="glass fragment stagger">
+      <svg class="ic" style="width:24px;height:24px;" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <h3>自动化重复操作</h3>
+      <p>"每天自动备份这个文件夹<br>到另一个目录"</p>
+    </div>
+  </div>
+  <p class="fragment" style="margin-top:0.6em; font-size:0.8em;">
+    它能操作你的电脑 — 这是和聊天工具的<span class="g" style="font-weight:700;">本质区别</span>
+  </p>
+</section>
+
+<!-- ====== Slide 9: Homework ====== -->
+<section data-bg="orb-amber">
+  <h2>课后作业</h2>
+  <div class="hw fragment">
+    <span class="n">01</span>
+    <strong>安装 Claude Code</strong><br>
+    <span class="dim">按照刚才的步骤，在你的电脑上装好 CC</span>
+  </div>
+  <div class="hw fragment">
+    <span class="n">02</span>
+    <strong>启动第一次对话</strong><br>
+    <span class="dim">终端输入 <code style="color:var(--cyan);">claude</code>，随便聊两句</span>
+  </div>
+  <div class="hw fragment">
+    <span class="n">03</span>
+    <strong>截图发群</strong><br>
+    <span class="dim">把你成功启动的截图发到学习群，大家互相打气</span>
+  </div>
+  <div class="fragment hbox" style="font-size:0.7em; text-align:center; margin-top:0.6em;">
+    安装遇到问题？群里 @ 我，<span class="g" style="font-weight:600;">手把手帮你搞定</span>
+  </div>
+</section>
+
+<!-- ====== Slide 10: End ====== -->
+<section>
+  <h2 style="font-size:2.4em;">
+    <span class="g">下节课见</span>
+  </h2>
+  <div class="glass glass-glow" style="display:inline-block; margin-top:0.6em; padding:1em 2.5em;">
+    <p style="margin:0; font-size:0.55em; color:var(--text-dim); letter-spacing:0.15em; text-transform:uppercase;">下节预告</p>
+    <p style="margin:0.3em 0 0; font-size:1em;">
+      <strong>第 2 课：用 CC 做出你的第一个项目</strong>
+    </p>
+    <p style="margin:0.3em 0 0; font-size:0.6em; color:var(--text-dim);">
+      从零到一，完整走通一个项目流程
+    </p>
+  </div>
+  <div style="margin-top:2em;">
+    <p style="font-size:0.55em; color:var(--text-dim);">
+      小金 · 微信：<span class="g">xiaochens_com</span>
+    </p>
+  </div>
+</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<div class="slide-footer">CLAUDE CODE LAB · XIAOJIN</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  showSlideNumber: 'speaker',
+  progress: true,
+  controls: true,
+  controlsTutorial: false,
+  touch: true,
+  keyboard: true,
+  overview: true,
+  center: true,
+  mouseWheel: true,
+  width: 1280,
+  height: 720,
+  margin: 0.08,
+  transition: 'slide',
+  transitionSpeed: 'default',
+  backgroundTransition: 'fade'
+});
+</script>
+</body>
+</html>
