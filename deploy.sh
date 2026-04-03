@@ -15,7 +15,7 @@ info()    { echo -e "${YELLOW}[INFO]${NC} $*"; }
 success() { echo -e "${GREEN}[OK]${NC} $*"; }
 error()   { echo -e "${RED}[ERROR]${NC} $*"; }
 
-ALL_PROJECTS=(homepage homepage-v2 halo lsky newapi aiclient dujiaoka npm cliproxyapi blog blog-landing)
+ALL_PROJECTS=(homepage homepage-v2 lsky newapi aiclient dujiaoka npm cliproxyapi blog blog-landing)
 
 usage() {
     echo "Usage: $0 <project|all>"
@@ -63,14 +63,15 @@ deploy_project() {
             files=(config.yaml)
             ;;
         blog)
-            files=(landing/index.html landing/robots.txt docker-compose.yml nginx.conf)
-            # Also sync slides directory
-            local slides_src="${local_dir}/landing/slides"
-            if [[ -d "$slides_src" ]]; then
-                local slides_dest="${remote_dir}/landing/slides"
-                ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${slides_dest}"
-                info "Syncing slides → ${SERVER}:${slides_dest}/"
-                rsync -avz -e "ssh -p $SSH_PORT" --delete "${slides_src}/" "${SERVER}:${slides_dest}/"
+            # Sync nginx.conf and docker-compose.yml as individual files
+            files=(docker-compose.yml nginx.conf)
+            # Rsync the entire landing directory
+            local landing_src="${local_dir}/landing"
+            if [[ -d "$landing_src" ]]; then
+                local landing_dest="${remote_dir}/landing"
+                ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${landing_dest}"
+                info "Syncing landing → ${SERVER}:${landing_dest}/"
+                rsync -avz -e "ssh -p $SSH_PORT" --delete "${landing_src}/" "${SERVER}:${landing_dest}/"
             fi
             ;;
         newapi)
@@ -90,7 +91,7 @@ deploy_project() {
         blog-landing)
             files=(index.html docker-compose.yml robots.txt)
             ;;
-        halo|lsky|aiclient|npm)
+        lsky|aiclient|npm)
             files=(docker-compose.yml)
             ;;
         *)
