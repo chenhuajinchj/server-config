@@ -14,11 +14,15 @@ const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
 ---
 
 <BaseLayout title="标签" description="所有文章标签">
-  <h1 class="page-title">标签</h1>
+  <div class="page-header">
+    <span class="page-label">分类</span>
+    <h1 class="page-title">标签</h1>
+    <div class="header-line"></div>
+  </div>
   <div class="tags-grid">
     {tags.map(([tag, count]) => (
       <a href={`/tags/${tag}`} class="tag-card">
-        <span class="tag-name">#{tag}</span>
+        <span class="tag-name">{tag}</span>
         <span class="tag-count">{count} 篇</span>
       </a>
     ))}
@@ -26,31 +30,51 @@ const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
 </BaseLayout>
 
 <style>
+  .page-header {
+    padding: 8rem 0 4rem;
+  }
+  .page-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--c-text-muted);
+    margin-bottom: 1rem;
+  }
   .page-title {
-    font-size: 1.8rem;
-    font-weight: 800;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
     margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .header-line {
+    width: 60px;
+    height: 1px;
+    background: var(--c-text);
+    opacity: 0.3;
   }
   .tags-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 0.8rem;
+    padding-top: 1rem;
   }
   .tag-card {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--c-bg-soft);
+    padding: 0.5rem 1.2rem;
     border: 1px solid var(--c-border);
-    border-radius: 2rem;
+    border-radius: 0;
     text-decoration: none;
     transition: all 0.2s;
   }
   .tag-card:hover {
-    border-color: var(--c-accent);
+    border-color: var(--c-text-soft);
     text-decoration: none;
   }
-  .tag-name { color: var(--c-text); font-weight: 500; }
-  .tag-count { color: var(--c-text-muted); font-size: 0.8rem; }
+  .tag-name { color: var(--c-text); font-weight: 500; font-size: 0.9rem; }
+  .tag-count { color: var(--c-text-muted); font-size: 0.75rem; }
 </style>

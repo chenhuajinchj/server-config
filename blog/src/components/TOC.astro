@@ -28,18 +28,17 @@ const filtered = headings.filter(h => h.depth >= 2 && h.depth <= 3);
 
 <style>
   .toc {
-    padding: 1rem 1.2rem;
-    background: var(--c-bg-soft);
-    border-radius: var(--radius);
-    margin-bottom: 2rem;
+    padding: 1rem 0 1rem 1.5rem;
+    border-left: 3px solid var(--c-border);
+    margin-bottom: 2.5rem;
   }
   .toc-title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
     color: var(--c-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
   }
   .toc-list {
     list-style: none;
@@ -50,7 +49,8 @@ const filtered = headings.filter(h => h.depth >= 2 && h.depth <= 3);
     font-size: 0.85rem;
     color: var(--c-text-soft);
     text-decoration: none;
+    transition: color 0.2s;
   }
-  .toc-item a:hover { color: var(--c-accent); }
+  .toc-item a:hover { color: var(--c-text); }
   .toc-h3 { padding-left: 1rem; }
 </style>

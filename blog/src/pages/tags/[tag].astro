@@ -22,11 +22,15 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<BaseLayout title={`#${tag}`} description={`标签「${tag}」下的所有文章`}>
-  <h1 class="page-title">#{tag}</h1>
-  <p class="tag-desc">共 {posts.length} 篇文章</p>
+<BaseLayout title={tag} description={`标签「${tag}」下的所有文章`}>
+  <div class="page-header">
+    <span class="page-label">标签</span>
+    <h1 class="page-title">{tag}</h1>
+    <p class="tag-desc">共 {posts.length} 篇文章</p>
+    <div class="header-line"></div>
+  </div>
 
-  <div class="post-list">
+  <div class="post-grid">
     {posts.map((post: any) => (
       <PostCard
         title={post.data.title}
@@ -34,6 +38,7 @@ const { tag, posts } = Astro.props;
         description={post.data.description}
         pubDate={post.data.pubDate}
         tags={post.data.tags}
+        image={post.data.image}
       />
     ))}
   </div>
@@ -42,18 +47,57 @@ const { tag, posts } = Astro.props;
 </BaseLayout>
 
 <style>
+  .page-header {
+    padding: 8rem 0 4rem;
+  }
+  .page-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--c-text-muted);
+    margin-bottom: 1rem;
+  }
   .page-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 0.3rem;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
   }
   .tag-desc {
     color: var(--c-text-muted);
+    font-size: 0.9rem;
     margin-bottom: 1.5rem;
+  }
+  .header-line {
+    width: 60px;
+    height: 1px;
+    background: var(--c-text);
+    opacity: 0.3;
+  }
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    padding-top: 1rem;
   }
   .back-link {
     display: inline-block;
-    margin-top: 2rem;
-    font-size: 0.9rem;
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .back-link:hover {
+    color: var(--c-text);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 3rem 0 2rem; }
+    .post-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   }
 </style>

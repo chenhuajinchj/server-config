@@ -13,13 +13,19 @@ const year = new Date().getFullYear();
 
 <style>
   .footer {
-    margin-top: auto;
-    padding: 2rem 0;
-    border-top: 1px solid var(--c-border);
+    margin-top: 6rem;
+    padding: 2.5rem 0;
     text-align: center;
     font-size: 0.85rem;
     color: var(--c-text-muted);
   }
-  .footer a { color: var(--c-text-soft); }
+  .footer a {
+    color: var(--c-text-muted);
+    text-decoration-color: transparent;
+  }
+  .footer a:hover {
+    color: var(--c-text-soft);
+    text-decoration-color: var(--c-text-soft);
+  }
   .footer-links { margin-top: 0.5rem; }
 </style>

@@ -14,9 +14,13 @@ const { page } = Astro.props;
 ---
 
 <BaseLayout title="博客文章" description="所有博客文章列表">
-  <h1 class="page-title">博客文章</h1>
+  <div class="page-header">
+    <span class="page-label">博客</span>
+    <h1 class="page-title">全部文章</h1>
+    <div class="header-line"></div>
+  </div>
 
-  <div class="post-list">
+  <div class="post-grid">
     {page.data.map((post: any) => (
       <PostCard
         title={post.data.title}
@@ -24,32 +28,75 @@ const { page } = Astro.props;
         description={post.data.description}
         pubDate={post.data.pubDate}
         tags={post.data.tags}
+        image={post.data.image}
       />
     ))}
   </div>
 
   <nav class="pagination">
     {page.url.prev && <a href={page.url.prev}>← 上一页</a>}
-    <span class="page-info">第 {page.currentPage} / {page.lastPage} 页</span>
+    <span class="page-info">{page.currentPage} / {page.lastPage}</span>
     {page.url.next && <a href={page.url.next}>下一页 →</a>}
   </nav>
 </BaseLayout>
 
 <style>
+  .page-header {
+    padding: 8rem 0 4rem;
+  }
+  .page-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--c-text-muted);
+    margin-bottom: 1rem;
+  }
   .page-title {
-    font-size: 1.8rem;
-    font-weight: 800;
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
     margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .header-line {
+    width: 60px;
+    height: 1px;
+    background: var(--c-text);
+    opacity: 0.3;
+  }
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3.5rem;
+    padding-top: 1rem;
   }
   .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    gap: 2rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
     border-top: 1px solid var(--c-border);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
-  .page-info { color: var(--c-text-muted); }
+  .pagination a {
+    color: var(--c-text-soft);
+    text-decoration: none;
+  }
+  .pagination a:hover {
+    color: var(--c-text);
+  }
+  .page-info {
+    color: var(--c-text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 3rem 0 2rem; }
+    .post-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
 </style>

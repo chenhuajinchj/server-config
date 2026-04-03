@@ -17,7 +17,7 @@ const updatedStr = updatedDate?.toLocaleDateString('zh-CN', { year: 'numeric', m
   {minutesRead && <span>· {minutesRead}</span>}
   {tags.length > 0 && (
     <span class="post-meta-tags">
-      {tags.map(tag => <a href={`/tags/${tag}`} class="tag">#{tag}</a>)}
+      {tags.map(tag => <a href={`/tags/${tag}`} class="tag">{tag}</a>)}
     </span>
   )}
 </div>
@@ -33,9 +33,14 @@ const updatedStr = updatedDate?.toLocaleDateString('zh-CN', { year: 'numeric', m
     margin-bottom: 2rem;
   }
   .tag {
-    color: var(--c-accent);
+    color: var(--c-text-soft);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .tag:hover {
+    border-bottom-color: var(--c-text-soft);
     text-decoration: none;
   }
-  .tag:hover { text-decoration: underline; }
   .post-meta-tags { display: flex; gap: 0.4rem; }
 </style>
