@@ -1,460 +1,66 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>从 Notion 重度用户到让 AI 帮我整理电脑 — 陈与小金</title>
-  <meta name="description" content="整理的意义不在结果，而在过程本身。分享我的文件管理方式：简化分类、Git 状态管理、iCloud 软连接、归档替代删除。">
-  <meta property="og:image" content="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-
-    :root {
-      --bg: #F5F1EB;
-      --bg-elevated: #FFFDF9;
-      --text: #1C1917;
-      --text-secondary: #78716C;
-      --text-tertiary: #A8A29E;
-      --accent: #C84B31;
-      --accent-hover: #A33D28;
-      --accent-light: rgba(200,75,49,0.08);
-      --border: #E7E0D6;
-      --border-strong: #D6CFC4;
-      --tag-bg: #EDE8E0;
-      --tag-text: #57534E;
-      --grain-opacity: 0.03;
-      --code-bg: #F0EBE3;
-    }
-
-    [data-theme="dark"] {
-      --bg: #121110;
-      --bg-elevated: #1A1816;
-      --text: #E7E0D4;
-      --text-secondary: #8C857C;
-      --text-tertiary: #5C5650;
-      --accent: #E8714F;
-      --accent-hover: #F28C6E;
-      --accent-light: rgba(232,113,79,0.1);
-      --border: #2A2623;
-      --border-strong: #3A3530;
-      --tag-bg: #242120;
-      --tag-text: #A09890;
-      --grain-opacity: 0.04;
-      --code-bg: #1E1C1A;
-    }
-
-    html { scroll-behavior: smooth }
-
-    body {
-      font-family: 'DM Sans', -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.65;
-      transition: background 0.4s ease, color 0.4s ease;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      pointer-events: none;
-      opacity: var(--grain-opacity);
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 256px 256px;
-    }
-
-    a { color: inherit; text-decoration: none; transition: color 0.25s ease }
-
-    .container { max-width: 680px; margin: 0 auto; padding: 0 28px }
-
-    /* ── Nav ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter: blur(16px) saturate(1.2);
-      -webkit-backdrop-filter: blur(16px) saturate(1.2);
-    }
-
-    nav .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 60px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-back {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      letter-spacing: 0.02em;
-    }
-
-    .nav-back:hover { color: var(--accent) }
-    .nav-back svg { width: 16px; height: 16px }
-
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .theme-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: var(--text-secondary);
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .theme-toggle:hover {
-      background: var(--accent-light);
-      color: var(--accent);
-    }
-
-    .theme-toggle svg { width: 18px; height: 18px }
-
-    /* ── Article Header ── */
-    .article-header {
-      padding: 64px 0 40px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .article-meta {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .article-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text-tertiary);
-      letter-spacing: 0.02em;
-    }
-
-    .tags { display: flex; gap: 8px; flex-wrap: wrap }
-
-    .tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: var(--tag-bg);
-      color: var(--tag-text);
-      letter-spacing: 0.02em;
-    }
-
-    .article-header h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 5vw, 44px);
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-
-    .article-header .description {
-      font-size: 16px;
-      color: var(--text-secondary);
-      line-height: 1.75;
-    }
-
-    /* ── Article Body ── */
-    .article-body {
-      padding: 48px 0 80px;
-    }
-
-    .article-body h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin: 48px 0 16px;
-    }
-
-    .article-body h2:first-child { margin-top: 0 }
-
-    .article-body h3 {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-      margin: 32px 0 12px;
-    }
-
-    .article-body p {
-      font-size: 16px;
-      color: var(--text);
-      line-height: 1.85;
-      margin-bottom: 20px;
-    }
-
-    .article-body ul, .article-body ol {
-      padding-left: 24px;
-      margin-bottom: 20px;
-    }
-
-    .article-body li {
-      font-size: 16px;
-      color: var(--text);
-      line-height: 1.85;
-      margin-bottom: 8px;
-    }
-
-    .article-body a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    }
-
-    .article-body a:hover {
-      text-decoration-color: var(--accent);
-    }
-
-    .article-body strong {
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .article-body blockquote {
-      border-left: 3px solid var(--accent);
-      padding: 12px 20px;
-      margin: 24px 0;
-      background: var(--accent-light);
-      border-radius: 0 8px 8px 0;
-    }
-
-    .article-body blockquote p {
-      color: var(--text-secondary);
-      margin-bottom: 0;
-      font-style: italic;
-    }
-
-    .article-body img {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      margin: 24px 0;
-    }
-
-    .article-body .img-caption {
-      font-size: 13px;
-      color: var(--text-tertiary);
-      text-align: center;
-      margin-top: -16px;
-      margin-bottom: 24px;
-    }
-
-    .article-body pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 24px;
-      overflow-x: auto;
-      margin: 24px 0;
-    }
-
-    .article-body code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .article-body p code {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    /* ── Footer ── */
-    .article-footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .footer-back {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .footer-back:hover { color: var(--accent) }
-    .footer-back svg { width: 16px; height: 16px }
-
-    .footer-copy {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
-
-    /* ── Animations ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(16px);
-      animation: revealUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    }
-
-    @keyframes revealUp {
-      to { opacity: 1; transform: translateY(0) }
-    }
-
-    .stagger > *:nth-child(1) { animation-delay: 0.05s }
-    .stagger > *:nth-child(2) { animation-delay: 0.1s }
-    .stagger > *:nth-child(3) { animation-delay: 0.15s }
-    .stagger > *:nth-child(4) { animation-delay: 0.2s }
-    .stagger > *:nth-child(5) { animation-delay: 0.25s }
-    .stagger > *:nth-child(6) { animation-delay: 0.3s }
-    .stagger > *:nth-child(7) { animation-delay: 0.35s }
-    .stagger > *:nth-child(8) { animation-delay: 0.4s }
-    .stagger > *:nth-child(9) { animation-delay: 0.45s }
-    .stagger > *:nth-child(10) { animation-delay: 0.5s }
-
-    @media (max-width: 640px) {
-      .container { padding: 0 20px }
-      .article-header { padding: 40px 0 28px }
-      .article-body { padding: 32px 0 60px }
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="/" class="nav-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        返回首页
-      </a>
-      <a href="/" class="nav-logo">陈与小金</a>
-      <button class="theme-toggle" aria-label="切换主题">
-        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      </button>
-    </div>
-  </nav>
-
-  <article>
-    <div class="container">
-      <header class="article-header reveal">
-        <div class="article-meta">
-          <span class="article-date">2026.04.02</span>
-          <div class="tags">
-            <span class="tag">效率</span>
-            <span class="tag">文件管理</span>
-            <span class="tag">AI Agent</span>
-            <span class="tag">Obsidian</span>
-          </div>
-        </div>
-        <h1>从 Notion 重度用户到让 AI 帮我整理电脑</h1>
-        <p class="description">整理的意义不在结果，而在过程本身。分享我的文件管理方式：简化分类、Git 状态管理、iCloud 软连接、归档替代删除。</p>
-      </header>
-
-      <div class="article-body stagger">
-        <p class="reveal">我建议每个人每个月都要整理一下自己的电脑，看一下自己平时存的文件和文档，有哪些内容是需要整理的，哪些是自己应该保留下来的，哪些是需要完全清除的。</p>
-
-        <h2 class="reveal">整理的意义不是在过程</h2>
-        <p class="reveal">这个过程的意义并不在于整理本身，或者说不在于最终的结果，而是在于"整理"这一个动作的本身。通过整理，你可以看到：</p>
-        <ol class="reveal">
-          <li>之前写的文档和做的项目。</li>
-          <li>哪些地方存了一些你保存下来但从未打开过，或者保存了却没看过的文件。</li>
-        </ol>
-        <p class="reveal">你可以在整理的过程中顺便把它们看一看。也可以在整理的过程中，把你之前写完发布的文章拿出来翻一翻。</p>
-        <p class="reveal">从一个月后去看一个月前写的内容，你的心情是怎样的？你觉得还有什么进步的空间？我觉得这些才是整理的真正意义。</p>
-
-        <h2 class="reveal">复杂系统是累赘，只是让自己满意</h2>
-        <p class="reveal">很多人喜欢给自己搭一个臃肿的系统，包括之前的我自己。</p>
-        <p class="reveal">比如我之前在 Notion 里面花费了将近半个月的时间，搭建了一套完全自我的工作库。</p>
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce665a5e0df.png" alt="Notion 复盘系统" loading="lazy">
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce665f2e775.png" alt="Notion 任务管理" loading="lazy">
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce666371e27.png" alt="Notion 工作库主页" loading="lazy">
-        <p class="reveal">当时搭建完成之后，我觉得自己简直是"天下第一"，觉得有了这套工作流程、工作库和知识库，我就可以产出更多更好的内容，可以坚持不懈地完成打卡。</p>
-        <p class="reveal">但是现在，尤其是在我和 Claude Code（Anthropic 推出的 AI 编程工具，下面简称 CC）的交流与工作融合越来越多之后，我发现这种东西对于 AI Agent 来说，路径越多，造成的干扰其实就越多。</p>
-        <p class="reveal">同时，对于我们人类而言，也是因为每一次打开的路径越长，我们做一件事的摩擦力就越大，那么这件事情就越做不下去了。</p>
-        <p class="reveal">我现在仅仅只做了一个 macOS 自动操作（Automator）脚本，根据下载的文件种类自动帮我移动到对应的文件夹中，其他的我都不会去做。平常的一些文档我都是随开随看随存，看完就关。</p>
-
-        <h2 class="reveal">Agent 时代的文件管理</h2>
-        <p class="reveal">我现在觉得最好的方式是：</p>
-        <ol class="reveal">
-          <li><strong>简化你的分类</strong>：不管是代码还是日常文档，只归为一个大类。</li>
-          <li><strong>细分你的项目</strong>：在大类里面，再根据具体的项目去分开创建。</li>
-          <li><strong>状态管理</strong>：每一个文件、每一个项目都应该用 Git 管理。这样你既可以回滚之前的状态，也不用担心哪天手误删掉了就找不回来。</li>
-        </ol>
-        <p class="reveal">你不要觉得这只是方便了 Agent，当你和越来越多的 AI 工具协作之后会发现：<strong>对 Agent 而言最高效的方式——路径短、项目明确——其实对人也是最高效的。</strong></p>
-        <p class="reveal">我觉得与其花时间去打造一些华而不实、分门别类的知识库或个人管理库，还不如把时间花在真正的产出上面。我现在已经不再搭建复杂的系统了，只是每个月定期清理一次。</p>
-        <p class="reveal">比如今天是 4 月 2 号，本来昨天就该清理，我在每个月的第一天整理一次，但由于昨天没有清理，所以一直拖到了今天。</p>
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png" alt="CC 整理后的文件夹结构" loading="lazy">
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce666fb3e0b.png" alt="CC 给出的文件夹结构建议" loading="lazy">
-
-        <h2 class="reveal">我的 Obsidian 同步方案：iCloud + 软连接</h2>
-        <p class="reveal">在这个过程中，分享一点我自己的 Obsidian 同步和保存方式。</p>
-        <p class="reveal">我是通过苹果的 iCloud 云文档来同步的，这样我可以在任何一台手机、iPad 或电脑上直接同步使用。我不会去用 Git 来同步 Obsidian 的笔记，因为那会增加我的操作摩擦。</p>
-        <p class="reveal">但 iCloud 有一个问题：默认路径非常长。很多时候 AI Agent 应用（比如 Codex 或 CC）在你和它对话时，如果你让它帮你在 Obsidian 里面创建或寻找某个文档，它需要花费很多时间去寻找，尤其是在你没有给它指定路径的情况下。</p>
-        <p class="reveal">虽然这是一个很基础的知识，但很多时候我们会不自觉地默认 AI 已经知道路径在哪，结果导致它浪费了很多上下文、时间还有 Token。</p>
-        <p class="reveal">所以，我做了一个这样的操作：通过"软连接"的方式，把 Obsidian 的路径映射出来。这样我可以直接在终端输入 <code>cd ~/Obsidian</code> 就能连接到我的库，而原本的文件依然存放在 iCloud 云文档里。</p>
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce6672cf238.png" alt="软连接示意" loading="lazy">
-        <p class="reveal">关于软连接的实现方式，你可以让任何一个 AI Agent 应用（比如 Codex 或 CC）来帮你完成，一句话的事。</p>
-
-        <h2 class="reveal">用归档替代废纸篓</h2>
-        <img class="reveal" src="https://img.xiaochens.com/i/2026/04/02/69ce72bd2e713.png" alt="小金在整理归档" loading="lazy">
-        <p class="reveal">最后分享一个小习惯：整理文件时，很多人会把目前看起来不需要的东西直接删除或移到废纸篓。</p>
-        <p class="reveal">我的建议是建立一个"归档"文件夹。如果你不确定某些东西未来是否还有用，就先放进归档。到了下个月再整理时，优先处理归档文件夹里的内容——如果确定不需要了，再删除。</p>
-        <p class="reveal">这和废纸篓的区别在于：归档是存放那些你已经用不到、但又不确定未来会不会需要的文档、文件和项目，在你下个月进行清理的时候，你就可以回看上一个月你放到"归档"里面的内容。你可以很轻易地判断出来，哪些东西是你不需要了，哪些东西是你应该保留下来的。</p>
-        <p class="reveal">而且这种结构对 Agent 特别友好——"归档"这个语义本身就是清晰的，Agent 可以很好地理解哪些内容是活跃的、哪些是归档的，不需要你额外解释。</p>
-        <p class="reveal">我的整理是完全针对我电脑上的所有文件，而不仅仅只是局限于 Obsidian。</p>
-      </div>
-
-      <footer class="article-footer">
-        <a href="/" class="footer-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          返回首页
-        </a>
-        <span class="footer-copy">&copy; 2026 陈与小金</span>
-      </footer>
-    </div>
-  </article>
-
-  <script>
-    const toggle = document.querySelector('.theme-toggle');
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.17.3"><title>从 Notion 重度用户到让 AI 帮我整理电脑</title><meta name="description" content="整理的意义不在结果，而在过程本身。分享我的文件管理方式：简化分类、Git 状态管理、iCloud 软连接、归档替代删除。"><link rel="canonical" href="https://blog.xiaochens.com/blog/monthly-computer-cleanup/"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://blog.xiaochens.com/blog/monthly-computer-cleanup/"><meta property="og:title" content="从 Notion 重度用户到让 AI 帮我整理电脑"><meta property="og:description" content="整理的意义不在结果，而在过程本身。分享我的文件管理方式：简化分类、Git 状态管理、iCloud 软连接、归档替代删除。"><meta property="og:image" content="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="从 Notion 重度用户到让 AI 帮我整理电脑"><meta name="twitter:description" content="整理的意义不在结果，而在过程本身。分享我的文件管理方式：简化分类、Git 状态管理、iCloud 软连接、归档替代删除。"><meta name="twitter:image" content="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png"><!-- Google Fonts: Noto Serif SC (headings) + Noto Sans SC (body) --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet"><link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml"><script>
+  (function() {
     const saved = localStorage.getItem('theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-    else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = saved || preferred;
+    document.documentElement.setAttribute('data-theme', theme);
 
-    toggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
     });
-  </script>
-</body>
-</html>
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CDGfc0hd.js"></script><style>.post-meta[data-astro-cid-qtyrxm4s]{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.85rem;color:var(--c-text-muted);margin-bottom:2rem}.tag[data-astro-cid-qtyrxm4s]{color:var(--c-text-soft);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}.tag[data-astro-cid-qtyrxm4s]:hover{border-bottom-color:var(--c-text-soft);text-decoration:none}.post-meta-tags[data-astro-cid-qtyrxm4s]{display:flex;gap:.4rem}.toc[data-astro-cid-obewoz47]{padding:1rem 0 1rem 1.5rem;border-left:3px solid var(--c-border);margin-bottom:2.5rem}.toc-title[data-astro-cid-obewoz47]{font-size:.8rem;font-weight:500;margin-bottom:.6rem;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.08em}.toc-list[data-astro-cid-obewoz47]{list-style:none;padding:0}.toc-item[data-astro-cid-obewoz47]{margin-bottom:.3rem}.toc-item[data-astro-cid-obewoz47] a[data-astro-cid-obewoz47]{font-size:.85rem;color:var(--c-text-soft);text-decoration:none;transition:color .2s}.toc-item[data-astro-cid-obewoz47] a[data-astro-cid-obewoz47]:hover{color:var(--c-text)}.toc-h3[data-astro-cid-obewoz47]{padding-left:1rem}.giscus-wrapper[data-astro-cid-an2nl7ar]{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--c-border)}.post[data-astro-cid-gjtny2mx]{max-width:var(--content-width);margin:0 auto}.post-header[data-astro-cid-gjtny2mx]{padding:6rem 0 3rem}.post-label[data-astro-cid-gjtny2mx]{display:block;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--c-text-muted);margin-bottom:1.5rem}.post-header[data-astro-cid-gjtny2mx] h1[data-astro-cid-gjtny2mx]{font-family:var(--font-heading);font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-.03em}.post-cover[data-astro-cid-gjtny2mx]{margin-bottom:3rem}.post-cover[data-astro-cid-gjtny2mx] img[data-astro-cid-gjtny2mx]{width:100%;aspect-ratio:16 / 9;object-fit:cover}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.B5QGCggR.css"></head> <body data-astro-cid-37fxchfa> <header class="header" data-astro-cid-3ef6ksr2> <nav class="container header-nav" data-astro-cid-3ef6ksr2> <a href="/" class="header-logo" data-astro-cid-3ef6ksr2>小陈</a> <div class="header-links" data-astro-cid-3ef6ksr2> <a href="/" class="nav-link" data-astro-cid-3ef6ksr2> 首页 </a><a href="/blog" class="nav-link active" data-astro-cid-3ef6ksr2> 博客 </a><a href="/tags" class="nav-link" data-astro-cid-3ef6ksr2> 标签 </a><a href="/about" class="nav-link" data-astro-cid-3ef6ksr2> 关于 </a> <button id="theme-toggle" class="theme-btn" aria-label="切换主题" data-astro-cid-3ef6ksr2> <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-3ef6ksr2></path></svg> <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header>  <main class="container main-content" data-astro-cid-37fxchfa>  <article class="post" data-astro-cid-gjtny2mx> <header class="post-header" data-astro-cid-gjtny2mx> <span class="post-label" data-astro-cid-gjtny2mx>文章</span> <h1 data-astro-cid-gjtny2mx>从 Notion 重度用户到让 AI 帮我整理电脑</h1> <div class="post-meta" data-astro-cid-qtyrxm4s> <time datetime="2026-04-02T00:00:00.000Z" data-astro-cid-qtyrxm4s>2026年4月2日</time>  <span data-astro-cid-qtyrxm4s>· 8 分钟</span> <span class="post-meta-tags" data-astro-cid-qtyrxm4s> <a href="/tags/效率" class="tag" data-astro-cid-qtyrxm4s>效率</a><a href="/tags/文件管理" class="tag" data-astro-cid-qtyrxm4s>文件管理</a><a href="/tags/AI Agent" class="tag" data-astro-cid-qtyrxm4s>AI Agent</a><a href="/tags/Obsidian" class="tag" data-astro-cid-qtyrxm4s>Obsidian</a> </span> </div>  </header> <div class="post-cover" data-astro-cid-gjtny2mx> <img src="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png" alt="从 Notion 重度用户到让 AI 帮我整理电脑" data-astro-cid-gjtny2mx> </div> <nav class="toc" data-astro-cid-obewoz47><h4 class="toc-title" data-astro-cid-obewoz47>目录</h4><ul class="toc-list" data-astro-cid-obewoz47><li class="toc-item" data-astro-cid-obewoz47><a href="#整理的意义不是在过程" data-astro-cid-obewoz47>整理的意义不是在过程</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#复杂系统是累赘只是让自己满意" data-astro-cid-obewoz47>复杂系统是累赘，只是让自己满意</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#agent-时代的文件管理" data-astro-cid-obewoz47>Agent 时代的文件管理</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#我的-obsidian-同步方案icloud--软连接" data-astro-cid-obewoz47>我的 Obsidian 同步方案：iCloud + 软连接</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#用归档替代废纸篓" data-astro-cid-obewoz47>用归档替代废纸篓</a></li></ul></nav> <div class="prose" data-astro-cid-gjtny2mx>  <p>我建议每个人每个月都要整理一下自己的电脑，看一下自己平时存的文件和文档，有哪些内容是需要整理的，哪些是自己应该保留下来的，哪些是需要完全清除的。</p>
+<h2 id="整理的意义不是在过程"><a href="#整理的意义不是在过程">整理的意义不是在过程</a></h2>
+<p>这个过程的意义并不在于整理本身，或者说不在于最终的结果，而是在于”整理”这一个动作的本身。通过整理，你可以看到：</p>
+<ol>
+<li>之前写的文档和做的项目。</li>
+<li>哪些地方存了一些你保存下来但从未打开过，或者保存了却没看过的文件。</li>
+</ol>
+<p>你可以在整理的过程中顺便把它们看一看。也可以在整理的过程中，把你之前写完发布的文章拿出来翻一翻。</p>
+<p>从一个月后去看一个月前写的内容，你的心情是怎样的？你觉得还有什么进步的空间？我觉得这些才是整理的真正意义。</p>
+<h2 id="复杂系统是累赘只是让自己满意"><a href="#复杂系统是累赘只是让自己满意">复杂系统是累赘，只是让自己满意</a></h2>
+<p>很多人喜欢给自己搭一个臃肿的系统，包括之前的我自己。</p>
+<p>比如我之前在 Notion 里面花费了将近半个月的时间，搭建了一套完全自我的工作库。</p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce665a5e0df.png" alt="Notion 复盘系统"></p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce665f2e775.png" alt="Notion 任务管理"></p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce666371e27.png" alt="Notion 工作库主页"></p>
+<p>当时搭建完成之后，我觉得自己简直是”天下第一”，觉得有了这套工作流程、工作库和知识库，我就可以产出更多更好的内容，可以坚持不懈地完成打卡。</p>
+<p>但是现在，尤其是在我和 Claude Code（Anthropic 推出的 AI 编程工具，下面简称 CC）的交流与工作融合越来越多之后，我发现这种东西对于 AI Agent 来说，路径越多，造成的干扰其实就越多。</p>
+<p>同时，对于我们人类而言，也是因为每一次打开的路径越长，我们做一件事的摩擦力就越大，那么这件事情就越做不下去了。</p>
+<p>我现在仅仅只做了一个 macOS 自动操作（Automator）脚本，根据下载的文件种类自动帮我移动到对应的文件夹中，其他的我都不会去做。平常的一些文档我都是随开随看随存，看完就关。</p>
+<h2 id="agent-时代的文件管理"><a href="#agent-时代的文件管理">Agent 时代的文件管理</a></h2>
+<p>我现在觉得最好的方式是：</p>
+<ol>
+<li><strong>简化你的分类</strong>：不管是代码还是日常文档，只归为一个大类。</li>
+<li><strong>细分你的项目</strong>：在大类里面，再根据具体的项目去分开创建。</li>
+<li><strong>状态管理</strong>：每一个文件、每一个项目都应该用 Git 管理。这样你既可以回滚之前的状态，也不用担心哪天手误删掉了就找不回来。</li>
+</ol>
+<p>你不要觉得这只是方便了 Agent，当你和越来越多的 AI 工具协作之后会发现：<strong>对 Agent 而言最高效的方式——路径短、项目明确——其实对人也是最高效的。</strong></p>
+<p>我觉得与其花时间去打造一些华而不实、分门别类的知识库或个人管理库，还不如把时间花在真正的产出上面。我现在已经不再搭建复杂的系统了，只是每个月定期清理一次。</p>
+<p>比如今天是 4 月 2 号，本来昨天就该清理，我在每个月的第一天整理一次，但由于昨天没有清理，所以一直拖到了今天。</p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce666651e0e.png" alt="CC 整理后的文件夹结构"></p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce666fb3e0b.png" alt="CC 给出的文件夹结构建议"></p>
+<h2 id="我的-obsidian-同步方案icloud--软连接"><a href="#我的-obsidian-同步方案icloud--软连接">我的 Obsidian 同步方案：iCloud + 软连接</a></h2>
+<p>在这个过程中，分享一点我自己的 Obsidian 同步和保存方式。</p>
+<p>我是通过苹果的 iCloud 云文档来同步的，这样我可以在任何一台手机、iPad 或电脑上直接同步使用。我不会去用 Git 来同步 Obsidian 的笔记，因为那会增加我的操作摩擦。</p>
+<p>但 iCloud 有一个问题：默认路径非常长。很多时候 AI Agent 应用（比如 Codex 或 CC）在你和它对话时，如果你让它帮你在 Obsidian 里面创建或寻找某个文档，它需要花费很多时间去寻找，尤其是在你没有给它指定路径的情况下。</p>
+<p>虽然这是一个很基础的知识，但很多时候我们会不自觉地默认 AI 已经知道路径在哪，结果导致它浪费了很多上下文、时间还有 Token。</p>
+<p>所以，我做了一个这样的操作：通过”软连接”的方式，把 Obsidian 的路径映射出来。这样我可以直接在终端输入 <code>cd ~/Obsidian</code> 就能连接到我的库，而原本的文件依然存放在 iCloud 云文档里。</p>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce6672cf238.png" alt="软连接示意"></p>
+<p>关于软连接的实现方式，你可以让任何一个 AI Agent 应用（比如 Codex 或 CC）来帮你完成，一句话的事。</p>
+<h2 id="用归档替代废纸篓"><a href="#用归档替代废纸篓">用归档替代废纸篓</a></h2>
+<p><img src="https://img.xiaochens.com/i/2026/04/02/69ce72bd2e713.png" alt="小金在整理归档"></p>
+<p>最后分享一个小习惯：整理文件时，很多人会把目前看起来不需要的东西直接删除或移到废纸篓。</p>
+<p>我的建议是建立一个”归档”文件夹。如果你不确定某些东西未来是否还有用，就先放进归档。到了下个月再整理时，优先处理归档文件夹里的内容——如果确定不需要了，再删除。</p>
+<p>这和废纸篓的区别在于：归档是存放那些你已经用不到、但又不确定未来会不会需要的文档、文件和项目，在你下个月进行清理的时候，你就可以回看上一个月你放到”归档”里面的内容。你可以很轻易地判断出来，哪些东西是你不需要了，哪些东西是你应该保留下来的。</p>
+<p>而且这种结构对 Agent 特别友好——“归档”这个语义本身就是清晰的，Agent 可以很好地理解哪些内容是活跃的、哪些是归档的，不需要你额外解释。</p>
+<p>我的整理是完全针对我电脑上的所有文件，而不仅仅只是局限于 Obsidian。</p>  </div>  </article>  </main> <footer class="footer" data-astro-cid-sz7xmlte> <div class="container" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2026 小陈的博客 · 由 <a href="https://astro.build" target="_blank" rel="noopener" data-astro-cid-sz7xmlte>Astro</a> 驱动</p> <p class="footer-links" data-astro-cid-sz7xmlte> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </p> </div> </footer>  </body></html> 

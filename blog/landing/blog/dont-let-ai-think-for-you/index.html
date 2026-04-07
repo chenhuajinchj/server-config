@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="zh-CN" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.17.3"><title>别让 AI 替你想问题</title><meta name="description" content="理论是给你用的，不是给 AI 用的。别把第一性原理、费曼方法塞进 prompt 里期待 AI 替你思考，你自己先想清楚，AI 负责执行。"><link rel="canonical" href="https://blog.xiaochens.com/blog/dont-let-ai-think-for-you/"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://blog.xiaochens.com/blog/dont-let-ai-think-for-you/"><meta property="og:title" content="别让 AI 替你想问题"><meta property="og:description" content="理论是给你用的，不是给 AI 用的。别把第一性原理、费曼方法塞进 prompt 里期待 AI 替你思考，你自己先想清楚，AI 负责执行。"><meta property="og:image" content="https://img.xiaochens.com/i/2026/04/06/69d3110987eb4.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="别让 AI 替你想问题"><meta name="twitter:description" content="理论是给你用的，不是给 AI 用的。别把第一性原理、费曼方法塞进 prompt 里期待 AI 替你思考，你自己先想清楚，AI 负责执行。"><meta name="twitter:image" content="https://img.xiaochens.com/i/2026/04/06/69d3110987eb4.png"><!-- Google Fonts: Noto Serif SC (headings) + Noto Sans SC (body) --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet"><link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml"><script>
+  (function() {
+    const saved = localStorage.getItem('theme');
+    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = saved || preferred;
+    document.documentElement.setAttribute('data-theme', theme);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    });
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CDGfc0hd.js"></script><style>.post-meta[data-astro-cid-qtyrxm4s]{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;font-size:.85rem;color:var(--c-text-muted);margin-bottom:2rem}.tag[data-astro-cid-qtyrxm4s]{color:var(--c-text-soft);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}.tag[data-astro-cid-qtyrxm4s]:hover{border-bottom-color:var(--c-text-soft);text-decoration:none}.post-meta-tags[data-astro-cid-qtyrxm4s]{display:flex;gap:.4rem}.toc[data-astro-cid-obewoz47]{padding:1rem 0 1rem 1.5rem;border-left:3px solid var(--c-border);margin-bottom:2.5rem}.toc-title[data-astro-cid-obewoz47]{font-size:.8rem;font-weight:500;margin-bottom:.6rem;color:var(--c-text-muted);text-transform:uppercase;letter-spacing:.08em}.toc-list[data-astro-cid-obewoz47]{list-style:none;padding:0}.toc-item[data-astro-cid-obewoz47]{margin-bottom:.3rem}.toc-item[data-astro-cid-obewoz47] a[data-astro-cid-obewoz47]{font-size:.85rem;color:var(--c-text-soft);text-decoration:none;transition:color .2s}.toc-item[data-astro-cid-obewoz47] a[data-astro-cid-obewoz47]:hover{color:var(--c-text)}.toc-h3[data-astro-cid-obewoz47]{padding-left:1rem}.giscus-wrapper[data-astro-cid-an2nl7ar]{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--c-border)}.post[data-astro-cid-gjtny2mx]{max-width:var(--content-width);margin:0 auto}.post-header[data-astro-cid-gjtny2mx]{padding:6rem 0 3rem}.post-label[data-astro-cid-gjtny2mx]{display:block;font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--c-text-muted);margin-bottom:1.5rem}.post-header[data-astro-cid-gjtny2mx] h1[data-astro-cid-gjtny2mx]{font-family:var(--font-heading);font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-.03em}.post-cover[data-astro-cid-gjtny2mx]{margin-bottom:3rem}.post-cover[data-astro-cid-gjtny2mx] img[data-astro-cid-gjtny2mx]{width:100%;aspect-ratio:16 / 9;object-fit:cover}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.B5QGCggR.css"></head> <body data-astro-cid-37fxchfa> <header class="header" data-astro-cid-3ef6ksr2> <nav class="container header-nav" data-astro-cid-3ef6ksr2> <a href="/" class="header-logo" data-astro-cid-3ef6ksr2>小陈</a> <div class="header-links" data-astro-cid-3ef6ksr2> <a href="/" class="nav-link" data-astro-cid-3ef6ksr2> 首页 </a><a href="/blog" class="nav-link active" data-astro-cid-3ef6ksr2> 博客 </a><a href="/tags" class="nav-link" data-astro-cid-3ef6ksr2> 标签 </a><a href="/about" class="nav-link" data-astro-cid-3ef6ksr2> 关于 </a> <button id="theme-toggle" class="theme-btn" aria-label="切换主题" data-astro-cid-3ef6ksr2> <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-3ef6ksr2></path></svg> <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header>  <main class="container main-content" data-astro-cid-37fxchfa>  <article class="post" data-astro-cid-gjtny2mx> <header class="post-header" data-astro-cid-gjtny2mx> <span class="post-label" data-astro-cid-gjtny2mx>文章</span> <h1 data-astro-cid-gjtny2mx>别让 AI 替你想问题</h1> <div class="post-meta" data-astro-cid-qtyrxm4s> <time datetime="2026-04-06T00:00:00.000Z" data-astro-cid-qtyrxm4s>2026年4月6日</time>  <span data-astro-cid-qtyrxm4s>· 5 分钟</span> <span class="post-meta-tags" data-astro-cid-qtyrxm4s> <a href="/tags/AI" class="tag" data-astro-cid-qtyrxm4s>AI</a><a href="/tags/思维方式" class="tag" data-astro-cid-qtyrxm4s>思维方式</a><a href="/tags/提示词" class="tag" data-astro-cid-qtyrxm4s>提示词</a> </span> </div>  </header> <div class="post-cover" data-astro-cid-gjtny2mx> <img src="https://img.xiaochens.com/i/2026/04/06/69d3110987eb4.png" alt="别让 AI 替你想问题" data-astro-cid-gjtny2mx> </div> <nav class="toc" data-astro-cid-obewoz47><h4 class="toc-title" data-astro-cid-obewoz47>目录</h4><ul class="toc-list" data-astro-cid-obewoz47><li class="toc-item" data-astro-cid-obewoz47><a href="#把理论塞进-prompt不代表-ai-就会了" data-astro-cid-obewoz47>把理论塞进 prompt，不代表 AI 就会了</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#你输入的每一个字都是提示词" data-astro-cid-obewoz47>你输入的每一个字都是提示词</a></li><li class="toc-item" data-astro-cid-obewoz47><a href="#ai-是顺从性人格是基于概率来回复你消息" data-astro-cid-obewoz47>AI 是顺从性人格，是基于概率来回复你消息</a></li></ul></nav> <div class="prose" data-astro-cid-gjtny2mx>  <p>今天热议，Michael Polanyi，来源一个大佬发布的推，然后看见不少转发还附带上以 Polanyi 悖论：（我们知道的，远比我们能说出来的多得多）为主题写了一些提示词。</p>
+<p>超级长，什么要根据 Polanyi 悖论来巴拉巴拉。</p>
+<h2 id="把理论塞进-prompt不代表-ai-就会了"><a href="#把理论塞进-prompt不代表-ai-就会了">把理论塞进 prompt，不代表 AI 就会了</a></h2>
+<p>我就很奇怪了，为什么大部分人在用这些理论，思考方法，比如”第一性原理""Polanyi""费曼方法”这些概念的时候，都是把它们塞进 prompt 里当指令，希望 AI 按照这个框架去思考。</p>
+<p>但问题是——AI 并不会因为你在 prompt 里写了”用第一性原理”就真的具备第一性原理的思维能力。它只是会模仿那个格式输出，看起来像，但是是迎合你去表演而已。</p>
+<p><strong>你为什么不把它反过来呢？</strong></p>
+<p>你自己先用第一性原理把问题拆解清楚，想明白最底层的假设是什么，然后给 AI 的 prompt 就是拆解后的具体问题。AI 负责执行，你负责思考框架。</p>
+<p>拿到 AI 的输出之后，再用第一性原理去验证：这个回答有没有隐含未经检验的假设？有没有跳过逻辑环节？</p>
+<p>简单说就是三步：</p>
+<ol>
+<li><strong>你用理论拆解问题</strong></li>
+<li><strong>AI 执行具体任务</strong></li>
+<li><strong>你用理论验证结果</strong></li>
+</ol>
+<p>而不是：把理论名词丢给 AI → 期待 AI 替你思考。</p>
+<p><img src="https://img.xiaochens.com/i/2026/04/06/69d311045b776.png" alt="小金在全息工作台前拆解问题"></p>
+<h2 id="你输入的每一个字都是提示词"><a href="#你输入的每一个字都是提示词">你输入的每一个字都是提示词</a></h2>
+<p>并且，提示词不是一大段东西，我们输入的，比如我这段话，是不是提示词？？？</p>
+<p>很多人对”prompt”有个误解，觉得它必须是精心设计的、带角色设定、带框架的一大段东西。</p>
+<p>但实际上你在和 AI 对话输入的每一句话都是 prompt——包括”帮我翻译这句话”这种最简单的指令。</p>
+<p>所谓”提示词工程”把这件事搞复杂了。它让人觉得必须用特定格式、特定术语、特定结构才能让 AI 好好工作。</p>
+<p>但你回想你每次就是用自然语言提了一个具体的问题，得到的回答质量也不差。</p>
+<p>区别其实只在于：</p>
+<ul>
+<li><strong>好的 prompt</strong> = 你想清楚了要问什么，然后用自然语言说清楚。</li>
+<li><strong>坏的 prompt</strong> = 你自己没想清楚，试图用一堆框架术语让 AI 替你想清楚。</li>
+</ul>
+<h2 id="ai-是顺从性人格是基于概率来回复你消息"><a href="#ai-是顺从性人格是基于概率来回复你消息">AI 是顺从性人格，是基于概率来回复你消息</a></h2>
+<p>很多人不愿意动脑子给 AI 一大堆理论，想要让 AI 帮她想清楚一个事情，但是 AI 说的不一定是对的呀，并且如果你自己不去思考，一直让 AI 帮你思考，那么你的脑子就会变得越来越蠢。</p>
+<p>AI 不像其他工具——你不会用锤子就钉不进钉子，结果很明确。</p>
+<blockquote>
+<p>AI 的问题是它永远会给你一个看起来合理的答案，不管对不对都说得很流畅。如果你自己没有判断力，你根本分不清它是真的在帮你思考，还是在一本正经地胡说。</p>
+</blockquote>
+<p>不要让 AI 直接给你结论，而是让它把推理过程摊开。比如你不会用第一性原理，不要问”用第一性原理帮我分析这个问题”，而是问”这个问题最底层的假设是什么？每个假设分别成立的依据是什么？“然后你看它列出来的东西，逐条问自己：这个我认同吗？这个有没有漏洞？</p>
+<p><img src="https://img.xiaochens.com/i/2026/04/06/69d31106f0339.png" alt="小金与 AI 伙伴一起思考"></p>
+<p>本质上就是把 AI 当成一个<strong>陪你想问题的人</strong>，而不是<strong>替你想问题的人</strong>。</p>  </div>  </article>  </main> <footer class="footer" data-astro-cid-sz7xmlte> <div class="container" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2026 小陈的博客 · 由 <a href="https://astro.build" target="_blank" rel="noopener" data-astro-cid-sz7xmlte>Astro</a> 驱动</p> <p class="footer-links" data-astro-cid-sz7xmlte> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </p> </div> </footer>  </body></html> 
