@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ai.xiaochens.com</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4efe7;
+        --card: rgba(255, 255, 255, 0.82);
+        --text: #1f1d1a;
+        --muted: #68625b;
+        --line: rgba(31, 29, 26, 0.12);
+        --accent: #c46a2f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top left, rgba(196, 106, 47, 0.18), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(40, 84, 74, 0.16), transparent 24%),
+          linear-gradient(135deg, #f8f3ec 0%, var(--bg) 52%, #ece4d8 100%);
+        color: var(--text);
+        font-family: "Hiragino Sans GB", "PingFang SC", "Noto Sans SC", sans-serif;
+      }
+
+      main {
+        width: min(720px, 100%);
+        padding: 40px 32px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--card);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 18px 80px rgba(31, 29, 26, 0.12);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(196, 106, 47, 0.12);
+        color: var(--accent);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 18px 0 12px;
+        font-size: clamp(36px, 8vw, 64px);
+        line-height: 0.96;
+      }
+
+      p {
+        margin: 0;
+        max-width: 36rem;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.75;
+      }
+
+      .hint {
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-size: 14px;
+      }
+
+      code {
+        font-family: "SFMono-Regular", "JetBrains Mono", monospace;
+        font-size: 0.95em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span class="eyebrow">Placeholder</span>
+      <h1>AI 域名已预留</h1>
+      <p>
+        <code>ai.xiaochens.com</code> 当前只是一个占位入口，后续会在这里替换成新的正式内容。
+      </p>
+      <p class="hint">
+        当前 CLIProxyAPI 后台已迁移到 <code>cli.xiaochens.com/management.html</code>。
+      </p>
+    </main>
+  </body>
+  </html>

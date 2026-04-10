@@ -91,7 +91,10 @@ deploy_project() {
         blog-landing)
             files=(index.html docker-compose.yml robots.txt)
             ;;
-        lsky|aiclient|npm)
+        aiclient)
+            files=(docker-compose.yml nginx.conf index.html)
+            ;;
+        lsky|npm)
             files=(docker-compose.yml)
             ;;
         *)
