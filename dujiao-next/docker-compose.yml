@@ -7,11 +7,8 @@ services:
       - "8091:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./custom-user:/usr/share/nginx/html:ro
     depends_on:
-      user:
-        condition: service_started
-      admin:
-        condition: service_started
       api:
         condition: service_healthy
     networks:
@@ -49,12 +46,7 @@ services:
       - dujiao-next
 
   api:
-    build:
-      context: ../dujiao-next-source/api
-      dockerfile: Dockerfile
-      args:
-        APP_VERSION: source-20260411
-    image: xiaochens/dujiaonext-api:source
+    image: dujiaonext/api:v1.0.1
     container_name: dujiaonext-api
     restart: unless-stopped
     environment:
@@ -77,26 +69,8 @@ services:
     networks:
       - dujiao-next
 
-  user:
-    build:
-      context: ../dujiao-next-source/user
-      dockerfile: Dockerfile
-    image: xiaochens/dujiaonext-user:source
-    container_name: dujiaonext-user
-    restart: unless-stopped
-    environment:
-      TZ: ${TZ}
-    depends_on:
-      api:
-        condition: service_healthy
-    networks:
-      - dujiao-next
-
   admin:
-    build:
-      context: ../dujiao-next-source/admin
-      dockerfile: Dockerfile
-    image: xiaochens/dujiaonext-admin:source
+    image: dujiaonext/admin:v1.0.1
     container_name: dujiaonext-admin
     restart: unless-stopped
     environment:

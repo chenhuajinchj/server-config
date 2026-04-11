@@ -208,8 +208,8 @@ header {
 
 /* 商品卡没有 <img> 时折叠 4:3 图片占位区。
  * 用 :has() 选择器判断 aspect-[4/3] 容器下是否有 img。
- * 同时保留 category icon fallback 的 img 显示。 */
-.theme-panel [class*="aspect-"]:not(:has(img)) {
+ * 只对 div 生效——img 元素本身即使带 aspect- 类也不应被隐藏。 */
+.theme-panel div[class*="aspect-"]:not(:has(img)) {
   display: none !important;
 }
 

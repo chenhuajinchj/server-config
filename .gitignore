@@ -36,5 +36,6 @@ dujiao-next-user/dist/
 # Ephemeral redesign screenshots and playwright session artifacts
 baseline-home.png
 v*-*.png
+prod-*.png
 .playwright-mcp/console-*.log
-.playwright-mcp/page-2026-04-11*.yml
+.playwright-mcp/page-2026-04-*.yml
