@@ -15,7 +15,7 @@ info()    { echo -e "${YELLOW}[INFO]${NC} $*"; }
 success() { echo -e "${GREEN}[OK]${NC} $*"; }
 error()   { echo -e "${RED}[ERROR]${NC} $*"; }
 
-ALL_PROJECTS=(homepage homepage-v2 lsky newapi aiclient dujiaoka npm cliproxyapi blog blog-landing)
+ALL_PROJECTS=(homepage homepage-v2 lsky newapi aiclient dujiaoka dujiao-next npm cliproxyapi blog blog-landing)
 
 usage() {
     echo "Usage: $0 <project|all>"
@@ -58,6 +58,18 @@ deploy_project() {
             ;;
         dujiaoka)
             files=(docker-compose.yml .env pixel-theme.css install.lock shop-logo.png)
+            ;;
+        dujiao-next)
+            info "Deploying dujiao-next (full project rsync)..."
+            ssh -p "$SSH_PORT" "$SERVER" "mkdir -p ${remote_dir}"
+            rsync -avz -e "ssh -p $SSH_PORT" --delete \
+                --exclude='.git' \
+                --exclude='.env' \
+                --exclude='config/config.yml' \
+                --exclude='data/' \
+                "${local_dir}/" "${SERVER}:${remote_dir}/"
+            success "Deploy complete: dujiao-next"
+            return 0
             ;;
         cliproxyapi)
             files=(config.yaml)

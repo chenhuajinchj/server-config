@@ -1,0 +1,112 @@
+services:
+  gateway:
+    image: nginx:alpine
+    container_name: dujiaonext-gateway
+    restart: unless-stopped
+    ports:
+      - "8091:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      user:
+        condition: service_started
+      admin:
+        condition: service_started
+      api:
+        condition: service_healthy
+    networks:
+      - dujiao-next
+
+  admin-gateway:
+    image: nginx:alpine
+    container_name: dujiaonext-admin-gateway
+    restart: unless-stopped
+    ports:
+      - "8093:80"
+    volumes:
+      - ./admin-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      admin:
+        condition: service_started
+      api:
+        condition: service_healthy
+    networks:
+      - dujiao-next
+
+  redis:
+    image: redis:7-alpine
+    container_name: dujiaonext-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - dujiao-next
+
+  api:
+    build:
+      context: ../dujiao-next-source/api
+      dockerfile: Dockerfile
+      args:
+        APP_VERSION: source-20260411
+    image: xiaochens/dujiaonext-api:source
+    container_name: dujiaonext-api
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+      DJ_DEFAULT_ADMIN_USERNAME: ${DJ_DEFAULT_ADMIN_USERNAME}
+      DJ_DEFAULT_ADMIN_PASSWORD: ${DJ_DEFAULT_ADMIN_PASSWORD}
+    volumes:
+      - ./config/config.yml:/app/config.yml:ro
+      - ./data/db:/app/db
+      - ./data/uploads:/app/uploads
+      - ./data/logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - dujiao-next
+
+  user:
+    build:
+      context: ../dujiao-next-source/user
+      dockerfile: Dockerfile
+    image: xiaochens/dujiaonext-user:source
+    container_name: dujiaonext-user
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - dujiao-next
+
+  admin:
+    build:
+      context: ../dujiao-next-source/admin
+      dockerfile: Dockerfile
+    image: xiaochens/dujiaonext-admin:source
+    container_name: dujiaonext-admin
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - dujiao-next
+
+networks:
+  dujiao-next:
+    driver: bridge

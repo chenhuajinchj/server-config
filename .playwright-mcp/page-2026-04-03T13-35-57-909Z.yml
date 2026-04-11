@@ -1,0 +1,150 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - link "小陈" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "首页" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - link "博客" [ref=e7] [cursor=pointer]:
+          - /url: /blog
+        - link "标签" [ref=e8] [cursor=pointer]:
+          - /url: /tags
+        - link "关于" [ref=e9] [cursor=pointer]:
+          - /url: /about
+        - button "切换主题" [ref=e10] [cursor=pointer]:
+          - img [ref=e11]
+  - main [ref=e13]:
+    - article [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: 文章
+        - heading "从 Notion 重度用户到让 AI 帮我整理电脑" [level=1] [ref=e17]
+        - generic [ref=e18]:
+          - time [ref=e19]: 2026年4月2日
+          - generic [ref=e20]: · 8 分钟
+          - generic [ref=e21]:
+            - link "效率" [ref=e22] [cursor=pointer]:
+              - /url: /tags/效率
+            - link "文件管理" [ref=e23] [cursor=pointer]:
+              - /url: /tags/文件管理
+            - link "AI Agent" [ref=e24] [cursor=pointer]:
+              - /url: /tags/AI Agent
+            - link "Obsidian" [ref=e25] [cursor=pointer]:
+              - /url: /tags/Obsidian
+      - img "从 Notion 重度用户到让 AI 帮我整理电脑" [ref=e27]
+      - navigation [ref=e28]:
+        - heading "目录" [level=4] [ref=e29]
+        - list [ref=e30]:
+          - listitem [ref=e31]:
+            - link "整理的意义不是在过程" [ref=e32] [cursor=pointer]:
+              - /url: "#整理的意义不是在过程"
+          - listitem [ref=e33]:
+            - link "复杂系统是累赘，只是让自己满意" [ref=e34] [cursor=pointer]:
+              - /url: "#复杂系统是累赘只是让自己满意"
+          - listitem [ref=e35]:
+            - link "Agent 时代的文件管理" [ref=e36] [cursor=pointer]:
+              - /url: "#agent-时代的文件管理"
+          - listitem [ref=e37]:
+            - link "我的 Obsidian 同步方案：iCloud + 软连接" [ref=e38] [cursor=pointer]:
+              - /url: "#我的-obsidian-同步方案icloud--软连接"
+          - listitem [ref=e39]:
+            - link "用归档替代废纸篓" [ref=e40] [cursor=pointer]:
+              - /url: "#用归档替代废纸篓"
+      - generic [ref=e41]:
+        - paragraph [ref=e42]: 我建议每个人每个月都要整理一下自己的电脑，看一下自己平时存的文件和文档，有哪些内容是需要整理的，哪些是自己应该保留下来的，哪些是需要完全清除的。
+        - heading "整理的意义不是在过程" [level=2] [ref=e43]:
+          - link "整理的意义不是在过程" [ref=e44] [cursor=pointer]:
+            - /url: "#整理的意义不是在过程"
+        - paragraph [ref=e45]: 这个过程的意义并不在于整理本身，或者说不在于最终的结果，而是在于”整理”这一个动作的本身。通过整理，你可以看到：
+        - list [ref=e46]:
+          - listitem [ref=e47]: 之前写的文档和做的项目。
+          - listitem [ref=e48]: 哪些地方存了一些你保存下来但从未打开过，或者保存了却没看过的文件。
+        - paragraph [ref=e49]: 你可以在整理的过程中顺便把它们看一看。也可以在整理的过程中，把你之前写完发布的文章拿出来翻一翻。
+        - paragraph [ref=e50]: 从一个月后去看一个月前写的内容，你的心情是怎样的？你觉得还有什么进步的空间？我觉得这些才是整理的真正意义。
+        - heading "复杂系统是累赘，只是让自己满意" [level=2] [ref=e51]:
+          - link "复杂系统是累赘，只是让自己满意" [ref=e52] [cursor=pointer]:
+            - /url: "#复杂系统是累赘只是让自己满意"
+        - paragraph [ref=e53]: 很多人喜欢给自己搭一个臃肿的系统，包括之前的我自己。
+        - paragraph [ref=e54]: 比如我之前在 Notion 里面花费了将近半个月的时间，搭建了一套完全自我的工作库。
+        - paragraph [ref=e55]:
+          - img "Notion 复盘系统" [ref=e56]
+        - paragraph [ref=e57]:
+          - img "Notion 任务管理" [ref=e58]
+        - paragraph [ref=e59]:
+          - img "Notion 工作库主页" [ref=e60]
+        - paragraph [ref=e61]: 当时搭建完成之后，我觉得自己简直是”天下第一”，觉得有了这套工作流程、工作库和知识库，我就可以产出更多更好的内容，可以坚持不懈地完成打卡。
+        - paragraph [ref=e62]: 但是现在，尤其是在我和 Claude Code（Anthropic 推出的 AI 编程工具，下面简称 CC）的交流与工作融合越来越多之后，我发现这种东西对于 AI Agent 来说，路径越多，造成的干扰其实就越多。
+        - paragraph [ref=e63]: 同时，对于我们人类而言，也是因为每一次打开的路径越长，我们做一件事的摩擦力就越大，那么这件事情就越做不下去了。
+        - paragraph [ref=e64]: 我现在仅仅只做了一个 macOS 自动操作（Automator）脚本，根据下载的文件种类自动帮我移动到对应的文件夹中，其他的我都不会去做。平常的一些文档我都是随开随看随存，看完就关。
+        - heading "Agent 时代的文件管理" [level=2] [ref=e65]:
+          - link "Agent 时代的文件管理" [ref=e66] [cursor=pointer]:
+            - /url: "#agent-时代的文件管理"
+        - paragraph [ref=e67]: 我现在觉得最好的方式是：
+        - list [ref=e68]:
+          - listitem [ref=e69]:
+            - strong [ref=e70]: 简化你的分类
+            - text: ：不管是代码还是日常文档，只归为一个大类。
+          - listitem [ref=e71]:
+            - strong [ref=e72]: 细分你的项目
+            - text: ：在大类里面，再根据具体的项目去分开创建。
+          - listitem [ref=e73]:
+            - strong [ref=e74]: 状态管理
+            - text: ：每一个文件、每一个项目都应该用 Git 管理。这样你既可以回滚之前的状态，也不用担心哪天手误删掉了就找不回来。
+        - paragraph [ref=e75]:
+          - text: 你不要觉得这只是方便了 Agent，当你和越来越多的 AI 工具协作之后会发现：
+          - strong [ref=e76]: 对 Agent 而言最高效的方式——路径短、项目明确——其实对人也是最高效的。
+        - paragraph [ref=e77]: 我觉得与其花时间去打造一些华而不实、分门别类的知识库或个人管理库，还不如把时间花在真正的产出上面。我现在已经不再搭建复杂的系统了，只是每个月定期清理一次。
+        - paragraph [ref=e78]: 比如今天是 4 月 2 号，本来昨天就该清理，我在每个月的第一天整理一次，但由于昨天没有清理，所以一直拖到了今天。
+        - paragraph [ref=e79]:
+          - img "CC 整理后的文件夹结构" [ref=e80]
+        - paragraph [ref=e81]:
+          - img "CC 给出的文件夹结构建议" [ref=e82]
+        - heading "我的 Obsidian 同步方案：iCloud + 软连接" [level=2] [ref=e83]:
+          - link "我的 Obsidian 同步方案：iCloud + 软连接" [ref=e84] [cursor=pointer]:
+            - /url: "#我的-obsidian-同步方案icloud--软连接"
+        - paragraph [ref=e85]: 在这个过程中，分享一点我自己的 Obsidian 同步和保存方式。
+        - paragraph [ref=e86]: 我是通过苹果的 iCloud 云文档来同步的，这样我可以在任何一台手机、iPad 或电脑上直接同步使用。我不会去用 Git 来同步 Obsidian 的笔记，因为那会增加我的操作摩擦。
+        - paragraph [ref=e87]: 但 iCloud 有一个问题：默认路径非常长。很多时候 AI Agent 应用（比如 Codex 或 CC）在你和它对话时，如果你让它帮你在 Obsidian 里面创建或寻找某个文档，它需要花费很多时间去寻找，尤其是在你没有给它指定路径的情况下。
+        - paragraph [ref=e88]: 虽然这是一个很基础的知识，但很多时候我们会不自觉地默认 AI 已经知道路径在哪，结果导致它浪费了很多上下文、时间还有 Token。
+        - paragraph [ref=e89]:
+          - text: 所以，我做了一个这样的操作：通过”软连接”的方式，把 Obsidian 的路径映射出来。这样我可以直接在终端输入
+          - code [ref=e90]: cd ~/Obsidian
+          - text: 就能连接到我的库，而原本的文件依然存放在 iCloud 云文档里。
+        - paragraph [ref=e91]:
+          - img "软连接示意" [ref=e92]
+        - paragraph [ref=e93]: 关于软连接的实现方式，你可以让任何一个 AI Agent 应用（比如 Codex 或 CC）来帮你完成，一句话的事。
+        - heading "用归档替代废纸篓" [level=2] [ref=e94]:
+          - link "用归档替代废纸篓" [ref=e95] [cursor=pointer]:
+            - /url: "#用归档替代废纸篓"
+        - paragraph [ref=e96]:
+          - img "小金在整理归档" [ref=e97]
+        - paragraph [ref=e98]: 最后分享一个小习惯：整理文件时，很多人会把目前看起来不需要的东西直接删除或移到废纸篓。
+        - paragraph [ref=e99]: 我的建议是建立一个”归档”文件夹。如果你不确定某些东西未来是否还有用，就先放进归档。到了下个月再整理时，优先处理归档文件夹里的内容——如果确定不需要了，再删除。
+        - paragraph [ref=e100]: 这和废纸篓的区别在于：归档是存放那些你已经用不到、但又不确定未来会不会需要的文档、文件和项目，在你下个月进行清理的时候，你就可以回看上一个月你放到”归档”里面的内容。你可以很轻易地判断出来，哪些东西是你不需要了，哪些东西是你应该保留下来的。
+        - paragraph [ref=e101]: 而且这种结构对 Agent 特别友好——“归档”这个语义本身就是清晰的，Agent 可以很好地理解哪些内容是活跃的、哪些是归档的，不需要你额外解释。
+        - paragraph [ref=e102]: 我的整理是完全针对我电脑上的所有文件，而不仅仅只是局限于 Obsidian。
+  - contentinfo [ref=e103]:
+    - generic [ref=e104]:
+      - paragraph [ref=e105]:
+        - text: © 2026 小陈的博客 · 由
+        - link "Astro" [ref=e106] [cursor=pointer]:
+          - /url: https://astro.build
+        - text: 驱动
+      - paragraph [ref=e107]:
+        - link "RSS" [ref=e108] [cursor=pointer]:
+          - /url: /rss.xml
+  - generic [ref=e111]:
+    - button "Menu" [ref=e112]:
+      - img [ref=e114]
+      - generic: Menu
+    - button "Inspect" [ref=e118]:
+      - img [ref=e120]
+      - generic: Inspect
+    - button "Audit" [ref=e122]:
+      - generic [ref=e123]:
+        - img [ref=e124]
+        - img [ref=e127]
+      - generic: Audit
+    - button "Settings" [ref=e130]:
+      - img [ref=e132]
+      - generic: Settings
