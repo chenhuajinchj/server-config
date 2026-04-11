@@ -1,0 +1,264 @@
+/*
+ * Custom theme override — Utility / Ink-blue
+ *
+ * 覆盖官方 style.css 里的 CSS 变量与若干圆角/阴影组件类，
+ * 目标：纯白底、墨蓝强调、锐直角、无阴影、价格等宽字体。
+ * 本文件在 main.ts 里于 style.css 之后导入，靠后定义规则优先。
+ */
+
+:root {
+  /* —— 背景：纯白，去掉 Apple 风的浅灰画布 —— */
+  --ui-bg-page: #ffffff;
+  --ui-bg-elevated: #ffffff;
+  --ui-bg-soft: #fafafa;
+  --ui-bg-muted: #f4f4f5;
+  --ui-bg-overlay: rgba(255, 255, 255, 0.92);
+  --ui-bg-overlay-strong: #ffffff;
+
+  /* —— 文字：近黑 + 中灰层级 —— */
+  --ui-text-primary: #0a0a0a;
+  --ui-text-secondary: #404040;
+  --ui-text-muted: #737373;
+  --ui-text-on-accent: #ffffff;
+
+  /* —— 边框：清晰但不重 —— */
+  --ui-border: #e5e5e5;
+  --ui-border-strong: #a3a3a3;
+
+  /* —— 强调色：墨蓝 —— */
+  --ui-accent: #1e3a5f;
+  --ui-accent-hover: #142942;
+  --ui-accent-soft: rgba(30, 58, 95, 0.08);
+  --ui-focus-ring: rgba(30, 58, 95, 0.24);
+
+  /* —— 状态色：克制化，不抢主角 —— */
+  --ui-success: #166534;
+  --ui-success-soft: rgba(22, 101, 52, 0.08);
+  --ui-warning: #9a6700;
+  --ui-warning-soft: rgba(154, 103, 0, 0.08);
+  --ui-danger: #b91c1c;
+  --ui-danger-soft: rgba(185, 28, 28, 0.08);
+  --ui-info: #1e3a5f;
+  --ui-info-soft: rgba(30, 58, 95, 0.08);
+
+  /* —— 圆角：全面锐化 —— */
+  --ui-radius-sm: 2px;
+  --ui-radius-md: 3px;
+  --ui-radius-lg: 4px;
+  --ui-radius-xl: 6px;
+
+  /* —— 阴影：全部关闭，靠边框区分层级 —— */
+  --ui-shadow-1: 0 0 0 0 transparent;
+  --ui-shadow-2: 0 0 0 0 transparent;
+  --ui-shadow-3: 0 1px 0 0 #e5e5e5;
+  --ui-shadow-soft: 0 0 0 0 transparent;
+  --ui-shadow-card: 0 0 0 0 transparent;
+
+  /* —— 价格：等宽字，主色近黑，促销色仍红但克制 —— */
+  --ui-price-primary: #0a0a0a;
+  --ui-price-promotion: #b91c1c;
+  --ui-price-original: #a3a3a3;
+
+  /* —— 字体栈：价格和编号用 mono —— */
+  --ui-font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo,
+    Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+}
+
+.dark {
+  /* 暗色模式留白：本次聚焦亮色，暗色保持官方默认即可 */
+}
+
+/* —— 全局字体：保持 Inter，但字重略收敛 —— */
+html,
+body {
+  background-color: var(--ui-bg-page);
+  font-feature-settings: "cv11", "ss01", "ss03";
+  letter-spacing: -0.005em;
+}
+
+/* —— 主面板：边框 + 纯白背景 + 零阴影，顶掉官方的 card shadow —— */
+@layer components {
+  .theme-panel,
+  .theme-panel-soft,
+  .theme-panel-muted,
+  .theme-panel-strong {
+    box-shadow: none !important;
+  }
+
+  .theme-panel {
+    background-color: #ffffff;
+    border-color: var(--ui-border);
+  }
+
+  .theme-panel-soft {
+    background-color: #fafafa;
+  }
+
+  .theme-panel-muted {
+    background-color: #f4f4f5;
+  }
+
+  .theme-panel-strong {
+    background-color: #ffffff;
+    border-color: var(--ui-border-strong);
+  }
+}
+
+/* —— 价格文字：所有 data-price 属性或 .price 类自动转 mono —— */
+[data-price],
+.price,
+.product-price,
+.price-value {
+  font-family: var(--ui-font-mono);
+  font-feature-settings: "tnum";
+  letter-spacing: -0.01em;
+}
+
+/* —— 通用按钮/徽章微调：去掉默认阴影 —— */
+button,
+.btn,
+.theme-badge {
+  box-shadow: none !important;
+}
+
+/* ============================================================
+ * 强制覆盖：Utility 风格要求锐直角 + 放大价格。
+ * 因为 Vue 组件内使用了 Tailwind utility class（如 rounded-2xl），
+ * CSS 变量无法通过级联生效，必须直接写选择器覆盖。
+ * ============================================================ */
+
+/* —— 圆角锐化：全面限制在 6px 以内 —— */
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl,
+.rounded-full:not(button):not(.h-2):not(.w-2):not([class*="w-8"]):not([class*="w-9"]) {
+  border-radius: 4px !important;
+}
+.rounded-lg { border-radius: 3px !important; }
+.rounded-md { border-radius: 3px !important; }
+.rounded-sm { border-radius: 2px !important; }
+
+/* 头像/圆点/开关/小圆按钮等应该保持圆形 */
+.avatar,
+[class*="rounded-full"].h-2,
+[class*="rounded-full"].w-2 {
+  border-radius: 999px !important;
+}
+
+/* —— 价格：整体放大 + 强对比 + 等宽 —— */
+.theme-price-sm {
+  font-size: 1.5rem !important;        /* 从 1.125rem 放大 */
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+  color: var(--ui-price-primary) !important;
+  font-family: var(--ui-font-mono) !important;
+  font-feature-settings: "tnum" !important;
+}
+
+.theme-price-lg {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  color: var(--ui-price-primary) !important;
+  font-family: var(--ui-font-mono) !important;
+  font-feature-settings: "tnum" !important;
+}
+
+/* —— 商品卡：去阴影、清边、允许标题两行 —— */
+.theme-panel.rounded-2xl,
+.theme-panel.rounded-xl {
+  box-shadow: none !important;
+  border-width: 1px !important;
+  transition: border-color var(--ui-duration-fast) ease,
+              background-color var(--ui-duration-fast) ease !important;
+}
+
+/* 商品名两行显示（原本 line-clamp-1 太短） */
+.theme-panel h3.line-clamp-1 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  min-height: 2.6em !important;
+  line-height: 1.3 !important;
+}
+
+/* —— Hover：只改边框颜色，不做位移/缩放 —— */
+.group:hover {
+  transform: none !important;
+}
+.theme-card-interactive:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: var(--ui-border-strong) !important;
+}
+
+/* —— 顶部导航：去阴影，边框清晰 —— */
+nav,
+header {
+  box-shadow: none !important;
+}
+
+/* ============================================================
+ * Utility 风专属：无图时折叠图片区、精简分块
+ * ============================================================ */
+
+/* 商品卡没有 <img> 时折叠 4:3 图片占位区。
+ * 用 :has() 选择器判断 aspect-[4/3] 容器下是否有 img。
+ * 同时保留 category icon fallback 的 img 显示。 */
+.theme-panel [class*="aspect-"]:not(:has(img)) {
+  display: none !important;
+}
+
+/* 商品卡内容区：去掉因隐藏图片产生的顶部空隙 */
+.theme-panel .aspect-\[4\/3\] + div,
+.theme-panel [class*="aspect-"] + div {
+  padding-top: 1rem !important;
+}
+
+/* 商品卡整体：改成纯文字为主的紧凑布局，边框即视觉层级 */
+.theme-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: auto !important;
+}
+
+/* 商品名换行后更精神：字号、字重、行距调整 */
+.theme-panel h3 {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.35 !important;
+  min-height: auto !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* 价格上方的 "价格" 小标签在 utility 风里是冗余的，隐藏 */
+.theme-panel .theme-text-muted.uppercase.tracking-wider {
+  display: none !important;
+}
+
+/* 但保留顶部的分类小标签（它在商品名上方，不是价格上方） */
+.theme-panel .text-xs.theme-text-muted.uppercase.tracking-wider.mb-1 {
+  display: block !important;
+}
+
+/* 空的分区整段折叠：没有内容就不占版面 */
+section:has(> * > * .empty-state):has(h2) {
+  /* keep for now; handled per-section below */
+}
+
+/* 隐藏空状态的「暂无文章」整个 section
+ * 粗略做法：任何包含 "暂无" 的空态 section 的 h2 标题附近收窄 */
+
+/* 商品卡悬停：用底色变化代替边框变化，更克制 */
+.theme-card-interactive {
+  transition: background-color 120ms ease !important;
+}
+.theme-card-interactive:hover {
+  background-color: #fafafa !important;
+  border-color: var(--ui-border-strong) !important;
+}

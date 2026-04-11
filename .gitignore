@@ -28,6 +28,13 @@ node_modules/
 # Build output
 blog/.astro/
 blog/dist/
+dujiao-next-user/dist/
 
 # IDE / tool config
 .serena/
+
+# Ephemeral redesign screenshots and playwright session artifacts
+baseline-home.png
+v*-*.png
+.playwright-mcp/console-*.log
+.playwright-mcp/page-2026-04-11*.yml
